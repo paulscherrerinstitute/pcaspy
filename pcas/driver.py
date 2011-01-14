@@ -49,9 +49,16 @@ class Driver(object):
                     pv.updateValue(self.pvData[reason])
                     self.pvFlag[reason] = False
 
+# map aitType to string representation
+_ait_d = {'enum'   : cas.aitEnumEnum16,
+          'str'    : cas.aitEnumString,
+          'string' : cas.aitEnumString,
+          'float'  : cas.aitEnumFloat64,
+          'int'    : cas.aitEnumInt32,
+          }
 class PVInfo(object):
     def __init__(self, info):
-        # ini default
+        # initialize default
         self.count = 1
         self.type  = cas.aitEnumFloat64
         self.enums = []
@@ -64,7 +71,11 @@ class PVInfo(object):
         self.asyn  = False
         # override with given dict
         for key in info:
-            setattr(self, key, info.get(key)) 
+            value = info.get(key)
+            if key == 'type':
+                self.type = _ait_d[value]
+            else:
+                setattr(self, key, value) 
 
 class SimplePV(cas.casPV):
     def __init__(self, name, info, drv):
