@@ -1,4 +1,4 @@
-from pcas import Driver, SimpleServer, PVInfo
+from pcas import Driver, SimpleServer
 import random
 import time
 import math
@@ -53,9 +53,8 @@ if __name__ == '__main__':
     server = SimpleServer()
     from db import pvdb, prefix
     for pvname in pvdb:
-        info = PVInfo(pvdb[pvname])
-        info.reason = pvname
-        pv = server.createPV(prefix+pvname, info, driver)
+        info = pvdb[pvname]
+        pv = server.createPV(prefix, pvname, info, driver)
         driver.registerPV(pv)
 
     while True:
