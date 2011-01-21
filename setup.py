@@ -54,6 +54,8 @@ setup (name = 'pcas',
        version = '0.1',
        description = """python channel access server""",
        author      = "Xiaoqiang Wang",
+       author_email= "xiaoqiangwang@gmail.com",
+       url         = "http://code.google.com/p/pcas/",
        ext_modules = [cas_module],
        packages   = ["pcas"],
        )
