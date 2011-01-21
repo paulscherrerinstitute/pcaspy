@@ -186,9 +186,12 @@ class SimpleServer(cas.caServer):
         else:
             return cas.S_casApp_pvNotFound
 
-    def createPV(self, name, info, drv):
-        pv = SimplePV(name, info, drv)
-        self.pvs[name] = pv
+    def createPV(self, prefix, name, info, drv):
+        pvinfo = PVInfo(info)
+        pvinfo.reason = name
+        fullname = prefix + name
+        pv = SimplePV(fullname, pvinfo, drv)
+        self.pvs[fullname] = pv
         return pv
 
    

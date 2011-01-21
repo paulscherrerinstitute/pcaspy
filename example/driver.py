@@ -1,26 +1,13 @@
-from pcas import Driver, SimpleServer, PVInfo
+from pcas import Driver, SimpleServer
 import random
 import time
 import math
 import thread
 
-class FSCalc(object):
-    def __init__(self):
-        pass
-
-    def calc(self, max=1200):
-        a = 1
-        b = 1
-        while self.run:
-            time.sleep(0.2)
-            a = b
-            b = a + b 
-            if b > max:
-                break
-
 class myDriver(Driver):
     def __init__(self):
         Driver.__init__(self)
+        self.run = False
         thread.start_new_thread(self.poll,())   
 
     def write(self, reason, value):
@@ -43,20 +30,31 @@ class myDriver(Driver):
                 self.run = False
         return True
 
+    def calcFS(self):
+        a = 1
+        b = 1
+        while self.run:
+            time.sleep(0.2)
+            a = b
+            b = a + b 
+            if b > 1200:
+                break
+        self.run = False
+        self.setParam('START', 0)
+        self.updatePVs()
+        self.callbackPV('START')
+
     def poll(self):
         while True:
-            self.setParam('START', 0)
             self.updatePVs()
-            self.callbackPV('START')
 
 if __name__ == '__main__':
     driver = myDriver()
     server = SimpleServer()
     from db import pvdb, prefix
     for pvname in pvdb:
-        info = PVInfo(pvdb[pvname])
-        info.reason = pvname
-        pv = server.createPV(prefix+pvname, info, driver)
+        info = pvdb[pvname]
+        pv = server.createPV(prefix, pvname, info, driver)
         driver.registerPV(pv)
 
     while True:
