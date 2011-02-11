@@ -26,18 +26,21 @@ if not HOSTARCH:
 # common libraries to link
 libraries = ['ca', 'Com', 'gdd','cas']
 macros = []
+cflags = []
 # platform dependent libraries and macros
 UNAME = platform.system()
 if  UNAME.find('CYGWIN') == 0:
     UNAME = "cygwin32"
 elif UNAME == 'Windows':
     UNAME = 'WIN32'
-    libraries += ['ws2_32', 'msvcrt']
+    libraries += ['ws2_32', 'msvcrt', 'user32', 'advapi32']
     macros += [('_CRT_SECURE_NO_WARNINGS', 'None')]
-
+    cflags += ['/MT']
 cas_module = Extension('pcas._cas',
-                            sources  =['pcas/casdef.i', 'pcas/pv.cpp'],
+                            sources  =[os.path.join('pcas','casdef.i'), 
+                                       os.path.join('pcas','pv.cpp'),],
                             swig_opts=['-c++','-nodefaultdtor','-I%s'% os.path.join(EPICSBASE, 'include')],
+                            extra_compile_args=cflags,
                             include_dirs = [ os.path.join(EPICSBASE, 'include'),
                                              os.path.join(EPICSBASE, 'include', 'os', UNAME),
                                            ],
