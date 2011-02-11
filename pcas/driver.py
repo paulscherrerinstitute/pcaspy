@@ -1,4 +1,6 @@
 import cas
+import thread
+import time
 
 class Driver(object):
     def __init__(self):
@@ -14,8 +16,9 @@ class Driver(object):
         return True
 
     def setParam(self, reason, value):
-        self.pvData[reason] = value
-        self.pvFlag[reason] = True
+        if self.pvData.get(reason) != value:
+            self.pvData[reason] = value
+            self.pvFlag[reason] = True
 
     def getParam(self, reason):
         return self.pvData[reason]
@@ -108,16 +111,17 @@ class SimplePV(cas.casPV):
         # post event for monitors
         if success:
             self.updateValue(value)
-        # async write will finish later
-        if self.info.asyn:
-            self.asyn = cas.casAsyncWriteIO(context)
-            return cas.S_casApp_asyncCompletion
+            # async write will finish later
+            if self.info.asyn:
+                self.asyn = cas.casAsyncWriteIO(context)
+                return cas.S_casApp_asyncCompletion
         else:
             return cas.S_casApp_success
 
     def writeComplete(self):
-        self.asyn.postIOCompletion(cas.S_casApp_success)
-        self.asyn = None
+        if self.asyn:
+            self.asyn.postIOCompletion(cas.S_casApp_success)
+            self.asyn = None
 
     def updateValue(self, value):
         if type(value) != cas.gdd:
@@ -186,9 +190,14 @@ class SimpleServer(cas.caServer):
         else:
             return cas.S_casApp_pvNotFound
 
-    def createPV(self, name, info, drv):
-        pv = SimplePV(name, info, drv)
-        self.pvs[name] = pv
+    def createPV(self, prefix, name, info, drv):
+        # create PCInfo from dict
+        pvinfo = PVInfo(info)
+        pvinfo.reason = name
+        # create and store SimplePV instance
+        fullname = prefix + name
+        pv = SimplePV(fullname, pvinfo, drv)
+        self.pvs[fullname] = pv
         return pv
 
    
