@@ -1,0 +1,5 @@
+Python binding to Portable Channel Access Server
+
+Build:
+    make
+

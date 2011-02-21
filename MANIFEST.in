@@ -1,0 +1,4 @@
+include Makefile
+include setup.py
+recursive-include pcas __init__.py driver.py pv.h pv.cpp *.i
+recursive-include example *.py
