@@ -128,7 +128,7 @@ public:
         def put(self, value):
             if type(value) == gdd:
                 self.put(gdd)
-            elif type(value) in [int, long, float]:
+            elif type(value) in [bool, int, long, float]:
                 self.setDimension(0)
                 self.putNumeric(value)
             elif type(value) == str:
@@ -136,7 +136,7 @@ public:
                 self.putString(value)
             elif type(value) == list:
                 if self.primitiveType() == aitEnumInvalid:
-                    if type(value[0]) in [int, long, float]:
+                    if type(value[0]) in [bool, int, long, float]:
                         self.setPrimType(aitEnumFloat64)
                     else:
                         self.setPrimType(aitEnumString)
