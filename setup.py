@@ -56,10 +56,15 @@ if UNAME != 'WIN32':
 setup (name = 'pcas',
        version = '0.1',
        description = """python channel access server""",
+       long_description = """
+       Write channel access server application made easy.
+       """,
        author      = "Xiaoqiang Wang",
        author_email= "xiaoqiangwang@gmail.com",
        url         = "http://code.google.com/p/pcas/",
        ext_modules = [cas_module],
-       packages   = ["pcas"],
+       packages    = ["pcas"],
+       license     = "GPLv3",
+       platforms   = ["Windows","Linux", "Mac OS X"],
        )
 

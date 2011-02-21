@@ -1,4 +1,7 @@
+include README
+include MANIFEST.in
 include Makefile
 include setup.py
-recursive-include pcas __init__.py driver.py pv.h pv.cpp *.i
-recursive-include example *.py
+include pcas/pv.*
+include pcas/*.i
+include example/*.py
