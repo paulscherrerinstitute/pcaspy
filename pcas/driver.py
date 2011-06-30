@@ -66,7 +66,7 @@ class PVInfo(object):
         self.type  = cas.aitEnumFloat64
         self.enums = []
         self.prec  = 0.0
-        self.units = ''
+        self.unit  = ''
         self.lolim = 0.0
         self.hilim = 0.0
         self.scan  = 0
@@ -115,6 +115,8 @@ class SimplePV(cas.casPV):
             if self.info.asyn:
                 self.asyn = cas.casAsyncWriteIO(context)
                 return cas.S_casApp_asyncCompletion
+            else:
+                return cas.S_casApp_success
         else:
             return cas.S_casApp_success
 
@@ -141,8 +143,8 @@ class SimplePV(cas.casPV):
         prec.put(self.info.prec)
         return cas.S_casApp_success
 
-    def getUnits(self, units):
-        units.put(self.info.units)
+    def getUnits(self, unit):
+        unit.put(self.info.unit)
         return cas.S_casApp_success
 
     def getEnums(self, enums):
