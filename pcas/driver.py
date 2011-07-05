@@ -137,6 +137,7 @@ class SimplePV(cas.casPV):
         value.setPrimType(self.info.type)
         newValue = self.drv.read(self.info.reason)
         value.put(newValue)
+        self.updateValue(newValue)
         return cas.S_casApp_success
 
     def getPrecision(self, prec):
