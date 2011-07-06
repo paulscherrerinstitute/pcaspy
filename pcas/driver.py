@@ -41,7 +41,7 @@ class Driver(object):
     def callbackPV(self, reason):
         pv = self.pvs[reason]
         if pv.info.asyn:
-            pv.writeComplete()
+            pv.endAsyncWrite(cas.S_casApp_success)
 
     def updatePVs(self):
         reasons = self.pvData.keys()
@@ -88,7 +88,6 @@ class SimplePV(cas.casPV):
         self.drv  = drv
         self.interest = False
         self.active   = False
-        self.asyn = None
         if self.info.scan > 0:
             thread.start_new_thread(self.scan,())
 
@@ -108,29 +107,22 @@ class SimplePV(cas.casPV):
     def write(self, context, value):
         # call out driver support 
         success = self.drv.write(self.info.reason, value.get())
-        # post event for monitors
-        if success:
-            self.updateValue(value)
-            # async write will finish later
-            if self.info.asyn:
-                self.asyn = cas.casAsyncWriteIO(context)
+        if self.info.asyn:
+            if success:
+                # async write will finish later
+                self.startAsyncWrite(context)
                 return cas.S_casApp_asyncCompletion
             else:
-                return cas.S_casApp_success
+                return  cas.S_casApp_postponeAsyncIO
         else:
             return cas.S_casApp_success
 
-    def writeComplete(self):
-        if self.asyn:
-            self.asyn.postIOCompletion(cas.S_casApp_success)
-            self.asyn = None
-
     def updateValue(self, value):
-        if type(value) != cas.gdd:
-            gddValue = cas.gdd()
-            gddValue.put(value)
-            value = gddValue
         if (self.interest):
+            if type(value) != cas.gdd:
+                gddValue = cas.gdd()
+                gddValue.put(value)
+                value = gddValue
             self.postEvent(value);
         
     def getValue(self, value):

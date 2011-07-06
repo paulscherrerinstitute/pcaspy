@@ -4,6 +4,16 @@
 #include <casdef.h>
 #include <gddAppFuncTable.h>
 
+class PV; 
+
+class AsyncWriteIO : public casAsyncWriteIO {
+    public:
+        AsyncWriteIO(const casCtx & ctxIn,  PV & pvIn); 
+        ~AsyncWriteIO();
+    private:
+        PV & pv; 
+}; 
+
 class PV : public casPV {
     public:
         PV();
@@ -21,8 +31,13 @@ class PV : public casPV {
         caStatus postEvent(gdd &value);
         void destroy();
 
+        void startAsyncWrite(const casCtx & ctx); 
+        void endAsyncWrite(caStatus status); 
+        void removeAsyncWrite(); 
+
         static void initFT();
     private:
+        AsyncWriteIO * pAsyncWrite; 
         static gddAppFuncTable<PV> ft;
         static int initialized;
 };

@@ -18,9 +18,12 @@ class myDriver(Driver):
         # store the values
         self.setParam(reason, value)
         # take proper actions
-        if reason == 'COMMAND' and not self.tid:
-            command = value
-            self.tid = thread.start_new_thread(self.runShell,(command,))
+        if reason == 'COMMAND':
+            if not self.tid:
+                command = value
+                self.tid = thread.start_new_thread(self.runShell,(command,))
+            else:
+                status = False
         return status
 
     def runShell(self, command):

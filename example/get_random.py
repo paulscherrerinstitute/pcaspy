@@ -8,7 +8,8 @@ prefix = 'MTEST:'
 db = {
     'RAND' : {
         'prec' : 3,
-        'scan' : 0.1
+        'scan' : 0.1,
+        'count': 10,
     },
 }
 class myDriver(Driver):
@@ -17,7 +18,7 @@ class myDriver(Driver):
 
     def read(self, reason):
         if reason == 'RAND':
-            value = random.random()
+            value = [random.random() for i in range(10)]
         else:
             value = self.getParam(reason)
         return value
