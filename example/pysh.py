@@ -30,6 +30,7 @@ class myDriver(Driver):
         # run shell
         proc = subprocess.Popen(shlex.split(command), stdout = subprocess.PIPE)
         self.setParam('OUTPUT', proc.stdout.read().rstrip())
+        self.callbackPV('COMMAND')
         # set status DONE
         self.setParam('STATUS', 0)
         self.updatePVs()
@@ -42,6 +43,7 @@ if __name__ == '__main__':
     pvdb = { 'COMMAND' : 
              {
                  'type' : 'string',
+                 'asyn' : True
              },
              'OUTPUT'  :
              {
