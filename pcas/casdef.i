@@ -94,6 +94,9 @@ public:
     virtual caStatus getUnits(gdd &units);
     virtual caStatus getEnums(gdd &enums);
 
+    void startAsyncWrite(const casCtx &ctx);
+    void endAsyncWrite(caStatus status);
+
     void destroy ();
 };
 
@@ -120,17 +123,6 @@ public:
     virtual void show ( unsigned level ) const;
 
     virtual void destroy ();
-};
-
-class casAsyncWriteIO {
-public:
-    casAsyncWriteIO ( const casCtx & ctx );
-
-    // server library call destroy() to delete
-    %extend {
-        ~casAsyncWriteIO() {};
-    }
-    caStatus postIOCompletion ( caStatus completionStatusIn );
 };
 
 void process(double delay);

@@ -1,9 +1,21 @@
 #include "pv.h"
 
+AsyncWriteIO::AsyncWriteIO ( const casCtx & ctxIn, PV & pvIn ) :
+	casAsyncWriteIO ( ctxIn ), pv ( pvIn )
+{
+}
+
+AsyncWriteIO::~AsyncWriteIO()
+{
+	this->pv.removeAsyncWrite();
+}
+
+
 int PV :: initialized = 0;
 gddAppFuncTable<PV> PV :: ft;
 
 PV :: PV () {
+    pAsyncWrite = NULL; 
     PV::initFT();
 }
 
@@ -13,6 +25,22 @@ PV ::~PV () {
 caStatus PV :: read ( const casCtx & ctx, gdd & protoIn)
 {
     return PV::ft.read ( *this, protoIn );
+}
+
+void PV :: startAsyncWrite( const casCtx & ctx )
+{
+    pAsyncWrite = new AsyncWriteIO ( ctx,  *this );
+}
+
+void PV :: endAsyncWrite(caStatus status)
+{
+    if (pAsyncWrite) 
+        pAsyncWrite->postIOCompletion ( status );
+}
+
+void PV :: removeAsyncWrite()
+{
+    pAsyncWrite = NULL; 
 }
 
 caStatus PV :: postEvent(gdd &value)
