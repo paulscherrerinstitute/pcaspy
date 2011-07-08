@@ -107,7 +107,7 @@ class SimplePV(cas.casPV):
     def write(self, context, value):
         # call out driver support 
         success = self.drv.write(self.info.reason, value.get())
-        self.updateValue(value)
+        self.updateValue(self.drv.getParam(self.info.reason))
         if self.info.asyn:
             if success:
                 # async write will finish later
