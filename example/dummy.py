@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 from pcas import Driver, SimpleServer
 import time
 
