@@ -3,14 +3,19 @@
 from pcas import Driver, SimpleServer
 import time
 
+prefix = 'MTEST:'
+db = {
+    'RAND' : {
+        'prec' : 3,
+    },
+}
+
 if __name__ == '__main__':
-    driver = Driver()
     server = SimpleServer()
-    from db import pvdb, prefix
-    for pvname in pvdb:
-        info = pvdb[pvname]
-        pv = server.createPV(prefix, pvname, info, driver)
-        driver.registerPV(pv)
+    for pvname in db:
+        info = db[pvname]
+        pv = server.createPV(prefix, pvname, info)
+    server.createDriver(Driver)
 
     while True:
         # process CA transactions

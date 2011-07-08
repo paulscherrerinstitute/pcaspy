@@ -8,13 +8,13 @@ prefix = 'MTEST:'
 db = {
     'RAND' : {
         'prec' : 3,
-        'scan' : 0.1,
+        'scan' : 0,
         'count': 10,
     },
 }
 class myDriver(Driver):
-    def __init__(self):
-        Driver.__init__(self)
+    def __init__(self, server):
+        Driver.__init__(self, server)
 
     def read(self, reason):
         if reason == 'RAND':
@@ -24,12 +24,11 @@ class myDriver(Driver):
         return value
 
 if __name__ == '__main__':
-    driver = myDriver()
     server = SimpleServer()
     for pvname in db:
         info = db[pvname]
-        pv = server.createPV(prefix, pvname, info, driver)
-        driver.registerPV(pv)
+        pv = server.createPV(prefix, pvname, info)
+    server.createDriver(myDriver)
 
     while True:
         # process CA transactions
