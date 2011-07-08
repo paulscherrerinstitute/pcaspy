@@ -3,43 +3,47 @@ import thread
 import time
 
 class Driver(object):
-    def __init__(self):
+    def __init__(self, server):
         self.pvData  = {}
         self.pvFlag  = {}
-        self.pvs = {}
+        # init pvData with pv instance
+        self.server = server
+        for reason, pv in server.getPV().items():
+            self.setParam(reason, pv.info.value)
 
     def read(self, reason):
+        """driver reimplemente this method to PV read request"""
         return self.getParam(reason)
 
     def write(self, reason, value):
+        """driver reimplemente this method to PV write request
+        return False if the value is not accepted.
+        """
         self.setParam(reason, value)
         return True
 
     def setParam(self, reason, value):
+        """set PV value and request update"""
         if self.pvData.get(reason) != value:
             self.pvData[reason] = value
             self.pvFlag[reason] = True
 
     def getParam(self, reason):
+        """retrieve PV value"""
         return self.pvData[reason]
 
-    def registerPV(self, pv):
-        self.pvs[pv.info.reason] = pv
-        self.setParam(pv.info.reason, pv.info.value)
-
     def callbackPV(self, reason):
-        pv = self.pvs[reason]
+        """inform asynchronous write completion"""
+        pv = self.server.getPV(reason)
         if pv.info.asyn:
             pv.endAsyncWrite(cas.S_casApp_success)
 
     def updatePVs(self):
-        reasons = self.pvData.keys()
-        for pv in self.pvs.values():
-            reason = pv.info.reason
-            if reason in reasons:
-                if self.pvFlag[reason]:
-                    pv.updateValue(self.pvData[reason])
-                    self.pvFlag[reason] = False
+        """post update event on changed values"""
+        for reason, pv in self.server.getPV().items():
+            if self.pvFlag[reason]:
+                pv.updateValue(self.pvData[reason])
+                self.pvFlag[reason] = False
 
 # map aitType to string representation
 _ait_d = {'enum'   : cas.aitEnumEnum16,
@@ -71,11 +75,11 @@ class PVInfo(object):
         self.value = info.get('value', value)
 
 class SimplePV(cas.casPV):
-    def __init__(self, name, info, drv):
+    def __init__(self, name, info, server):
         cas.casPV.__init__(self)
         self.name = name
         self.info = info
-        self.drv  = drv
+        self.server  = server
         self.interest = False
         self.active   = False
         if self.info.scan > 0:
@@ -83,7 +87,9 @@ class SimplePV(cas.casPV):
 
     def scan(self):
         while True:
-            value = self.drv.read(self.info.reason)
+            driver = self.server.getDriver()
+            if not driver: continue
+            value = driver.read(self.info.reason)
             self.updateValue(value)
             time.sleep(self.info.scan)
 
@@ -95,9 +101,12 @@ class SimplePV(cas.casPV):
         self.interest = False
 
     def write(self, context, value):
+        # get driver object
+        driver = self.server.getDriver()
+        if not driver: return
         # call out driver support 
-        success = self.drv.write(self.info.reason, value.get())
-        self.updateValue(self.drv.getParam(self.info.reason))
+        success = driver.write(self.info.reason, value.get())
+        self.updateValue(driver.getParam(self.info.reason))
         if self.info.asyn:
             if success:
                 # async write will finish later
@@ -117,8 +126,12 @@ class SimplePV(cas.casPV):
             self.postEvent(value);
         
     def getValue(self, value):
+        # get driver object
+        driver = self.server.getDriver()
+        if not driver: return
+        # create gdd value
         value.setPrimType(self.info.type)
-        newValue = self.drv.read(self.info.reason)
+        newValue = driver.read(self.info.reason)
         value.put(newValue)
         self.updateValue(newValue)
         return cas.S_casApp_success
@@ -162,28 +175,40 @@ class SimplePV(cas.casPV):
 class SimpleServer(cas.caServer):
     def __init__(self):
         cas.caServer.__init__(self)
-        self.pvs = {}
+        self.pvs_s = {}
+        self.pvs_f = {}
+        self.driver = None
 
-    def pvExistTest(self, context, addr, name):
-        if name in self.pvs.keys():
+    def pvExistTest(self, context, addr, fullname):
+        if fullname in self.pvs_f.keys():
             return cas.pverExistsHere
         else:
             return cas.pverDoesNotExistHere
 
-    def pvAttach(self, context, name):
-        if name in self.pvs.keys():
-            return self.pvs[name]
+    def pvAttach(self, context, fullname):
+        if fullname in self.pvs_f.keys():
+            return self.pvs_f[fullname]
         else:
             return cas.S_casApp_pvNotFound
 
-    def createPV(self, prefix, name, info, drv):
+    def createPV(self, prefix, name, info):
         pvinfo = PVInfo(info)
         pvinfo.reason = name
         fullname = prefix + name
-        pv = SimplePV(fullname, pvinfo, drv)
-        self.pvs[fullname] = pv
+        pv = SimplePV(fullname, pvinfo, self)
+        self.pvs_f[fullname] = pv
+        self.pvs_s[name] = pv
         return pv
+    def getPV(self, name=None):
+        if name == None:
+            return self.pvs_s
+        else:
+            return self.pvs_s[name]
 
-   
+    def createDriver(self, driver_class):
+        self.driver = driver_class(self)
+    def getDriver(self):
+        return self.driver
+
     def process(self, time):
         cas.process(time)

@@ -9,8 +9,8 @@ import shlex
 from pcas import Driver, SimpleServer
 
 class myDriver(Driver):
-    def __init__(self):
-        Driver.__init__(self)
+    def __init__(self, server):
+        Driver.__init__(self, server)
         self.tid = None 
 
     def write(self, reason, value):
@@ -28,6 +28,7 @@ class myDriver(Driver):
         return status
 
     def runShell(self, command):
+        print "DEBUG: Run ", command
         # set status BUSY
         self.setParam('STATUS', 1)
         self.updatePVs()
@@ -39,9 +40,9 @@ class myDriver(Driver):
         self.setParam('STATUS', 0)
         self.updatePVs()
         self.tid = None
+        print "DEBUG: Finish ", command
 
 if __name__ == '__main__':
-    driver = myDriver()
     server = SimpleServer()
     prefix = 'MTEST:'
     pvdb = { 'COMMAND' : 
@@ -60,8 +61,8 @@ if __name__ == '__main__':
            }
     for pvname in pvdb:
         info = pvdb[pvname]
-        pv = server.createPV(prefix, pvname, info, driver)
-        driver.registerPV(pv)
+        pv = server.createPV(prefix, pvname, info)
+    server.createDriver(myDriver)
 
     while True:
         # process CA transactions
