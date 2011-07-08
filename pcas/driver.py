@@ -41,7 +41,7 @@ class Driver(object):
     def updatePVs(self):
         """post update event on changed values"""
         for reason, pv in self.server.getPV().items():
-            if self.pvFlag[reason]:
+            if self.pvFlag[reason] and pv.info.scan == 0:
                 pv.updateValue(self.pvData[reason])
                 self.pvFlag[reason] = False
 
