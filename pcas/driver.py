@@ -25,18 +25,7 @@ class Driver(object):
 
     def registerPV(self, pv):
         self.pvs[pv.info.reason] = pv
-        # initialize value based on type and count
-        type = pv.info.type
-        # empty for string types
-        if type in [cas.aitEnumString, cas.aitEnumFixedString,]:
-            value = ''
-        # zero for numeric types
-        else:
-            value = 0
-        count = pv.info.count
-        if count > 1:
-            value = [value] * count
-        self.setParam(pv.info.reason, value)
+        self.setParam(pv.info.reason, pv.info.value)
 
     def callbackPV(self, reason):
         pv = self.pvs[reason]
@@ -61,24 +50,25 @@ _ait_d = {'enum'   : cas.aitEnumEnum16,
           }
 class PVInfo(object):
     def __init__(self, info):
-        # initialize default
-        self.count = 1
-        self.type  = cas.aitEnumFloat64
-        self.enums = []
-        self.prec  = 0.0
-        self.unit  = ''
-        self.lolim = 0.0
-        self.hilim = 0.0
-        self.scan  = 0
+        # initialize from info dict with defaults
+        self.count = info.get('count', 1)
+        self.type  = _ait_d[info.get('type', 'float')]
+        self.enums = info.get('enums', [])
+        self.prec  = info.get('prec', 0.0)
+        self.unit  = info.get('unit', '')
+        self.lolim = info.get('lolim', 0.0)
+        self.hilim = info.get('hilim', 0.0)
+        self.scan  = info.get('scan', 0)
+        self.asyn  = info.get('asyn', False)
         self.reason= ''
-        self.asyn  = False
-        # override with given dict
-        for key in info:
-            value = info.get(key)
-            if key == 'type':
-                self.type = _ait_d[value]
-            else:
-                setattr(self, key, value) 
+        # initialize value based on type and count
+        if self.type in [cas.aitEnumString, cas.aitEnumFixedString,]:
+            value = ''
+        else:
+            value = 0
+        if self.count > 1:
+            value = [value] * self.count
+        self.value = info.get('value', value)
 
 class SimplePV(cas.casPV):
     def __init__(self, name, info, drv):
