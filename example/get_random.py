@@ -8,7 +8,7 @@ prefix = 'MTEST:'
 db = {
     'RAND' : {
         'prec' : 3,
-        'scan' : 0,
+        'scan' : 1,
         'count': 10,
     },
 }
