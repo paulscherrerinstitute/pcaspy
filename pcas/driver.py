@@ -122,6 +122,7 @@ class SimplePV(cas.casPV):
             if type(value) != cas.gdd:
                 gddValue = cas.gdd()
                 gddValue.put(value)
+                gddValue.setTimeStamp()
                 value = gddValue
             self.postEvent(value);
         
