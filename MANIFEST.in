@@ -1,4 +1,6 @@
 include README
+include LICENSE
+include COPYING
 include MANIFEST.in
 include Makefile
 include setup.py
