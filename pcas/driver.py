@@ -192,6 +192,11 @@ class SimpleServer(cas.caServer):
         else:
             return cas.S_casApp_pvNotFound
 
+    def createPVs(self, prefix, pvdb):
+        for pvname,pvinfo in pvdb.items():
+            info = pvdb[pvname]
+            self.createPV(prefix, pvname, info)
+
     def createPV(self, prefix, name, info):
         pvinfo = PVInfo(info)
         pvinfo.reason = name
@@ -200,6 +205,7 @@ class SimpleServer(cas.caServer):
         self.pvs_f[fullname] = pv
         self.pvs_s[name] = pv
         return pv
+
     def getPV(self, name=None):
         if name == None:
             return self.pvs_s

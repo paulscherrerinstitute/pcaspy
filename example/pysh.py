@@ -43,7 +43,6 @@ class myDriver(Driver):
         print "DEBUG: Finish ", command
 
 if __name__ == '__main__':
-    server = SimpleServer()
     prefix = 'MTEST:'
     pvdb = { 'COMMAND' : 
              {
@@ -59,9 +58,8 @@ if __name__ == '__main__':
                  'enums': ['DONE', 'BUSY']
              }
            }
-    for pvname in pvdb:
-        info = pvdb[pvname]
-        pv = server.createPV(prefix, pvname, info)
+    server = SimpleServer()
+    server.createPVs(prefix, pvdb)
     server.createDriver(myDriver)
 
     while True:
