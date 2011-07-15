@@ -66,7 +66,6 @@ class myDriver(Driver):
             self.updatePVs()
 
 if __name__ == '__main__':
-    server = SimpleServer()
     prefix = 'MTEST:'
     pvdb = {'Run'              : { 'type' : 'enum',
                                    'enums': ['STOP', 'RUN']    },
@@ -85,9 +84,8 @@ if __name__ == '__main__':
             'MaxValue'         : { 'prec' : 4 },
             'MeanValue'        : { 'prec' : 4 },
            }
-    for pvname in pvdb:
-        info = pvdb[pvname]
-        pv = server.createPV(prefix, pvname, info)
+    server = SimpleServer()
+    server.createPVs(prefix, pvdb)
     server.createDriver(myDriver)
 
     while True:

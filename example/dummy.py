@@ -3,18 +3,16 @@
 from pcas import Driver, SimpleServer
 import time
 
-prefix = 'MTEST:'
-db = {
-    'RAND' : {
-        'prec' : 3,
-    },
-}
-
 if __name__ == '__main__':
+    prefix = 'MTEST:'
+    pvdb = {
+        'RAND' : {
+            'prec' : 3,
+        },
+    }
+
     server = SimpleServer()
-    for pvname in db:
-        info = db[pvname]
-        pv = server.createPV(prefix, pvname, info)
+    server.createPVs(prefix, pvdb)
     server.createDriver(Driver)
 
     while True:

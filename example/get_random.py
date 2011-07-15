@@ -4,14 +4,6 @@ from pcas import SimpleServer, Driver
 import time
 import random
 
-prefix = 'MTEST:'
-db = {
-    'RAND' : {
-        'prec' : 3,
-        'scan' : 1,
-        'count': 10,
-    },
-}
 class myDriver(Driver):
     def __init__(self, server):
         Driver.__init__(self, server)
@@ -24,10 +16,17 @@ class myDriver(Driver):
         return value
 
 if __name__ == '__main__':
+    prefix = 'MTEST:'
+    pvdb = {
+        'RAND' : {
+            'prec' : 3,
+            'scan' : 1,
+            'count': 10,
+        },
+    }
+
     server = SimpleServer()
-    for pvname in db:
-        info = db[pvname]
-        pv = server.createPV(prefix, pvname, info)
+    server.createPVs(prefix, db)
     server.createDriver(myDriver)
 
     while True:
