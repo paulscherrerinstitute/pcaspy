@@ -1,0 +1,9 @@
+syntax: glob
+MANIFEST
+*.pyc
+build
+dist
+casdef_wrap.*
+cas.py
+_cas.pyd
+_cas.so
