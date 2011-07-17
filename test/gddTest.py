@@ -1,6 +1,6 @@
-import cas
+import pcaspy
 
-s = cas.gdd()
+s = pcaspy.gdd()
 s.put("sdcsd")
 print s.primitiveType(), s.get()
 
@@ -15,7 +15,7 @@ print s.get()
 s.put(12)
 print s.primitiveType(), s.get()
 
-s.setPrimType(cas.aitEnumString)
+s.setPrimType(pcaspy.aitEnumString)
 s.put(["sdcsd","sdcsd"])
 print s.primitiveType(), s.get()
 
