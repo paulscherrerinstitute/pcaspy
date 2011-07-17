@@ -36,9 +36,9 @@ elif UNAME == 'Windows':
     libraries += ['ws2_32', 'msvcrt', 'user32', 'advapi32']
     macros += [('_CRT_SECURE_NO_WARNINGS', 'None')]
     cflags += ['/MT']
-cas_module = Extension('pcas._cas',
-                            sources  =[os.path.join('pcas','casdef.i'), 
-                                       os.path.join('pcas','pv.cpp'),],
+cas_module = Extension('pcaspy._cas',
+                            sources  =[os.path.join('pcaspy','casdef.i'), 
+                                       os.path.join('pcaspy','pv.cpp'),],
                             swig_opts=['-c++','-nodefaultdtor','-I%s'% os.path.join(EPICSBASE, 'include')],
                             extra_compile_args=cflags,
                             include_dirs = [ os.path.join(EPICSBASE, 'include'),
@@ -53,7 +53,7 @@ cas_module = Extension('pcas._cas',
 if UNAME != 'WIN32':
     cas_module.runtime_library_dirs += os.path.join(EPICSBASE, 'lib', HOSTARCH),
 
-setup (name = 'pcas',
+setup (name = 'pcaspy',
        version = '0.1',
        description = """python channel access server""",
        long_description = """
@@ -61,9 +61,9 @@ setup (name = 'pcas',
        """,
        author      = "Xiaoqiang Wang",
        author_email= "xiaoqiangwang@gmail.com",
-       url         = "http://code.google.com/p/pcas/",
+       url         = "http://code.google.com/p/pcaspy/",
        ext_modules = [cas_module],
-       packages    = ["pcas"],
+       packages    = ["pcaspy"],
        license     = "GPLv3",
        platforms   = ["Windows","Linux", "Mac OS X"],
        )

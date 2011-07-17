@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from pcas import Driver, SimpleServer
+from pcaspy import Driver, SimpleServer
 import time
 
 if __name__ == '__main__':

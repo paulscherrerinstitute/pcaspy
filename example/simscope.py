@@ -5,7 +5,7 @@ import thread
 import threading
 import numpy
 
-from pcas import Driver, SimpleServer
+from pcaspy import Driver, SimpleServer
 
 MAX_POINTS    = 1000
 FREQUENCY     = 1000

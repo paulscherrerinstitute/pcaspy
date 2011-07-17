@@ -1,4 +1,4 @@
-Python binding to Portable Channel Access Server
+Portable Channel Access Server Python Binding
 
 Build:
     make
