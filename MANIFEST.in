@@ -4,6 +4,6 @@ include COPYING
 include MANIFEST.in
 include Makefile
 include setup.py
-include pcas/pv.*
-include pcas/*.i
+include pcaspy/pv.*
+include pcaspy/*.i
 include example/*.py

@@ -6,7 +6,7 @@ import subprocess
 import tempfile
 import shlex
 
-from pcas import Driver, SimpleServer
+from pcaspy import Driver, SimpleServer
 
 class myDriver(Driver):
     def __init__(self, server):

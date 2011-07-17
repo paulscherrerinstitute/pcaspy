@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from pcas import SimpleServer, Driver
+from pcaspy import SimpleServer, Driver
 import time
 import random
 
