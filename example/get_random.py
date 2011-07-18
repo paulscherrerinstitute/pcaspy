@@ -5,8 +5,8 @@ import time
 import random
 
 class myDriver(Driver):
-    def __init__(self, server):
-        Driver.__init__(self, server)
+    def __init__(self):
+        Driver.__init__(self)
 
     def read(self, reason):
         if reason == 'RAND':
@@ -26,8 +26,8 @@ if __name__ == '__main__':
     }
 
     server = SimpleServer()
-    server.createPVs(prefix, db)
-    server.createDriver(myDriver)
+    server.createPV(prefix, pvdb)
+    driver = myDriver()
 
     while True:
         # process CA transactions

@@ -9,8 +9,8 @@ import shlex
 from pcaspy import Driver, SimpleServer
 
 class myDriver(Driver):
-    def __init__(self, server):
-        Driver.__init__(self, server)
+    def __init__(self):
+        Driver.__init__(self)
         self.tid = None 
 
     def write(self, reason, value):
@@ -59,8 +59,8 @@ if __name__ == '__main__':
              }
            }
     server = SimpleServer()
-    server.createPVs(prefix, pvdb)
-    server.createDriver(myDriver)
+    server.createPV(prefix, pvdb)
+    driver = myDriver()
 
     while True:
         # process CA transactions

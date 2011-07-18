@@ -12,8 +12,8 @@ if __name__ == '__main__':
     }
 
     server = SimpleServer()
-    server.createPVs(prefix, pvdb)
-    server.createDriver(Driver)
+    server.createPV(prefix, pvdb)
+    driver = Driver()
 
     while True:
         # process CA transactions

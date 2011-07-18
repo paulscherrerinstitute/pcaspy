@@ -2,13 +2,39 @@ import cas
 import thread
 import time
 
+class Manager(object):
+    pvs = {}    # PV dict using port name as key and {pv base name: pv instance} as value
+    pvf = {}    # PV dict using PV full name as key
+    driver = {} # Driver dict
+
+manager = Manager()
+
+# decorator to register driver
+def registerDriver(driver_init_func):
+    def wrap(*args, **kargs):
+        driver_instance = args[0]
+        port = driver_instance.port
+        manager.driver[port] = driver_instance
+        return driver_init_func(*args, **kargs)
+    return wrap
+
+# decorator to register PV
+def registerPV(pv_init):
+    def wrap(*args, **kargs):
+        pvs = args[0]
+        return pv_init(*args, **kargs)
+    return wrap
+
+
 class Driver(object):
-    def __init__(self, server):
+    port = 'default'
+
+    @registerDriver
+    def __init__(self):
         self.pvData  = {}
         self.pvFlag  = {}
         # init pvData with pv instance
-        self.server = server
-        for reason, pv in server.getPV().items():
+        for reason, pv in manager.pvs[self.port].items():
             self.setParam(reason, pv.info.value)
 
     def read(self, reason):
@@ -34,13 +60,13 @@ class Driver(object):
 
     def callbackPV(self, reason):
         """inform asynchronous write completion"""
-        pv = self.server.getPV(reason)
+        pv = manager.pvs[self.port][reason]
         if pv.info.asyn:
             pv.endAsyncWrite(cas.S_casApp_success)
 
     def updatePVs(self):
         """post update event on changed values"""
-        for reason, pv in self.server.getPV().items():
+        for reason, pv in manager.pvs[self.port].items():
             if self.pvFlag[reason] and pv.info.scan == 0:
                 pv.updateValue(self.pvData[reason])
                 self.pvFlag[reason] = False
@@ -65,6 +91,7 @@ class PVInfo(object):
         self.scan  = info.get('scan', 0)
         self.asyn  = info.get('asyn', False)
         self.reason= ''
+        self.port  = info.get('port', 'default')
         # initialize value based on type and count
         if self.type in [cas.aitEnumString, cas.aitEnumFixedString,]:
             value = ''
@@ -75,11 +102,10 @@ class PVInfo(object):
         self.value = info.get('value', value)
 
 class SimplePV(cas.casPV):
-    def __init__(self, name, info, server):
+    def __init__(self, name, info):
         cas.casPV.__init__(self)
         self.name = name
         self.info = info
-        self.server  = server
         self.interest = False
         self.active   = False
         if self.info.scan > 0:
@@ -87,7 +113,7 @@ class SimplePV(cas.casPV):
 
     def scan(self):
         while True:
-            driver = self.server.getDriver()
+            driver = manager.driver[self.info.port]
             if not driver: continue
             value = driver.read(self.info.reason)
             self.updateValue(value)
@@ -102,7 +128,7 @@ class SimplePV(cas.casPV):
 
     def write(self, context, value):
         # get driver object
-        driver = self.server.getDriver()
+        driver = manager.driver[self.info.port]
         if not driver: return
         # call out driver support 
         success = driver.write(self.info.reason, value.get())
@@ -128,7 +154,7 @@ class SimplePV(cas.casPV):
         
     def getValue(self, value):
         # get driver object
-        driver = self.server.getDriver()
+        driver = manager.driver[self.info.port]
         if not driver: return
         # create gdd value
         value.setPrimType(self.info.type)
@@ -176,46 +202,25 @@ class SimplePV(cas.casPV):
 class SimpleServer(cas.caServer):
     def __init__(self):
         cas.caServer.__init__(self)
-        self.pvs_s = {}
-        self.pvs_f = {}
-        self.driver = None
 
     def pvExistTest(self, context, addr, fullname):
-        if fullname in self.pvs_f.keys():
+        if fullname in manager.pvf:
             return cas.pverExistsHere
         else:
             return cas.pverDoesNotExistHere
 
     def pvAttach(self, context, fullname):
-        if fullname in self.pvs_f.keys():
-            return self.pvs_f[fullname]
-        else:
-            return cas.S_casApp_pvNotFound
+        return manager.pvf.get(fullname, cas.S_casApp_pvNotFound)
 
-    def createPVs(self, prefix, pvdb):
-        for pvname,pvinfo in pvdb.items():
-            info = pvdb[pvname]
-            self.createPV(prefix, pvname, info)
-
-    def createPV(self, prefix, name, info):
-        pvinfo = PVInfo(info)
-        pvinfo.reason = name
-        fullname = prefix + name
-        pv = SimplePV(fullname, pvinfo, self)
-        self.pvs_f[fullname] = pv
-        self.pvs_s[name] = pv
-        return pv
-
-    def getPV(self, name=None):
-        if name == None:
-            return self.pvs_s
-        else:
-            return self.pvs_s[name]
-
-    def createDriver(self, driver_class):
-        self.driver = driver_class(self)
-    def getDriver(self):
-        return self.driver
+    def createPV(self, prefix, pvdb):
+        for basename, pvinfo in pvdb.items():
+            pvinfo = PVInfo(pvinfo)
+            pvinfo.reason = basename
+            pvinfo.name   = prefix + basename
+            pv = SimplePV(pvinfo.name, pvinfo)
+            manager.pvf[pvinfo.name] = pv
+            if pvinfo.port not in manager.pvs: manager.pvs[pvinfo.port]={}
+            manager.pvs[pvinfo.port][basename] = pv
 
     def process(self, time):
         cas.process(time)

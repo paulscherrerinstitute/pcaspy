@@ -13,8 +13,8 @@ NUM_DIVISIONS = 10
 AMPLITUDE     = 1.0
 
 class myDriver(Driver):
-    def __init__(self, server):
-        Driver.__init__(self, server)
+    def __init__(self):
+        Driver.__init__(self)
         self.eid = threading.Event()
         self.tid = thread.start_new_thread(self.runSimScope, ()) 
 
@@ -85,8 +85,8 @@ if __name__ == '__main__':
             'MeanValue'        : { 'prec' : 4 },
            }
     server = SimpleServer()
-    server.createPVs(prefix, pvdb)
-    server.createDriver(myDriver)
+    server.createPV(prefix, pvdb)
+    driver = myDriver()
 
     while True:
         # process CA transactions
