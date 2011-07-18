@@ -33,8 +33,15 @@ class myDriver(Driver):
         self.setParam('STATUS', 1)
         self.updatePVs()
         # run shell
-        proc = subprocess.Popen(shlex.split(command), stdout = subprocess.PIPE)
-        self.setParam('OUTPUT', proc.stdout.read().rstrip())
+        try:
+            proc = subprocess.Popen(shlex.split(command), stdout = subprocess.PIPE, stderr = subprocess.PIPE)
+            proc.wait()
+        except OSError, m:
+            self.setParam('ERROR', str(m))
+            self.setParam('OUTPUT', '')
+        else:
+            self.setParam('ERROR', proc.stderr.read().rstrip())
+            self.setParam('OUTPUT', proc.stdout.read().rstrip())
         self.callbackPV('COMMAND')
         # set status DONE
         self.setParam('STATUS', 0)
@@ -56,7 +63,11 @@ if __name__ == '__main__':
              'STATUS'   :
              {   'type' : 'enum',
                  'enums': ['DONE', 'BUSY']
-             }
+             },
+             'ERROR'    :
+             {
+                 'type' : 'string',
+             },
            }
     server = SimpleServer()
     server.createPV(prefix, pvdb)
