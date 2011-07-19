@@ -1,5 +1,19 @@
-Portable Channel Access Server Python Binding
+pcaspy
+=======
 
-Build:
-    make
+pcaspy_ is a Portable Channel Access Server Python Binding. 
+And it provides an easy API to create PCAS in Python.
 
+Prerequisites
+--------------
+
+  * EPICS base 3.14.8+ and environment variables EPICS_BASE and EPICS_HOST_ARCH are defined according to your actual EPICS base installation.
+  * Python 2.4+
+  * SWIG 1.3.29+
+
+Build
+---------------------
+  * make
+
+To build the current development, clone the project, 
+  $ hg clone http://code.google.com/p/pcaspy/ pcaspy
