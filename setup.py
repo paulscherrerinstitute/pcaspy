@@ -55,9 +55,9 @@ if UNAME != 'WIN32':
 
 setup (name = 'pcaspy',
        version = '0.1',
-       description = """python channel access server""",
+       description = """Portable Channel Access Server in Python""",
        long_description = """
-       Write channel access server application made easy.
+       Writing portable channel access server application made easy.
        """,
        author      = "Xiaoqiang Wang",
        author_email= "xiaoqiangwang@gmail.com",
@@ -66,5 +66,13 @@ setup (name = 'pcaspy',
        packages    = ["pcaspy"],
        license     = "GPLv3",
        platforms   = ["Windows","Linux", "Mac OS X"],
+       classifiers = [
+            'Development Status :: 4 - Beta',
+            'Environment :: Console', 
+            'Intended Audience :: Developers',
+            'License :: OSI Approved :: GNU General Public License (GPL)',
+            'Programming Language :: C++',
+            'Programming Language :: Python :: 2',
+           ],
        )
 
