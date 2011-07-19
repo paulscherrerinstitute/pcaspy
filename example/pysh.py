@@ -8,6 +8,24 @@ import shlex
 
 from pcaspy import Driver, SimpleServer
 
+prefix = 'MTEST:'
+pvdb = { 
+    'COMMAND' : {
+        'type' : 'string',
+        'asyn' : True
+    },
+    'OUTPUT'  : {
+        'type' : 'string',
+    },
+    'STATUS'  : {
+        'type' : 'enum',
+        'enums': ['DONE', 'BUSY']
+    },
+    'ERROR'   : {
+        'type' : 'string',
+    },
+}
+
 class myDriver(Driver):
     def __init__(self):
         Driver.__init__(self)
@@ -34,7 +52,9 @@ class myDriver(Driver):
         self.updatePVs()
         # run shell
         try:
-            proc = subprocess.Popen(shlex.split(command), stdout = subprocess.PIPE, stderr = subprocess.PIPE)
+            proc = subprocess.Popen(shlex.split(command), 
+                    stdout = subprocess.PIPE, 
+                    stderr = subprocess.PIPE)
             proc.wait()
         except OSError, m:
             self.setParam('ERROR', str(m))
@@ -50,25 +70,6 @@ class myDriver(Driver):
         print "DEBUG: Finish ", command
 
 if __name__ == '__main__':
-    prefix = 'MTEST:'
-    pvdb = { 'COMMAND' : 
-             {
-                 'type' : 'string',
-                 'asyn' : True
-             },
-             'OUTPUT'  :
-             {
-                 'type' : 'string',
-             },
-             'STATUS'   :
-             {   'type' : 'enum',
-                 'enums': ['DONE', 'BUSY']
-             },
-             'ERROR'    :
-             {
-                 'type' : 'string',
-             },
-           }
     server = SimpleServer()
     server.createPV(prefix, pvdb)
     driver = myDriver()
