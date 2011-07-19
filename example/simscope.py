@@ -12,6 +12,27 @@ FREQUENCY     = 1000
 NUM_DIVISIONS = 10
 AMPLITUDE     = 1.0
 
+prefix = 'MTEST:'
+pvdb = {
+        'Run'              : { 'type' : 'enum',
+                                'enums': ['STOP', 'RUN']    },
+        'UpdateTime'       : { 'prec' : 3, 'value' : 1     },
+        'TimePerDivision'  : { 'prec' : 5, 'value' : 0.001 },
+        'TriggerDelay'     : { 'prec' : 5, 'value' : 0.0005},
+        'VoltsPerDivision' : { 'prec' : 3, 'value' : 0.2   },
+        'VoltOffset'       : { 'prec' : 3 },
+        'NoiseAmplitude'   : { 'prec' : 3, 'value' : 0.2   },
+        'Waveform'         : { 'count': MAX_POINTS,
+                                'prec' : 5 },
+        'TimeBase'         : { 'count': MAX_POINTS,
+                               'prec' : 5,
+                               'value': list(numpy.arange(MAX_POINTS, dtype=float) 
+                                            * NUM_DIVISIONS / (MAX_POINTS -1))},
+        'MinValue'         : { 'prec' : 4 },
+        'MaxValue'         : { 'prec' : 4 },
+        'MeanValue'        : { 'prec' : 4 },
+}
+ 
 class myDriver(Driver):
     def __init__(self):
         Driver.__init__(self)
@@ -24,8 +45,9 @@ class myDriver(Driver):
         if reason == 'UpdateTime':
             value = max(0.2, value)
         elif reason == 'Run':
-            if value == 1:
+            if not self.getParam('Run') and value == 1:
                 self.eid.set()
+                self.eid.clear()
         # store the values
         if status:
             self.setParam(reason, value)
@@ -37,7 +59,7 @@ class myDriver(Driver):
             run = self.getParam('Run')
             updateTime = self.getParam('UpdateTime')
             if run:
-                time.sleep(updateTime)
+                self.eid.wait(updateTime)
             else:
                 self.eid.wait()
             run = self.getParam('Run')
@@ -66,24 +88,6 @@ class myDriver(Driver):
             self.updatePVs()
 
 if __name__ == '__main__':
-    prefix = 'MTEST:'
-    pvdb = {'Run'              : { 'type' : 'enum',
-                                   'enums': ['STOP', 'RUN']    },
-            'UpdateTime'       : { 'prec' : 3, 'value' : 1     },
-            'TimePerDivision'  : { 'prec' : 5, 'value' : 0.001 },
-            'TriggerDelay'     : { 'prec' : 5, 'value' : 0.0005},
-            'VoltsPerDivision' : { 'prec' : 3, 'value' : 0.2   },
-            'VoltOffset'       : { 'prec' : 3 },
-            'NoiseAmplitude'   : { 'prec' : 3, 'value' : 0.2   },
-            'Waveform'         : { 'count': MAX_POINTS,
-                                   'prec' : 5 },
-            'TimeBase'         : { 'count': MAX_POINTS,
-                                   'prec' : 5,
-                                   'value': list(numpy.arange(MAX_POINTS, dtype=float) * NUM_DIVISIONS / (MAX_POINTS -1))},
-            'MinValue'         : { 'prec' : 4 },
-            'MaxValue'         : { 'prec' : 4 },
-            'MeanValue'        : { 'prec' : 4 },
-           }
     server = SimpleServer()
     server.createPV(prefix, pvdb)
     driver = myDriver()
