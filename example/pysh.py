@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-import sys
 import time
 import thread
 import subprocess
@@ -40,6 +39,8 @@ class myDriver(Driver):
                 self.tid = thread.start_new_thread(self.runShell,(command,))
             else:
                 status = False
+        else:
+            status = False
         # store the values
         if status:
             self.setParam(reason, value)
