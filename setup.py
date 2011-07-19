@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-setup.py file for pyCAS
+setup.py file for pcaspy
 """
 
 from distutils.core import setup, Extension
