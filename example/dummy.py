@@ -3,14 +3,14 @@
 from pcaspy import Driver, SimpleServer
 import time
 
-if __name__ == '__main__':
-    prefix = 'MTEST:'
-    pvdb = {
-        'RAND' : {
-            'prec' : 3,
-        },
-    }
+prefix = 'MTEST:'
+pvdb = {
+    'RAND' : {
+        'prec' : 3,
+    },
+}
 
+if __name__ == '__main__':
     server = SimpleServer()
     server.createPV(prefix, pvdb)
     driver = Driver()
