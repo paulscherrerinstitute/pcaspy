@@ -7,15 +7,16 @@ import numpy
 
 from pcaspy import Driver, SimpleServer
 
-MAX_POINTS    = 1000
-FREQUENCY     = 1000
-NUM_DIVISIONS = 10
-AMPLITUDE     = 1.0
+MAX_POINTS      = 1000
+FREQUENCY       = 1000
+AMPLITUDE       = 1.0
+NUM_DIVISIONS   = 10
+MIN_UPDATE_TIME = 0.1
 
 prefix = 'MTEST:'
 pvdb = {
         'Run'              : { 'type' : 'enum',
-                                'enums': ['STOP', 'RUN']    },
+                                'enums': ['STOP', 'RUN']   },
         'UpdateTime'       : { 'prec' : 3, 'value' : 1     },
         'TimePerDivision'  : { 'prec' : 5, 'value' : 0.001 },
         'TriggerDelay'     : { 'prec' : 5, 'value' : 0.0005},
@@ -43,7 +44,7 @@ class myDriver(Driver):
         status = True
         # take proper actions
         if reason == 'UpdateTime':
-            value = max(0.2, value)
+            value = max(MIN_UPDATE_TIME, value)
         elif reason == 'Run':
             if not self.getParam('Run') and value == 1:
                 self.eid.set()
