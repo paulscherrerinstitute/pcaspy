@@ -6,4 +6,7 @@ include Makefile
 include setup.py
 include pcaspy/pv.*
 include pcaspy/*.i
-include example/*.py
+include example/*.py example/simscope.adl
+prune   example/pcaspy
+include test/*.py
+prune   test/pcaspy
