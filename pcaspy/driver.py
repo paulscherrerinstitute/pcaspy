@@ -113,10 +113,10 @@ class SimplePV(cas.casPV):
 
     def scan(self):
         while True:
-            driver = manager.driver[self.info.port]
-            if not driver: continue
-            value = driver.read(self.info.reason)
-            self.updateValue(value)
+            driver = manager.driver.get(self.info.port)
+            if driver:
+                value = driver.read(self.info.reason)
+                self.updateValue(value)
             time.sleep(self.info.scan)
 
     def interestRegister(self):
@@ -128,8 +128,8 @@ class SimplePV(cas.casPV):
 
     def write(self, context, value):
         # get driver object
-        driver = manager.driver[self.info.port]
-        if not driver: return
+        driver = manager.driver.get(self.info.port)
+        if not driver: return S_casApp_undefined
         # call out driver support 
         success = driver.write(self.info.reason, value.get())
         self.updateValue(driver.getParam(self.info.reason))
@@ -154,8 +154,8 @@ class SimplePV(cas.casPV):
         
     def getValue(self, value):
         # get driver object
-        driver = manager.driver[self.info.port]
-        if not driver: return
+        driver = manager.driver.get(self.info.port)
+        if not driver: return S_casApp_undefined
         # create gdd value
         value.setPrimType(self.info.type)
         newValue = driver.read(self.info.reason)
