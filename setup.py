@@ -4,6 +4,12 @@
 setup.py file for pcaspy
 """
 
+try:
+    from distutils.command.build_py import build_py_2to3 as build_py
+except ImportError:
+    # 2.x
+    from distutils.command.build_py import build_py
+
 from distutils.core import setup, Extension
 import os, platform
 
@@ -64,6 +70,7 @@ setup (name = 'pcaspy',
        url         = "http://code.google.com/p/pcaspy/",
        ext_modules = [cas_module],
        packages    = ["pcaspy"],
+       cmdclass    = {'build_py':build_py},
        license     = "GPLv3",
        platforms   = ["Windows","Linux", "Mac OS X"],
        classifiers = [
