@@ -6,6 +6,14 @@ typedef long gddStatus;
 
 %include <std_string.i>
 
+%pythoncode{
+import sys
+if sys.version_info.major > 2:
+    str2char = lambda x: bytes(str(x),'utf8')
+else: 
+    str2char = str
+}
+
 %include "helper_typemaps.i"
 %{
 #include <gddApps.h>
@@ -143,9 +151,9 @@ public:
                 self.setDimension(1)
                 self.setBound(0,0,len(value))
                 if self.primitiveType() == aitEnumFixedString:
-                    self.putFStringArray([str(v) for v in value])
+                    self.putFStringArray([str2char(v) for v in value])
                 elif self.primitiveType() == aitEnumString:
-                    self.putStringArray([str(v) for v in value])
+                    self.putStringArray([str2char(v) for v in value])
                 else:
                     self.putNumericArray(value)
 
