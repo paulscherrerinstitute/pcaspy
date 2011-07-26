@@ -128,7 +128,7 @@ public:
         def put(self, value):
             if type(value) == gdd:
                 self.put(gdd)
-            elif type(value) in [bool, int, long, float]:
+            elif type(value) in [bool, int, float, long]:
                 self.setDimension(0)
                 self.putNumeric(value)
             elif type(value) == str:
