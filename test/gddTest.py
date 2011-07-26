@@ -1,35 +1,33 @@
 import pcaspy
 
-s = pcaspy.gdd()
-s.put("sdcsd")
-print s.primitiveType(), s.get()
+
+import unittest
+
+class TestGDD(unittest.TestCase):
+    def setUp(self):
+        self.s = pcaspy.gdd()
+    def test_string(self):
+        self.s.put("sdcsd")
+        self.assertEqual(self.s.get(), "sdcsd")
+
+    def test_numeric(self):
+        self.s.put(12)
+        self.assertEqual(self.s.get(), 12)
 
 
-s.put(12)
-print s.primitiveType(), s.get()
+    def test_string_array(self):
+        self.s.setPrimType(pcaspy.aitEnumString)
+        self.s.put(["sdcsd","sdcsd"])
+        self.assertEqual(self.s.get(), ["sdcsd","sdcsd"])
 
+    def test_numeric_array(self):
+        self.s.put(list(range(2)))
+        print(self.s.get())
+        self.assertEqual(self.s.get(), [0.0,1.0])
 
-s.put("sdcsd")
-print s.get()
+    def tearDown(self):
+        del self.s
 
-s.put(12)
-print s.primitiveType(), s.get()
+if __name__ == '__main__':
+    unittest.main()
 
-s.setPrimType(pcaspy.aitEnumString)
-s.put(["sdcsd","sdcsd"])
-print s.primitiveType(), s.get()
-
-s.put(range(12))
-print s.get()
-
-t=s
-
-print t.get()
-
-del s
-
-
-t.put(range(15))
-print t.get()
-
-del t
