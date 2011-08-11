@@ -59,12 +59,12 @@ cas_module = Extension('pcaspy._cas',
 if UNAME != 'WIN32':
     cas_module.runtime_library_dirs += os.path.join(EPICSBASE, 'lib', HOSTARCH),
 
+long_description = open('README').read()
+
 setup (name = 'pcaspy',
        version = '0.2',
        description = """Portable Channel Access Server in Python""",
-       long_description = """
-       Writing portable channel access server application made easy.
-       """,
+       long_description = long_description,
        author      = "Xiaoqiang Wang",
        author_email= "xiaoqiangwang@gmail.com",
        url         = "http://code.google.com/p/pcaspy/",
