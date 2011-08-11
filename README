@@ -2,7 +2,7 @@ pcaspy
 =======
 
 pcaspy_ is a Portable Channel Access Server Python Binding. 
-And it provides an easy API to create PCAS in Python.
+And it provides an easy API to create PCAS application in Python.
 
 Prerequisites
 --------------

@@ -60,7 +60,7 @@ if UNAME != 'WIN32':
     cas_module.runtime_library_dirs += os.path.join(EPICSBASE, 'lib', HOSTARCH),
 
 setup (name = 'pcaspy',
-       version = '0.1',
+       version = '0.2',
        description = """Portable Channel Access Server in Python""",
        long_description = """
        Writing portable channel access server application made easy.
@@ -80,6 +80,7 @@ setup (name = 'pcaspy',
             'License :: OSI Approved :: GNU General Public License (GPL)',
             'Programming Language :: C++',
             'Programming Language :: Python :: 2',
+            'Programming Language :: Python :: 3',
            ],
        )
 
