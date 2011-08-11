@@ -13,7 +13,7 @@ Prerequisites
 
 Build
 ---------------------
-  * make
+  * python setup.py build
 
 To build the current development, clone the project, 
   $ hg clone http://code.google.com/p/pcaspy/ pcaspy
