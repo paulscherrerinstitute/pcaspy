@@ -61,13 +61,13 @@ void aitStringDestructor::run ( void * pUntyped )
 
 // const aitFloat64 array pointer input 
 %typemap (in) aitFloat64 *dput {
-    if (PyList_Check($input)) {
-        int size = PyList_Size($input);
+    if (PySequence_Check($input)) {
+        int size = PySequence_Size($input);
         int i = 0;
         $1 = new aitFloat64[size];
         for (i=0; i<size; i++)
         {
-            PyObject *o = PyList_GetItem($input, i);
+            PyObject *o = PySequence_GetItem($input, i);
             $1[i] = PyFloat_AsDouble(o);
         }
     }
@@ -78,13 +78,13 @@ void aitStringDestructor::run ( void * pUntyped )
 
 // aitFloat64 array pointer and destructor input
 %typemap (in) (aitFloat64 *dput,gddDestructor *dest ) {
-    if (PyList_Check($input)) {
-        int size = PyList_Size($input);
+    if (PySequence_Check($input)) {
+        int size = PySequence_Size($input);
         int i = 0;
         $1 = new aitFloat64[size];
         for (i=0; i<size; i++)
         {
-            PyObject *o = PyList_GetItem($input, i);
+            PyObject *o = PySequence_GetItem($input, i);
             $1[i] = PyFloat_AsDouble(o);
         }
         $2 = new aitFloat64Destructor();
@@ -117,13 +117,13 @@ void aitStringDestructor::run ( void * pUntyped )
 
 // const aitFixedString array pointer input
 %typemap (in) aitFixedString *dput {
-    if (PyList_Check($input)) {
-        int size = PyList_Size($input);
+    if (PySequence_Check($input)) {
+        int size = PySequence_Size($input);
         int i = 0;
         $1 = new aitFixedString[size];
         for (i=0; i<size; i++)
         {
-            PyObject *o = PyList_GetItem($input, i);
+            PyObject *o = PySequence_GetItem($input, i);
             strncpy ($1[i].fixed_string, PyString_AsString(o), AIT_FIXED_STRING_SIZE);
         }
     }
@@ -133,13 +133,13 @@ void aitStringDestructor::run ( void * pUntyped )
 }
 // aitFixedString array pointer and destructor input
 %typemap (in) (aitFixedString *dput, gddDestructor *dest) {
-    if (PyList_Check($input)) {
-        int size = PyList_Size($input);
+    if (PySequence_Check($input)) {
+        int size = PySequence_Size($input);
         int i = 0;
         $1 = new aitFixedString[size];
         for (i=0; i<size; i++)
         {
-            PyObject *o = PyList_GetItem($input, i);
+            PyObject *o = PySequence_GetItem($input, i);
             strncpy ($1[i].fixed_string, PyString_AsString(o), AIT_FIXED_STRING_SIZE);
         }
         $2 = new aitFixedStringDestructor();
@@ -148,13 +148,13 @@ void aitStringDestructor::run ( void * pUntyped )
 
 // const aitString array pointer input
 %typemap (in) aitString *dput {
-    if (PyList_Check($input)) {
-        int size = PyList_Size($input);
+    if (PySequence_Check($input)) {
+        int size = PySequence_Size($input);
         int i = 0;
         $1 = new aitString[size];
         for (i=0; i<size; i++)
         {
-            PyObject *o = PyList_GetItem($input, i);
+            PyObject *o = PySequence_GetItem($input, i);
             $1[i] = PyString_AsString(o);
         }
     }
@@ -164,13 +164,13 @@ void aitStringDestructor::run ( void * pUntyped )
 }
 // aitString array pointer and destructor input
 %typemap (in) (aitString *dput, gddDestructor *dest) {
-    if (PyList_Check($input)) {
-        int size = PyList_Size($input);
+    if (PySequence_Check($input)) {
+        int size = PySequence_Size($input);
         int i = 0;
         $1 = new aitString[size];
         for (i=0; i<size; i++)
         {
-            PyObject *o = PyList_GetItem($input, i);
+            PyObject *o = PySequence_GetItem($input, i);
             $1[i] = PyString_AsString(o);
         }
         $2 = new aitStringDestructor();

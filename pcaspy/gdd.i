@@ -158,16 +158,25 @@ public:
                     self.putNumericArray(value)
 
         def get(self):
+            primitiveType = self.primitiveType()
             if self.isScalar():
-                if self.primitiveType() in [aitEnumString, aitEnumFixedString]:
+                if primitiveType in [aitEnumString, aitEnumFixedString]:
                     return self.getConvertString()
                 else:
-                    return self.getConvertNumeric()
+                    valueFloat = self.getConvertNumeric()
+                    if primitiveType in [aitEnumFloat32, aitEnumFloat64]:
+                        return valueFloat
+                    else:
+                        return int(valueFloat)
             else:
-                if self.primitiveType() in [aitEnumString, aitEnumFixedString]:
+                if primitiveType in [aitEnumString, aitEnumFixedString]:
                     return self.getStringArray(self.getDataSizeElements())
                 else:
-                    return self.getNumericArray(self.getDataSizeElements())
+                    valueFloat =  self.getNumericArray(self.getDataSizeElements())
+                    if primitiveType in [aitEnumFloat32, aitEnumFloat64]:
+                        return valueFloat
+                    else:
+                        return [int(x) for x in valueFloat]
 
         %}
 
