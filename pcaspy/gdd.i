@@ -8,7 +8,7 @@ typedef long gddStatus;
 
 %pythoncode{
 import sys
-if sys.version_info.major > 2:
+if sys.version_info[0] > 2:
     str2char = lambda x: bytes(str(x),'utf8')
 else: 
     str2char = str
