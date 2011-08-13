@@ -8,6 +8,7 @@ typedef long gddStatus;
 
 %pythoncode{
 import sys
+import operator
 if sys.version_info[0] > 2:
     str2char = lambda x: bytes(str(x),'utf8')
 else: 
@@ -70,6 +71,8 @@ public:
 	int isScalar(void) const;
 	int isContainer(void) const;
 	int isAtomic(void) const;
+
+    gddStatus clear(void); // clear all fields of the DD, including arrays
 
 	gddStatus reference(void) const;
 	gddStatus unreference(void) const;
@@ -137,15 +140,27 @@ public:
             if type(value) == gdd:
                 self.put(gdd)
             elif type(value) in [bool, int, float, long]:
-                self.setDimension(0)
-                self.putNumeric(value)
+                self.putConvertNumeric(value)
             elif type(value) == str:
-                self.setDimension(0)
-                self.putString(value)
-            elif type(value) == list:
+                self.putConvertString(value)
+            elif hasattr(value, 'shape'): # numpy data type
+                if len(value.shape) == 0: # scalar
+                    self.putConvertNumeric(value)
+                else:
+                    if len(value.shape) > 1: # ndarray
+                        value = value.flatten()
+                    self.setDimension(1)
+                    self.setBound(0,0,len(value))
+                    if self.primitiveType() == aitEnumFixedString:
+                        self.putFStringArray([str2char(v) for v in value])
+                    elif self.primitiveType() == aitEnumString:
+                        self.putStringArray([str2char(v) for v in value])
+                    else:
+                        self.putNumericArray(value)
+            elif operator.isSequenceType(value):
                 if self.primitiveType() == aitEnumInvalid:
-                    if type(value[0]) in [bool, int, long, float]:
-                        self.setPrimType(aitEnumFloat64)
+                    if type(value[0]) in [bool, int, float, long]:
+                        self.setPrimType(aitEnumFloat64) 
                     else:
                         self.setPrimType(aitEnumString)
                 self.setDimension(1)
@@ -156,7 +171,7 @@ public:
                     self.putStringArray([str2char(v) for v in value])
                 else:
                     self.putNumericArray(value)
-
+                       
         def get(self):
             primitiveType = self.primitiveType()
             if self.isScalar():
