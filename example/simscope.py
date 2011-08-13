@@ -27,8 +27,8 @@ pvdb = {
                                 'prec' : 5 },
         'TimeBase'         : { 'count': MAX_POINTS,
                                'prec' : 5,
-                               'value': list(numpy.arange(MAX_POINTS, dtype=float) 
-                                            * NUM_DIVISIONS / (MAX_POINTS -1))},
+                               'value': numpy.arange(MAX_POINTS, dtype=float) 
+                                            * NUM_DIVISIONS / (MAX_POINTS -1)},
         'MinValue'         : { 'prec' : 4 },
         'MaxValue'         : { 'prec' : 4 },
         'MeanValue'        : { 'prec' : 4 },
@@ -78,13 +78,13 @@ class myDriver(Driver):
             noise  = noiseAmplitude * numpy.random.random(MAX_POINTS)
             data = AMPLITUDE * numpy.sin(timeWave * FREQUENCY * 2 * numpy.pi) + noise 
             # calculate statistics
-            self.setParam('MinValue',  float(data.min()))
-            self.setParam('MaxValue',  float(data.max()))
-            self.setParam('MeanValue', float(data.mean()))
+            self.setParam('MinValue',  data.min())
+            self.setParam('MaxValue',  data.max())
+            self.setParam('MeanValue', data.mean())
             # scale/offset
             yScale = 1.0 / voltsPerDivision
             data   = NUM_DIVISIONS/2.0 + yScale * (data + voltOffset)
-            self.setParam('Waveform',  data.tolist())
+            self.setParam('Waveform',  data)
             # do updates so clients see the changes
             self.updatePVs()
 
