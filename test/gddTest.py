@@ -1,5 +1,6 @@
 import pcaspy
 
+import numpy
 
 import unittest
 
@@ -14,16 +15,45 @@ class TestGDD(unittest.TestCase):
         self.s.put(12)
         self.assertEqual(self.s.get(), 12)
 
-
     def test_string_array(self):
-        self.s.setPrimType(pcaspy.aitEnumString)
         self.s.put(["sdcsd","sdcsd"])
         self.assertEqual(self.s.get(), ["sdcsd","sdcsd"])
 
     def test_numeric_array(self):
-        self.s.put(list(range(2)))
-        print(self.s.get())
-        self.assertEqual(self.s.get(), [0.0,1.0])
+        self.s.put(range(2))
+        self.assertEqual(self.s.get(), [0,1])
+
+    def test_numpy_scaler(self):
+        self.s.put(numpy.int32(12))
+        self.assertEqual(self.s.get(), 12)
+
+    def test_numpy_array(self):
+        self.s.put(numpy.arange(2))
+        self.assertEqual(self.s.get(), [0, 1])
+
+    def test_dim_enlarge(self):
+        self.s.put(1)
+        self.assertEqual(self.s.get(), 1)
+
+        self.s.put(range(2))
+        self.assertEqual(self.s.get(), [0, 1])
+
+    def test_convert_to_numeric(self):
+        self.s.put(1)
+        self.assertEqual(self.s.get(), 1)
+
+        self.s.put('2')
+        self.assertEqual(self.s.get(), 2)
+
+        self.s.put('qwf')
+        self.assertEqual(self.s.get(), 2)
+
+    def test_convert_to_string(self):
+        self.s.put('sdcsd')
+        self.assertEqual(self.s.get(), 'sdcsd')
+        
+        self.s.put(2)
+        self.assertEqual(self.s.get(), '2')
 
     def tearDown(self):
         del self.s
