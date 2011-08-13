@@ -50,7 +50,8 @@ class Driver(object):
 
     def setParam(self, reason, value):
         """set PV value and request update"""
-        if self.pvData.get(reason) != value:
+        same = self.pvData.get(reason) == value
+        if type(same) == bool and not same or hasattr(same, 'all') and not same.all():
             self.pvData[reason] = value
             self.pvFlag[reason] = True
 
