@@ -147,6 +147,7 @@ class SimplePV(cas.casPV):
         if (self.interest):
             if type(value) != cas.gdd:
                 gddValue = cas.gdd()
+                gddValue.setPrimType(self.info.type)
                 gddValue.put(value)
                 gddValue.setTimeStamp()
                 value = gddValue
@@ -157,7 +158,6 @@ class SimplePV(cas.casPV):
         driver = manager.driver.get(self.info.port)
         if not driver: return S_casApp_undefined
         # create gdd value
-        value.setPrimType(self.info.type)
         newValue = driver.read(self.info.reason)
         value.put(newValue)
         self.updateValue(newValue)
