@@ -18,14 +18,6 @@ def registerDriver(driver_init_func):
         return driver_init_func(*args, **kargs)
     return wrap
 
-# decorator to register PV
-def registerPV(pv_init):
-    def wrap(*args, **kargs):
-        pvs = args[0]
-        return pv_init(*args, **kargs)
-    return wrap
-
-
 class Driver(object):
     port = 'default'
 
