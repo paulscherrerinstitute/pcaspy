@@ -10,10 +10,14 @@ pvdb = {
     },
 }
 
+class myDriver(Driver):
+    def  __init__(self):
+        super(myDriver, self).__init__()
+
 if __name__ == '__main__':
     server = SimpleServer()
     server.createPV(prefix, pvdb)
-    driver = Driver()
+    driver = myDriver()
 
     while True:
         # process CA transactions
