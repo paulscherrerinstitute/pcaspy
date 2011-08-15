@@ -1,6 +1,10 @@
 #!/usr/bin/env python
 import time
-import thread
+import sys
+try:
+    import thread
+except:
+    import _thread as thread
 import subprocess
 import tempfile
 import shlex
@@ -47,7 +51,7 @@ class myDriver(Driver):
         return status
 
     def runShell(self, command):
-        print "DEBUG: Run ", command
+        print("DEBUG: Run ", command)
         # set status BUSY
         self.setParam('STATUS', 1)
         self.updatePVs()
@@ -57,8 +61,8 @@ class myDriver(Driver):
                     stdout = subprocess.PIPE, 
                     stderr = subprocess.PIPE)
             proc.wait()
-        except OSError, m:
-            self.setParam('ERROR', str(m))
+        except OSError:
+            self.setParam('ERROR', str(sys.exc_info()[1]))
             self.setParam('OUTPUT', '')
         else:
             self.setParam('ERROR', proc.stderr.read().rstrip())
@@ -68,7 +72,7 @@ class myDriver(Driver):
         self.setParam('STATUS', 0)
         self.updatePVs()
         self.tid = None
-        print "DEBUG: Finish ", command
+        print("DEBUG: Finish ", command)
 
 if __name__ == '__main__':
     server = SimpleServer()

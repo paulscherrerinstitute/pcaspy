@@ -1,7 +1,10 @@
 #!/usr/bin/env python
 import sys
 import time
-import thread
+try:
+    import thread
+except:
+    import _thread as thread
 import threading
 import numpy
 
