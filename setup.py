@@ -11,7 +11,10 @@ except ImportError:
     from distutils.command.build_py import build_py
 
 from distutils.core import setup, Extension
-import os, platform
+import os, platform, sys
+
+if sys.version_info[0] > 2:
+    raw_input = input
 
 # define EPICS base path and host arch
 EPICSBASE = os.environ.get("EPICS_BASE")
