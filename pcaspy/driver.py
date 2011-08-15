@@ -9,19 +9,28 @@ class Manager(object):
 
 manager = Manager()
 
+
 # decorator to register driver
 def registerDriver(driver_init_func):
     def wrap(*args, **kargs):
         driver_instance = args[0]
         port = driver_instance.port
+        driver_init_func(*args, **kargs)
         manager.driver[port] = driver_instance
-        return driver_init_func(*args, **kargs)
     return wrap
+
+# Driver metaclass to decorate subclass.__init__ to
+# register subclass object 
+class DriverType(type):
+    def __init__(self, name, bases, dct):
+        if name != 'Driver':
+            self.__init__ = registerDriver(self.__init__)
+        return type.__init__(self, name, bases, dct)
 
 class Driver(object):
     port = 'default'
 
-    @registerDriver
+    __metaclass__ = DriverType
     def __init__(self):
         self.pvData  = {}
         self.pvFlag  = {}
