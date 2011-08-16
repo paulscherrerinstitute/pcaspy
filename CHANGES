@@ -1,0 +1,9 @@
+0.2 (XX-08-2011)
+    * Added Python 3 support
+    * Added numpy data types support
+    * Fixed the driver registration issue.
+    * Rework gdd put/get methods
+    * Added gdd unittest cases
+
+0.1 (19-07-2011)
+    * Initial release.
