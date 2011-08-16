@@ -1,4 +1,4 @@
-0.2 (XX-08-2011)
+0.2 (16-08-2011)
     * Added Python 3 support
     * Added numpy data types support
     * Fixed the driver registration issue.
