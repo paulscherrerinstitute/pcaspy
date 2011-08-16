@@ -2,7 +2,7 @@ include README
 include LICENSE
 include COPYING
 include MANIFEST.in
-include Makefile
+include CHANGES
 include setup.py
 include pcaspy/pv.*
 include pcaspy/*.i
