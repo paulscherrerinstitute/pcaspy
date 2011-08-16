@@ -4,6 +4,7 @@
     * Fixed the driver registration issue.
     * Rework gdd put/get methods
     * Added gdd unittest cases
+    * Remove Makefile in favor of setup.py
 
 0.1 (19-07-2011)
     * Initial release.
