@@ -53,7 +53,7 @@ class TestGDD(unittest.TestCase):
         self.assertEqual(self.s.get(), 'sdcsd')
         
         self.s.put(2)
-        self.assertEqual(self.s.get(), '2')
+        self.assertEqual(float(self.s.get()), 2)
 
     def tearDown(self):
         del self.s
