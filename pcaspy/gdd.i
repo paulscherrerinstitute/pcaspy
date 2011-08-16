@@ -145,7 +145,7 @@ public:
                 self.putConvertString(value)
             elif hasattr(value, 'shape'): # numpy data type
                 if len(value.shape) == 0: # scalar
-                    self.putConvertNumeric(value)
+                    self.putConvertNumeric(value.astype(float))
                 else:
                     if len(value.shape) > 1: # ndarray
                         value = value.flatten()
