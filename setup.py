@@ -16,6 +16,15 @@ import os, platform, sys
 if sys.version_info[0] > 2:
     raw_input = input
 
+from distutils.command.build_ext import build_ext as _build_ext
+if sys.hexversion < 0x02050000:
+    class build_ext(_build_ext):
+        def initialize_options (self):
+            _build_ext.initialize_options(self)
+            self.swig_cpp = True
+else:
+    build_ext = _build_ext
+
 # define EPICS base path and host arch
 EPICSBASE = os.environ.get("EPICS_BASE")
 if not EPICSBASE:
@@ -73,7 +82,7 @@ setup (name = 'pcaspy',
        url         = "http://code.google.com/p/pcaspy/",
        ext_modules = [cas_module],
        packages    = ["pcaspy"],
-       cmdclass    = {'build_py':build_py},
+       cmdclass    = {'build_py':build_py, 'build_ext':build_ext},
        license     = "GPLv3",
        platforms   = ["Windows","Linux", "Mac OS X"],
        classifiers = [
