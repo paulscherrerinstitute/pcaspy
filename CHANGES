@@ -1,3 +1,6 @@
+0.3 (xx-xx-2011)
+    * Added casPV's writeNotify method for EPICS base 3.14.11+
+
 0.2 (16-08-2011)
     * Added Python 3 support
     * Added numpy data types support
