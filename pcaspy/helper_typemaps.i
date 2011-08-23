@@ -1,3 +1,8 @@
+/*
+  swig typemap to facilitate argument pass and return
+
+*/
+
 /* pvExistReturn */
 %typemap(directorout) pvExistReturn {
     if (PyInt_Check($1)) {
@@ -30,6 +35,7 @@
     }
 }
 
+/* gddDestructor of aitFixedString array */
 %{
 class aitFixedStringDestructor: public gddDestructor {
     void run (void *);
@@ -40,6 +46,7 @@ void aitFixedStringDestructor::run ( void * pUntyped )
     delete [] ps;
 }
 
+/* gddDestructor of aitFloat64 array */
 class aitFloat64Destructor: public gddDestructor {
     void run (void *);
 };
@@ -49,6 +56,7 @@ void aitFloat64Destructor::run ( void * pUntyped )
     delete [] ps;
 }
 
+/* gddDestructor of aitString array */
 class aitStringDestructor: public gddDestructor {
     void run (void *);
 };
@@ -59,7 +67,7 @@ void aitStringDestructor::run ( void * pUntyped )
 }
 %}
 
-// const aitFloat64 array pointer input 
+/* const aitFloat64 array pointer input  */
 %typemap (in) aitFloat64 *dput {
     if (PySequence_Check($input)) {
         int size = PySequence_Size($input);
@@ -76,7 +84,7 @@ void aitStringDestructor::run ( void * pUntyped )
     delete [] $1;
 }
 
-// aitFloat64 array pointer and destructor input
+/* aitFloat64 array pointer and destructor input */
 %typemap (in) (aitFloat64 *dput,gddDestructor *dest ) {
     if (PySequence_Check($input)) {
         int size = PySequence_Size($input);
@@ -91,7 +99,7 @@ void aitStringDestructor::run ( void * pUntyped )
     }
 }
 
-// aitFloat64 array pointer output
+/* aitFloat64 array pointer output */
 %typemap (in) (aitFloat64 *dget, aitUint32 size) {
     if (!PyInt_Check($input)) {
        PyErr_SetString(PyExc_ValueError, "Expecting an integer");
@@ -115,7 +123,7 @@ void aitStringDestructor::run ( void * pUntyped )
     delete [] $1;
 }
 
-// const aitFixedString array pointer input
+/* const aitFixedString array pointer input */
 %typemap (in) aitFixedString *dput {
     if (PySequence_Check($input)) {
         int size = PySequence_Size($input);
@@ -131,7 +139,7 @@ void aitStringDestructor::run ( void * pUntyped )
 %typemap(freearg) aitFixedString *dput{
     delete [] $1;
 }
-// aitFixedString array pointer and destructor input
+/* aitFixedString array pointer and destructor input */
 %typemap (in) (aitFixedString *dput, gddDestructor *dest) {
     if (PySequence_Check($input)) {
         int size = PySequence_Size($input);
@@ -146,7 +154,7 @@ void aitStringDestructor::run ( void * pUntyped )
     }
 }
 
-// const aitString array pointer input
+/* const aitString array pointer input */
 %typemap (in) aitString *dput {
     if (PySequence_Check($input)) {
         int size = PySequence_Size($input);
@@ -162,7 +170,8 @@ void aitStringDestructor::run ( void * pUntyped )
 %typemap(freearg) aitString *dput{
     delete [] $1;
 }
-// aitString array pointer and destructor input
+
+/* aitString array pointer and destructor input */
 %typemap (in) (aitString *dput, gddDestructor *dest) {
     if (PySequence_Check($input)) {
         int size = PySequence_Size($input);
@@ -177,7 +186,7 @@ void aitStringDestructor::run ( void * pUntyped )
     }
 }
 
-// aitString array pointer output
+/* aitString array pointer output */
 %typemap (in) (aitString *dget, aitUint32 size) {
     if (!PyInt_Check($input)) {
        PyErr_SetString(PyExc_ValueError, "Expecting an integer");
