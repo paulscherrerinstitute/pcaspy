@@ -81,6 +81,6 @@ if __name__ == '__main__':
 
     while True:
         # process CA transactions
-        server.process(0.01)
+        server.process(0.001)
         # give other thread a chance
-        time.sleep(0.01)
+        time.sleep(0.001)
