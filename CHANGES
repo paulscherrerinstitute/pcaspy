@@ -1,6 +1,8 @@
-0.3 (xx-xx-2011)
+0.3 (21-10-2011)
     * Added casPV's writeNotify method for EPICS base 3.14.11+
     * Release GIL for each C function call
+    * Added tools.ServerThread running server process in separate thread
+    * Added preliminary Qt GUI integration example using tools.ServerThread
 
 0.2 (16-08-2011)
     * Added Python 3 support
