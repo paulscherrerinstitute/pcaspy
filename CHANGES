@@ -1,4 +1,5 @@
 0.3 (21-10-2011)
+    * Fixed gdd vector memory leak introduced in 0.2
     * Added casPV's writeNotify method for EPICS base 3.14.11+
     * Release GIL for each C function call
     * Added tools.ServerThread running server process in separate thread
