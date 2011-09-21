@@ -77,6 +77,7 @@ void aitStringDestructor::run ( void * pUntyped )
         {
             PyObject *o = PySequence_GetItem($input, i);
             $1[i] = PyFloat_AsDouble(o);
+            Py_XDECREF(o);
         }
     }
 }
@@ -94,6 +95,7 @@ void aitStringDestructor::run ( void * pUntyped )
         {
             PyObject *o = PySequence_GetItem($input, i);
             $1[i] = PyFloat_AsDouble(o);
+            Py_XDECREF(o);
         }
         $2 = new aitFloat64Destructor();
     }
@@ -133,6 +135,7 @@ void aitStringDestructor::run ( void * pUntyped )
         {
             PyObject *o = PySequence_GetItem($input, i);
             strncpy ($1[i].fixed_string, PyString_AsString(o), AIT_FIXED_STRING_SIZE);
+            Py_XDECREF(o);
         }
     }
 }
@@ -149,6 +152,7 @@ void aitStringDestructor::run ( void * pUntyped )
         {
             PyObject *o = PySequence_GetItem($input, i);
             strncpy ($1[i].fixed_string, PyString_AsString(o), AIT_FIXED_STRING_SIZE);
+            Py_XDECREF(o);
         }
         $2 = new aitFixedStringDestructor();
     }
@@ -164,6 +168,7 @@ void aitStringDestructor::run ( void * pUntyped )
         {
             PyObject *o = PySequence_GetItem($input, i);
             $1[i] = PyString_AsString(o);
+            Py_XDECREF(o);
         }
     }
 }
@@ -181,6 +186,7 @@ void aitStringDestructor::run ( void * pUntyped )
         {
             PyObject *o = PySequence_GetItem($input, i);
             $1[i] = PyString_AsString(o);
+            Py_XDECREF(o);
         }
         $2 = new aitStringDestructor();
     }
