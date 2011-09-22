@@ -1,5 +1,5 @@
-#ifndef EXPV_H
-#define EXPV_H
+#ifndef PV_H
+#define PV_H
 
 #include <casdef.h>
 #include <gddAppFuncTable.h>
@@ -35,6 +35,10 @@ class PV : public casPV {
         void endAsyncWrite(caStatus status); 
         void removeAsyncWrite(); 
 
+        virtual bool readAccess(const char * const pUserName,  const char * const pHostName)  const { return true; }
+        virtual bool writeAccess(const char * const pUserName,  const char * const pHostName) const { return true; }
+        casChannel * createChannel ( const casCtx &ctx, const char * const pUserName, const char * const pHostName); 
+    
         static void initFT();
     private:
         AsyncWriteIO * pAsyncWrite; 

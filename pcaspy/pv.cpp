@@ -1,3 +1,4 @@
+#include "channel.h"
 #include "pv.h"
 
 AsyncWriteIO::AsyncWriteIO ( const casCtx & ctxIn, PV & pvIn ) :
@@ -10,7 +11,6 @@ AsyncWriteIO::~AsyncWriteIO()
 	this->pv.removeAsyncWrite();
 }
 
-
 int PV :: initialized = 0;
 gddAppFuncTable<PV> PV :: ft;
 
@@ -20,6 +20,12 @@ PV :: PV () {
 }
 
 PV ::~PV () {
+}
+
+casChannel * PV :: createChannel ( const casCtx &ctx, const char * const pUserName, const char * const pHostName )
+{ 
+    Channel *chan = new Channel(ctx, this,  pUserName,  pHostName);
+    return chan; 
 }
 
 caStatus PV :: read ( const casCtx & ctx, gdd & protoIn)
