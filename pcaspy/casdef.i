@@ -69,8 +69,8 @@ public:
     virtual caStatus writeNotify (const casCtx &ctx, const gdd &value);
     #endif
 
-    virtual casChannel * createChannel ( const casCtx &ctx,
-        const char * const pUserName, const char * const pHostName );
+    //virtual casChannel * createChannel ( const casCtx &ctx,
+    //    const char * const pUserName, const char * const pHostName );
     
     virtual aitEnum bestExternalType () const;
     
@@ -98,6 +98,9 @@ public:
     virtual caStatus getLowLimit(gdd &lolim);
     virtual caStatus getUnits(gdd &units);
     virtual caStatus getEnums(gdd &enums);
+
+    virtual bool readAccess(const char * const pUserName,  const char * const pHostName) const;
+    virtual bool writeAccess(const char * const pUserName,  const char * const pHostName) const;
 
     void startAsyncWrite(const casCtx &ctx);
     void endAsyncWrite(caStatus status);

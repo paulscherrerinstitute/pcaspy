@@ -56,7 +56,8 @@ elif UNAME == 'Windows':
     cflags += ['/MT']
 cas_module = Extension('pcaspy._cas',
                             sources  =[os.path.join('pcaspy','casdef.i'), 
-                                       os.path.join('pcaspy','pv.cpp'),],
+                                       os.path.join('pcaspy','pv.cpp'),
+                                       os.path.join('pcaspy','channel.cpp'),],
                             swig_opts=['-c++','-threads','-nodefaultdtor','-I%s'% os.path.join(EPICSBASE, 'include')],
                             extra_compile_args=cflags,
                             include_dirs = [ os.path.join(EPICSBASE, 'include'),
