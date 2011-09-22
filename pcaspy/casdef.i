@@ -123,7 +123,11 @@ public:
 
     virtual caStatus read (const casCtx &ctx, gdd &prototype);
     virtual caStatus write (const casCtx &ctx, const gdd &value);
-    /*virtual caStatus writeNotify(const casCtx &ctx, const gdd &value);*/
+    #if EPICS_VERSION > 3 || \
+        EPICS_VERSION == 3 && EPICS_REVISION > 14 || \
+        EPICS_VERSION == 3 && EPICS_REVISION == 14 && EPICS_MODIFICATION >= 11
+    virtual caStatus writeNotify(const casCtx &ctx, const gdd &value);
+    #endif
 
     virtual void show ( unsigned level ) const;
 
