@@ -75,7 +75,7 @@ if UNAME != 'WIN32':
 long_description = open('README').read()
 
 setup (name = 'pcaspy',
-       version = '0.3',
+       version = '0.4',
        description = """Portable Channel Access Server in Python""",
        long_description = long_description,
        author      = "Xiaoqiang Wang",
