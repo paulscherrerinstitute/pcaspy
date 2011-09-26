@@ -2,13 +2,23 @@
 #define CHANNEL_H
 
 #include <casdef.h>
+#include <asLib.h>
 
 class PV; 
 
+/* callback function when access rights change */
+static void clientCallback(ASCLIENTPVT, asClientStatus); 
+
 class Channel : public casChannel {
     public:
-        Channel(const casCtx &ctxIn,  PV *pvIn,  const char * const pUserNameIn, const char * const pHostNameIn); 
+        Channel(const casCtx &ctxIn,  PV *pvIn,  
+                const char * const pUserNameIn, 
+                const char * const pHostNameIn); 
+        ~Channel(); 
 
+        /* server library calls these methods to determin 
+         * client's access rights.
+         */
         bool readAccess() const;
         bool writeAccess() const;
     private:
@@ -16,9 +26,10 @@ class Channel : public casChannel {
         Channel ( const Channel & );
 
         PV * pPv; 
-        const char * pUserName; 
-        const char * pHostName; 
-}; 
+        char * pUserName; 
+        char * pHostName; 
 
+        ASCLIENTPVT client; 
+}; 
 
 #endif

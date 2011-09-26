@@ -42,7 +42,7 @@ if not HOSTARCH:
     HOSTARCH = raw_input("Please define EPICS host arch: ")
 
 # common libraries to link
-libraries = ['ca', 'Com', 'gdd','cas']
+libraries = ['ca', 'Com', 'gdd','cas', 'asIoc']
 macros = []
 cflags = []
 # platform dependent libraries and macros
