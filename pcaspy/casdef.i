@@ -4,6 +4,8 @@
 #define SWIG_FILE_WITH_INIT
 #include <fdManager.h>
 #include <casdef.h>
+#include <asLib.h>
+#include <asCa.h>
 #include "pv.h"
 %}
 %include <epicsVersion.h>
@@ -69,9 +71,6 @@ public:
     virtual caStatus writeNotify (const casCtx &ctx, const gdd &value);
     #endif
 
-    //virtual casChannel * createChannel ( const casCtx &ctx,
-    //    const char * const pUserName, const char * const pHostName );
-    
     virtual aitEnum bestExternalType () const;
     
     virtual unsigned maxDimension () const; // return zero if scalar
@@ -99,8 +98,7 @@ public:
     virtual caStatus getUnits(gdd &units);
     virtual caStatus getEnums(gdd &enums);
 
-    virtual bool readAccess(const char * const pUserName,  const char * const pHostName) const;
-    virtual bool writeAccess(const char * const pUserName,  const char * const pHostName) const;
+    bool setAccessSecurityGroup(const char *);
 
     void startAsyncWrite(const casCtx &ctx);
     void endAsyncWrite(caStatus status);
@@ -136,6 +134,11 @@ public:
 
     virtual void destroy ();
 };
+
+void asCaStart();
+void asCaStop();
+
+long asInitFile(const char *filename, const char *substitutions);
 
 void process(double delay);
 %{

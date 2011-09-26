@@ -92,6 +92,7 @@ class PVInfo(object):
         self.hilim = info.get('hilim', 0.0)
         self.scan  = info.get('scan', 0)
         self.asyn  = info.get('asyn', False)
+        self.asg   = info.get('asg', '')
         self.reason= ''
         self.port  = info.get('port', 'default')
         # initialize value based on type and count
@@ -109,7 +110,8 @@ class SimplePV(cas.casPV):
         self.name = name
         self.info = info
         self.interest = False
-        self.active   = False
+        if info.asg:
+            self.setAccessSecurityGroup(info.asg)
         if self.info.scan > 0:
             thread.start_new_thread(self.scan,())
 
@@ -223,6 +225,10 @@ class SimpleServer(cas.caServer):
             manager.pvf[pvinfo.name] = pv
             if pvinfo.port not in manager.pvs: manager.pvs[pvinfo.port]={}
             manager.pvs[pvinfo.port][basename] = pv
+
+    def initAccessSecurityFile(self, filename, subst):
+        cas.asInitFile(filename, subst)
+        cas.asCaStart()
 
     def process(self, time):
         cas.process(time)

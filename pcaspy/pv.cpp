@@ -11,21 +11,46 @@ AsyncWriteIO::~AsyncWriteIO()
 	this->pv.removeAsyncWrite();
 }
 
+/* Application function table init */
 int PV :: initialized = 0;
 gddAppFuncTable<PV> PV :: ft;
 
-PV :: PV () {
-    pAsyncWrite = NULL; 
+
+PV :: PV () 
+    : pAsyncWrite(NULL), 
+    asg(NULL), 
+    member(NULL)
+{
     PV::initFT();
 }
 
-PV ::~PV () {
+PV ::~PV () 
+{
+    if (member)
+        asRemoveMember(&member); 
+    if (asg)
+        free(asg); 
 }
 
-casChannel * PV :: createChannel ( const casCtx &ctx, const char * const pUserName, const char * const pHostName )
+// called by server application to specify access rights 
+// by given ASG name. 
+// this is called in Python subclass SimplePV
+bool PV :: setAccessSecurityGroup (const char *asgName)
+{
+    asg = strdup (asgName); 
+    if (asAddMember(&member, asg) != 0) {
+        member = NULL; 
+        return false; 
+    }
+    return true; 
+}
+
+// called by server library when connection established
+casChannel * PV :: createChannel ( const casCtx &ctx, 
+        const char * const pUserName, 
+        const char * const pHostName )
 { 
-    Channel *chan = new Channel(ctx, this,  pUserName,  pHostName);
-    return chan; 
+    return new Channel(ctx, this,  pUserName,  pHostName);
 }
 
 caStatus PV :: read ( const casCtx & ctx, gdd & protoIn)
@@ -33,28 +58,25 @@ caStatus PV :: read ( const casCtx & ctx, gdd & protoIn)
     return PV::ft.read ( *this, protoIn );
 }
 
+// called by server application when it starts async write operation
 void PV :: startAsyncWrite( const casCtx & ctx )
 {
     pAsyncWrite = new AsyncWriteIO ( ctx,  *this );
 }
-
+// called by server application when it finishes async write operation
 void PV :: endAsyncWrite(caStatus status)
 {
     if (pAsyncWrite) 
         pAsyncWrite->postIOCompletion ( status );
 }
-
+// called by AsyncWriteIO destructor to remove pending async write
 void PV :: removeAsyncWrite()
 {
     pAsyncWrite = NULL; 
 }
-
+// called by server application when it changes value and notifies clients
 caStatus PV :: postEvent(gdd &value)
 {
-
-    //
-    // post a value change event
-    //
     caServer * pCAS = this->getCAS();
     if ( pCAS != NULL ) {
         casEventMask select ( pCAS->valueEventMask() | pCAS->logEventMask() );
@@ -82,7 +104,7 @@ void PV :: initFT()
         PV::initialized = 1;
     }
 }
-
+// no-op because PV is live through the life time of server application
 void PV :: destroy()
 {
 }
