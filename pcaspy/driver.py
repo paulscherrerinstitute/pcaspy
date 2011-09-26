@@ -207,6 +207,9 @@ class SimpleServer(cas.caServer):
     def __init__(self):
         cas.caServer.__init__(self)
 
+    def __del__(self):
+        cas.asCaStop()
+
     def pvExistTest(self, context, addr, fullname):
         if fullname in manager.pvf:
             return cas.pverExistsHere
