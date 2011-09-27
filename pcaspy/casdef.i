@@ -88,7 +88,7 @@ public:
     PV();
     virtual ~PV();
 
-    virtual caStatus read (const casCtx &ctx, gdd &protoIn);
+    caStatus read (const casCtx &ctx, gdd &protoIn);
     caStatus postEvent (gdd &value);
 
     virtual caStatus getValue(gdd &value);
