@@ -1,5 +1,6 @@
 0.4 (XX-XX-2011)
     * Change from GPL to New BSD License for broader audience.
+    * Added access security control
 
 0.3 (21-09-2011)
     * Fixed gdd vector memory leak introduced in 0.2
