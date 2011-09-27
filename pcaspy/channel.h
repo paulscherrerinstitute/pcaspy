@@ -6,9 +6,6 @@
 
 class PV; 
 
-/* callback function when access rights change */
-static void clientCallback(ASCLIENTPVT, asClientStatus); 
-
 class Channel : public casChannel {
     public:
         Channel(const casCtx &ctxIn,  PV *pvIn,  
