@@ -229,8 +229,9 @@ class SimpleServer(cas.caServer):
             if pvinfo.port not in manager.pvs: manager.pvs[pvinfo.port]={}
             manager.pvs[pvinfo.port][basename] = pv
 
-    def initAccessSecurityFile(self, filename, subst):
-        cas.asInitFile(filename, subst)
+    def initAccessSecurityFile(self, filename, **subst):
+        macro = ','.join(['%s=%s'%(k,v) for k,v in subst.items()])
+        cas.asInitFile(filename, macro)
         cas.asCaStart()
 
     def process(self, time):
