@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from pcaspy import Driver, SimpleServer, asInitFile, asCaStart
+from pcaspy import Driver, SimpleServer
 import time
 
 prefix = 'MTEST:'
@@ -19,7 +19,7 @@ class myDriver(Driver):
 
 if __name__ == '__main__':
     server = SimpleServer()
-    server.initAccessSecurityFile('test.as','P='+prefix)
+    server.initAccessSecurityFile('test.as', P=prefix)
     server.createPV(prefix, pvdb)
     driver = myDriver()
     # process CA transactions
