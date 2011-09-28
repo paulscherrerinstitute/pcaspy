@@ -38,7 +38,7 @@ PV ::~PV ()
 bool PV :: setAccessSecurityGroup (const char *asgName)
 {
     asg = strdup (asgName); 
-    if (asAddMember(&member, asg) != 0) {
+    if (asAddMember(&member, asg)) {
         member = NULL; 
         return false; 
     }

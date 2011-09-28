@@ -36,7 +36,8 @@ Channel :: Channel(const casCtx &ctxIn,
                 pUserName,  pHostName)  == 0) {
         asPutClientPvt(client,  this); 
         asRegisterClientCallback(client, ::clientCallback);
-    }
+    } else
+        client = NULL; 
 }
 
 Channel :: ~Channel()
