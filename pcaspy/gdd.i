@@ -112,9 +112,11 @@ public:
         //void put(const aitFixedString * const dput);
         //void put(const aitString * const dput);
 
+        %rename (putCharArray)    putRef(aitUint8 *dput, gddDestructor *dest);
         %rename (putNumericArray) putRef(aitFloat64 *dput, gddDestructor *dest);
         %rename (putFStringArray) putRef(aitFixedString *dput, gddDestructor *dest);
         %rename (putStringArray)  putRef(aitString *dput, gddDestructor *dest);
+        void putRef(aitUint8 *dput, gddDestructor *dest);
         void putRef(aitFloat64 *dput, gddDestructor *dest);
         void putRef(aitFixedString *dput, gddDestructor *dest);
         void putRef(aitString *dput, gddDestructor *dest);
@@ -137,12 +139,20 @@ public:
         }
         %pythoncode %{
         def put(self, value):
+            primitiveType = self.primitiveType()
             if type(value) == gdd:
                 self.put(gdd)
             elif type(value) in [bool, int, float, long]:
                 self.putConvertNumeric(value)
             elif type(value) == str:
-                self.putConvertString(value)
+                # if aitEnumUint8 then string is converted to char array
+                if primitiveType == aitEnumUint8:
+                    valueChar = [ord(v) for v in value]
+                    self.setDimension(1)
+                    self.setBound(0, 0, len(valueChar))
+                    self.putCharArray(valueChar)
+                else:
+                    self.putConvertString(value)
             elif hasattr(value, 'shape'): # numpy data type
                 if len(value.shape) == 0: # scalar
                     self.putConvertNumeric(value.astype(float))
@@ -191,7 +201,11 @@ public:
                     if primitiveType in [aitEnumFloat32, aitEnumFloat64]:
                         return valueFloat
                     else:
-                        return [int(x) for x in valueFloat]
+                        valueInt = [int(x) for x in valueFloat]
+                        if primitiveType == aitEnumUint8:
+                            return ''.join([chr(x) for x in valueInt]).rstrip('\x00')
+                        else:
+                            return valueInt
 
         %}
 
