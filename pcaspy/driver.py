@@ -7,6 +7,7 @@ class Manager(object):
     pvf = {}    # PV dict using PV full name as key
     driver = {} # Driver dict
 
+# Yes, this is a global instance
 manager = Manager()
 
 
@@ -79,6 +80,7 @@ _ait_d = {'enum'   : cas.aitEnumEnum16,
           'string' : cas.aitEnumString,
           'float'  : cas.aitEnumFloat64,
           'int'    : cas.aitEnumInt32,
+          'char'   : cas.aitEnumUint8,
           }
 class PVInfo(object):
     def __init__(self, info):
@@ -96,11 +98,11 @@ class PVInfo(object):
         self.reason= ''
         self.port  = info.get('port', 'default')
         # initialize value based on type and count
-        if self.type in [cas.aitEnumString, cas.aitEnumFixedString,]:
+        if self.type in [cas.aitEnumString, cas.aitEnumFixedString, cas.aitEnumUint8]:
             value = ''
         else:
             value = 0
-        if self.count > 1:
+        if self.count > 1 and self.type is not cas.aitEnumUint8:
             value = [value] * self.count
         self.value = info.get('value', value)
 
@@ -161,7 +163,10 @@ class SimplePV(cas.casPV):
         # get driver object
         driver = manager.driver.get(self.info.port)
         if not driver: return S_casApp_undefined
-        # create gdd value
+        # set gdd type if necessary
+        if value.primitiveType() == cas.aitEnumInvalid:
+            value.setPrimType(self.info.type)
+        # set gdd value
         newValue = driver.read(self.info.reason)
         value.put(newValue)
         self.updateValue(newValue)
