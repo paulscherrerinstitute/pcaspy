@@ -1,3 +1,6 @@
+#include <stdio.h>
+#include <epicsString.h>
+
 #include "channel.h"
 #include "pv.h"
 
@@ -37,7 +40,7 @@ PV ::~PV ()
 // this is called in Python subclass SimplePV
 bool PV :: setAccessSecurityGroup (const char *asgName)
 {
-    asg = strdup (asgName); 
+    asg = epicsStrDup(asgName); 
     if (asAddMember(&member, asg)) {
         member = NULL; 
         return false; 

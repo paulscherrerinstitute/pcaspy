@@ -1,3 +1,5 @@
+#include <stdio.h>
+#include <epicsString.h>
 
 #include "pv.h"
 #include "channel.h"
@@ -27,8 +29,8 @@ Channel :: Channel(const casCtx &ctxIn,
             : casChannel(ctxIn) 
 {
     pPv = pvIn; 
-    pUserName = strdup(user); 
-    pHostName = strdup(host); 
+    pUserName = epicsStrDup(user); 
+    pHostName = epicsStrDup(host); 
 
     /* add as client and register access rights callback */
     ASMEMBERPVT member = pvIn->getAccessSecurityGroup(); 
