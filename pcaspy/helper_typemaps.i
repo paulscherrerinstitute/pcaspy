@@ -56,6 +56,17 @@ void aitFloat64Destructor::run ( void * pUntyped )
     delete [] ps;
 }
 
+/* gddDestructor of aitUint8 array */
+class aitUint8Destructor: public gddDestructor {
+    void run (void *);
+};
+void aitUint8Destructor::run ( void * pUntyped )
+{
+    aitUint8 *ps = (aitUint8 *) pUntyped;
+    delete [] ps;
+}
+
+
 /* gddDestructor of aitString array */
 class aitStringDestructor: public gddDestructor {
     void run (void *);
@@ -214,3 +225,41 @@ void aitStringDestructor::run ( void * pUntyped )
     }
     delete [] $1;
 }
+
+
+
+/* const aitUint8 array pointer input  */
+%typemap (in) aitUint8 *dput {
+    if (PySequence_Check($input)) {
+        int size = PySequence_Size($input);
+        int i = 0;
+        $1 = new aitUint8[size];
+        for (i=0; i<size; i++)
+        {
+            PyObject *o = PySequence_GetItem($input, i);
+            $1[i] = PyInt_AsLong(o);
+            Py_XDECREF(o);
+        }
+    }
+}
+%typemap(freearg) aitUint8 *dput {
+    delete [] $1;
+}
+
+/* aitUint8 array pointer and destructor input */
+%typemap (in) (aitUint8 *dput,gddDestructor *dest ) {
+    if (PySequence_Check($input)) {
+        int size = PySequence_Size($input);
+        int i = 0;
+        $1 = new aitUint8[size];
+        for (i=0; i<size; i++)
+        {
+            PyObject *o = PySequence_GetItem($input, i);
+            $1[i] = PyInt_AsLong(o);
+            Py_XDECREF(o);
+        }
+        $2 = new aitUint8Destructor();
+    }
+}
+
+
