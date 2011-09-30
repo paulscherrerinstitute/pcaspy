@@ -55,6 +55,11 @@ class TestGDD(unittest.TestCase):
         self.s.put(2)
         self.assertEqual(float(self.s.get()), 2)
 
+    def test_char_array(self):
+        self.s.setPrimType(pcaspy.aitEnumUint8)
+        self.s.put('asddfff')
+        self.assertEqual(self.s.get(), 'asddfff')
+
     def tearDown(self):
         del self.s
 
