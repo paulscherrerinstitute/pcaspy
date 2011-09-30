@@ -237,7 +237,7 @@ void aitStringDestructor::run ( void * pUntyped )
         for (i=0; i<size; i++)
         {
             PyObject *o = PySequence_GetItem($input, i);
-            $1[i] = PyInt_AsLong(o);
+            $1[i] = (aitUint8) PyInt_AsLong(o);
             Py_XDECREF(o);
         }
     }
@@ -255,11 +255,10 @@ void aitStringDestructor::run ( void * pUntyped )
         for (i=0; i<size; i++)
         {
             PyObject *o = PySequence_GetItem($input, i);
-            $1[i] = PyInt_AsLong(o);
+            $1[i] = (aitUint8) PyInt_AsLong(o);
             Py_XDECREF(o);
         }
         $2 = new aitUint8Destructor();
     }
 }
-
 
