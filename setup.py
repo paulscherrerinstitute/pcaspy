@@ -43,8 +43,10 @@ if not HOSTARCH:
 
 # common libraries to link
 libraries = ['ca', 'Com', 'gdd','cas', 'asIoc']
-macros = []
+umacros = []
+macros   = []
 cflags = []
+lflags = []
 # platform dependent libraries and macros
 UNAME = platform.system()
 if  UNAME.find('CYGWIN') == 0:
@@ -53,7 +55,9 @@ elif UNAME == 'Windows':
     UNAME = 'WIN32'
     libraries += ['ws2_32', 'msvcrt', 'user32', 'advapi32']
     macros += [('_CRT_SECURE_NO_WARNINGS', 'None')]
-    cflags += ['/MT']
+    cflags += ['/EHsc']
+    lflags += ['/LTCG','/NODEFAULTLIB:libcmt.lib']
+    umacros+= ['_DLL']
 cas_module = Extension('pcaspy._cas',
                             sources  =[os.path.join('pcaspy','casdef.i'), 
                                        os.path.join('pcaspy','pv.cpp'),
@@ -66,7 +70,9 @@ cas_module = Extension('pcaspy._cas',
                             library_dirs = [ os.path.join(EPICSBASE, 'lib', HOSTARCH),
                                            ],
                             libraries = libraries,
+                            extra_link_args = lflags,
                             define_macros = macros,
+                            undef_macros  = umacros,
                     )
 # *NIX linker has runtime library path option
 if UNAME != 'WIN32':
