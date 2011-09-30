@@ -18,7 +18,8 @@ pvdb = {
         'asyn' : True
     },
     'OUTPUT'  : {
-        'type' : 'string',
+        'type' : 'char',
+        'count': 500,
     },
     'STATUS'  : {
         'type' : 'enum',
