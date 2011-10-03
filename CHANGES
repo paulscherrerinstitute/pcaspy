@@ -2,6 +2,7 @@
     * Change from GPL to New BSD License for broader audience.
     * Added access security control
     * Added new type char
+    * Added __version__ info
 
 0.3 (21-09-2011)
     * Fixed gdd vector memory leak introduced in 0.2
