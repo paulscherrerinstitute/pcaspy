@@ -47,6 +47,7 @@ class PV : public casPV {
 
         /* Async write */
         void startAsyncWrite(const casCtx & ctx); 
+        bool hasAsyncWrite() {return pAsyncWrite != NULL;}; 
         void endAsyncWrite(caStatus status); 
         void removeAsyncWrite(); 
 

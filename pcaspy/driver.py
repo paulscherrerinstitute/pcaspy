@@ -132,20 +132,32 @@ class SimplePV(cas.casPV):
     def interestDelete(self):
         self.interest = False
 
-    def write(self, context, value):
+    def writeValue(self, value):
         # get driver object
         driver = manager.driver.get(self.info.port)
         if not driver: return S_casApp_undefined
         # call out driver support 
         success = driver.write(self.info.reason, value.get())
         self.updateValue(driver.getParam(self.info.reason))
-        if self.info.asyn:
-            if success:
-                # async write will finish later
-                self.startAsyncWrite(context)
-                return cas.S_casApp_asyncCompletion
-            else:
-                return  cas.S_casApp_postponeAsyncIO
+        return success
+    
+    def write(self, context, value):
+        # delegate asynchronous to python writeNotify method
+        # only if writeNotify not present in C++ library
+        if not cas.EPICS_HAS_WRITENOTIFY and self.info.asyn:
+            return self.writeNotify(context, value)
+        else:
+            success = self.writeValue(value)
+            return cas.S_casApp_success
+    
+    def writeNotify(self, context, value):
+        success = self.writeValue(value)
+        if success:
+            # async write will finish later
+            self.startAsyncWrite(context)
+            return cas.S_casApp_asyncCompletion
+        elif self.hasAsyncWrite():
+            return  cas.S_casApp_postponeAsyncIO
         else:
             return cas.S_casApp_success
 

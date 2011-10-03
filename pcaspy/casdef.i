@@ -68,7 +68,10 @@ public:
     #if EPICS_VERSION > 3 || \
         EPICS_VERSION == 3 && EPICS_REVISION > 14 || \
         EPICS_VERSION == 3 && EPICS_REVISION == 14 && EPICS_MODIFICATION >= 11
+        #define EPICS_HAS_WRITENOTIFY 1
     virtual caStatus writeNotify (const casCtx &ctx, const gdd &value);
+    #else
+        #define EPICS_HAS_WRITENOTIFY 0
     #endif
 
     virtual aitEnum bestExternalType () const;
@@ -102,6 +105,7 @@ public:
 
     void startAsyncWrite(const casCtx &ctx);
     void endAsyncWrite(caStatus status);
+    bool hasAsyncWrite();
 
     void destroy ();
 };
