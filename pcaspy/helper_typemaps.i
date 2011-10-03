@@ -262,3 +262,27 @@ void aitStringDestructor::run ( void * pUntyped )
     }
 }
 
+/* aitUint8 array pointer output */
+%typemap (in) (aitUint8 *dget, aitUint32 size) {
+    if (!PyInt_Check($input)) {
+       PyErr_SetString(PyExc_ValueError, "Expecting an integer");
+       return NULL;
+    }
+    $2 = PyInt_AsLong($input);
+    if ($2 < 0) {
+        PyErr_SetString(PyExc_ValueError, "Positive integer expected");
+        return NULL;
+    }
+    $1 = new aitUint8[$2];
+}
+%typemap (argout) (aitUint8 *dget, aitUint32 size) {
+    Py_XDECREF($result);
+    $result = PyList_New($2);
+    for (aitUint32 i=0; i<$2; i++) {
+        PyObject *o = PyInt_FromLong($1[i]);
+        PyList_SetItem($result, i, o);
+    }
+    delete [] $1;
+}
+
+

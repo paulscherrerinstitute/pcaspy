@@ -130,6 +130,10 @@ public:
         //void get(aitString  *dget);
 
         %extend {
+            void getCharArray(aitUint8 *dget, aitUint32 size) {
+                self->get(dget);
+            }
+
             void getNumericArray(aitFloat64 *dget, aitUint32 size) {
                 self->get(dget);
             }
@@ -196,16 +200,15 @@ public:
             else:
                 if primitiveType in [aitEnumString, aitEnumFixedString]:
                     return self.getStringArray(self.getDataSizeElements())
+                elif primitiveType in [aitEnumUint8, aitEnumInt8]:
+                    valueChar = self.getCharArray(self.getDataSizeElements())
+                    return ''.join([chr(x) for x in valueChar]).rstrip('\x00')
                 else:
                     valueFloat =  self.getNumericArray(self.getDataSizeElements())
                     if primitiveType in [aitEnumFloat32, aitEnumFloat64]:
                         return valueFloat
                     else:
-                        valueInt = [int(x) for x in valueFloat]
-                        if primitiveType == aitEnumUint8:
-                            return ''.join([chr(x) for x in valueInt]).rstrip('\x00')
-                        else:
-                            return valueInt
+                        return [int(x) for x in valueFloat]
 
         %}
 
