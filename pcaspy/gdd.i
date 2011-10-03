@@ -150,7 +150,7 @@ public:
                 self.putConvertNumeric(value)
             elif type(value) == str:
                 # if aitEnumUint8 then string is converted to char array
-                if primitiveType == aitEnumUint8:
+                if primitiveType in [aitEnumUint8, aitEnumInt8]:
                     valueChar = [ord(v) for v in value]
                     self.setDimension(1)
                     self.setBound(0, 0, len(valueChar))
@@ -196,7 +196,11 @@ public:
                     if primitiveType in [aitEnumFloat32, aitEnumFloat64]:
                         return valueFloat
                     else:
-                        return int(valueFloat)
+                        valueInt = int(valueFloat)
+                        if primitiveType in [aitEnumUint8, aitEnumInt8]:
+                            return chr(valueInt & 0xFF)
+                        else:
+                            return valueInt
             else:
                 if primitiveType in [aitEnumString, aitEnumFixedString]:
                     return self.getStringArray(self.getDataSizeElements())

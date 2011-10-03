@@ -14,7 +14,8 @@ from pcaspy import Driver, SimpleServer
 prefix = 'MTEST:'
 pvdb = { 
     'COMMAND' : {
-        'type' : 'string',
+        'type' : 'char',
+        'count': 128,
         'asyn' : True
     },
     'OUTPUT'  : {
