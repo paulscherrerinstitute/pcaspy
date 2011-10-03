@@ -90,7 +90,7 @@ setup (name = 'pcaspy',
        ext_modules = [cas_module],
        packages    = ["pcaspy"],
        cmdclass    = {'build_py':build_py, 'build_ext':build_ext},
-       license     = "GPLv3",
+       license     = "BSD",
        platforms   = ["Windows","Linux", "Mac OS X"],
        classifiers = [
             'Development Status :: 4 - Beta',
