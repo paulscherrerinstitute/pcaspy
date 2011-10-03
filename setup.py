@@ -11,7 +11,7 @@ except ImportError:
     from distutils.command.build_py import build_py
 
 from distutils.core import setup, Extension
-import os, platform, sys
+import os, platform, sys, imp
 
 if sys.version_info[0] > 2:
     raw_input = input
@@ -79,9 +79,10 @@ if UNAME != 'WIN32':
     cas_module.runtime_library_dirs += os.path.join(EPICSBASE, 'lib', HOSTARCH),
 
 long_description = open('README').read()
+_version = imp.load_source('_version','pcaspy/_version.py')
 
 setup (name = 'pcaspy',
-       version = '0.4',
+       version = _version.__version__,
        description = """Portable Channel Access Server in Python""",
        long_description = long_description,
        author      = "Xiaoqiang Wang",
