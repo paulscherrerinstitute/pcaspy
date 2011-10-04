@@ -1,10 +1,7 @@
 #!/usr/bin/env python
 import time
 import sys
-try:
-    import thread
-except:
-    import _thread as thread
+import threading
 import subprocess
 import tempfile
 import shlex
@@ -30,7 +27,7 @@ pvdb = {
         'type' : 'string',
     },
 }
-
+import math
 class myDriver(Driver):
     def __init__(self):
         Driver.__init__(self)
@@ -42,7 +39,8 @@ class myDriver(Driver):
         if reason == 'COMMAND':
             if not self.tid:
                 command = value
-                self.tid = thread.start_new_thread(self.runShell,(command,))
+                self.tid = threading.Thread(target=self.runShell,args=(command,))
+                self.tid.start()
             else:
                 status = False
         else:
