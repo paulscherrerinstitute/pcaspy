@@ -1,10 +1,6 @@
 #!/usr/bin/env python
 import sys
 import time
-try:
-    import thread
-except:
-    import _thread as thread
 import threading
 import numpy
 
@@ -41,7 +37,10 @@ class myDriver(Driver):
     def __init__(self):
         Driver.__init__(self)
         self.eid = threading.Event()
-        self.tid = thread.start_new_thread(self.runSimScope, ()) 
+        self.eid.clear()
+        self.tid = threading.Thread(target = self.runSimScope) 
+        self.tid.setDaemon(True)
+        self.tid.start()
 
     def write(self, reason, value):
         status = True
