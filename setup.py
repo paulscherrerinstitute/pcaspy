@@ -4,6 +4,7 @@
 setup.py file for pcaspy
 """
 
+# Use 2to3 to support Python 3
 try:
     from distutils.command.build_py import build_py_2to3 as build_py
 except ImportError:
@@ -13,9 +14,12 @@ except ImportError:
 from distutils.core import setup, Extension
 import os, platform, sys, imp
 
+# raw_input is renamed to input in Python 3
 if sys.version_info[0] > 2:
     raw_input = input
 
+# Python 2.4 below does not check the -c++ option in setup
+# This is a workaound.
 from distutils.command.build_ext import build_ext as _build_ext
 if sys.hexversion < 0x02050000:
     class build_ext(_build_ext):
