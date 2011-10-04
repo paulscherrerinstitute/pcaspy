@@ -10,7 +10,7 @@ MAX_POINTS      = 1000
 FREQUENCY       = 1000
 AMPLITUDE       = 1.0
 NUM_DIVISIONS   = 10
-MIN_UPDATE_TIME = 0.1
+MIN_UPDATE_TIME = 0.01
 
 prefix = 'MTEST:'
 pvdb = {
@@ -37,7 +37,6 @@ class myDriver(Driver):
     def __init__(self):
         Driver.__init__(self)
         self.eid = threading.Event()
-        self.eid.clear()
         self.tid = threading.Thread(target = self.runSimScope) 
         self.tid.setDaemon(True)
         self.tid.start()
