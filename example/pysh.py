@@ -57,7 +57,7 @@ class myDriver(Driver):
         self.updatePVs()
         # run shell
         try:
-            #time.sleep(0.01)
+            time.sleep(0.01)
             proc = subprocess.Popen(shlex.split(command), 
                     stdout = subprocess.PIPE, 
                     stderr = subprocess.PIPE)
