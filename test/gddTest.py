@@ -60,6 +60,11 @@ class TestGDD(unittest.TestCase):
         self.s.put('asddfff')
         self.assertEqual(self.s.get(), 'asddfff')
 
+    def test_char_scaler(self):
+        self.s.setPrimType(pcaspy.aitEnumUint8)
+        self.s.put('a')
+        self.assertEqual(self.s.get(), 'a')
+
     def tearDown(self):
         del self.s
 
