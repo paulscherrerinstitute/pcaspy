@@ -1,5 +1,5 @@
 import cas
-import thread
+import threading
 import time
 
 class Manager(object):
@@ -115,7 +115,9 @@ class SimplePV(cas.casPV):
         if info.asg:
             self.setAccessSecurityGroup(info.asg)
         if self.info.scan > 0:
-            thread.start_new_thread(self.scan,())
+            self.tid = threading.Thread(target=self.scan)
+            self.tid.setDaemon(True)
+            self.tid.start()
 
     def scan(self):
         while True:
