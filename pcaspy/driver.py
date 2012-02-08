@@ -154,7 +154,8 @@ class SimplePV(cas.casPV):
     
     def writeNotify(self, context, value):
         success = self.writeValue(value)
-        if success:
+        # do asynchronous only if PV supports
+        if success and self.info.asyn:
             # async write will finish later
             self.startAsyncWrite(context)
             return cas.S_casApp_asyncCompletion
