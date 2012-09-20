@@ -63,7 +63,7 @@ elif UNAME == 'Windows':
     lflags += ['/LTCG','/NODEFAULTLIB:libcmt.lib']
     umacros+= ['_DLL']
 cas_module = Extension('pcaspy._cas',
-                            sources  =[os.path.join('pcaspy','casdef.i'), 
+                            sources  =[os.path.join('pcaspy','casdef.i'),
                                        os.path.join('pcaspy','pv.cpp'),
                                        os.path.join('pcaspy','channel.cpp'),],
                             swig_opts=['-c++','-threads','-nodefaultdtor','-I%s'% os.path.join(EPICSBASE, 'include')],
