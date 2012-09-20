@@ -28,7 +28,7 @@ typedef enum {
 	aitEnumContainer
 } aitEnum;
 
-
+%apply long   &OUTPUT {long &tv_secOut, long &uSecOut};
 class aitTimeStamp {
 public:
     aitTimeStamp ();
