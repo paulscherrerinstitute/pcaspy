@@ -46,8 +46,8 @@ public:
 
 	aitUint32 getDataSizeElements(void) const;
 
-	void getTimeStamp(aitTimeStamp* const ts) const;
-	void setTimeStamp(const aitTimeStamp* const ts);
+	void getTimeStamp(epicsTimeStamp* const ts) const;
+	void setTimeStamp(const epicsTimeStamp* const ts);
         %extend {
             // set current time
             void setTimeStamp() {
