@@ -10,6 +10,7 @@ typedef double              aitFloat64;
 typedef unsigned int        aitIndex;
 typedef void*               aitPointer;
 typedef aitUint32           aitStatus;
+typedef unsigned int        epicsUInt32;
 
 
 typedef enum {
@@ -28,10 +29,27 @@ typedef enum {
 	aitEnumContainer
 } aitEnum;
 
-%apply long   &OUTPUT {long &tv_secOut, long &uSecOut};
-class aitTimeStamp {
-public:
-    aitTimeStamp ();
-    aitTimeStamp (const unsigned long tv_secIn, const unsigned long tv_nsecIn);
-    void getTV(long &tv_secOut, long &uSecOut) const;
-};
+%#include <epicsTime.h>
+
+/* epics time stamp for C interface*/
+typedef struct epicsTimeStamp {
+    epicsUInt32 secPastEpoch; /* seconds since 0000 Jan 1, 1990 */
+    epicsUInt32 nsec;         /* nanoseconds within second */
+
+%extend {
+    epicsTimeStamp() {
+        epicsTimeStamp *ts = (epicsTimeStamp*) malloc(sizeof(epicsTimeStamp));
+        epicsTimeGetCurrent(ts);
+        return ts;
+    }
+    ~epicsTimeStamp() {
+        free(self);
+    }
+}
+%pythoncode {
+    def __str__(self):
+        return '%d,%d' % (self.secPastEpoch, self.nsec)
+}
+} epicsTimeStamp;
+
+

@@ -7,6 +7,7 @@ include pcaspy/pv.*
 include pcaspy/channel.*
 include pcaspy/*.i
 include pcaspy/tools.py
+include pcaspy/alarm.py
 include example/*.py example/simscope.adl example/test.as
 prune   example/pcaspy
 include test/*.py

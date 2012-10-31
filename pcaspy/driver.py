@@ -2,6 +2,8 @@ import cas
 import threading
 import time
 
+from alarm import Severity, Alarm
+
 class Manager(object):
     pvs = {}    # PV dict using port name as key and {pv base name: pv instance} as value
     pvf = {}    # PV dict using PV full name as key
@@ -21,23 +23,35 @@ def registerDriver(driver_init_func):
     return wrap
 
 # Driver metaclass to decorate subclass.__init__ to
-# register subclass object 
+# register subclass object
 class DriverType(type):
     def __init__(self, name, bases, dct):
         if name != 'Driver':
             self.__init__ = registerDriver(self.__init__)
         return type.__init__(self, name, bases, dct)
 
+class Data(object):
+    def __init__(self):
+        self.value = 0
+        self.flag  = False
+        self.severity  = Severity.INVALID_ALARM
+        self.alarm = Alarm.UDF_ALARM
+        self.time  = cas.epicsTimeStamp()
+
+    def __repr__(self):
+        return "Value: %s\nAlarm: %s\nSeverity: %s\nTime: %s" % (self.value, self.alarm, self.severity, self.time)
+
 class Driver(object):
     port = 'default'
 
     __metaclass__ = DriverType
     def __init__(self):
-        self.pvData  = {}
-        self.pvFlag  = {}
+        self.pvDB    = {}
         # init pvData with pv instance
         for reason, pv in manager.pvs[self.port].items():
+            self.pvDB[reason] = Data()
             self.setParam(reason, pv.info.value)
+            self.setParamStatus(reason, 0, 0)
 
     def read(self, reason):
         """driver reimplemente this method to PV read request"""
@@ -52,14 +66,26 @@ class Driver(object):
 
     def setParam(self, reason, value):
         """set PV value and request update"""
-        same = self.pvData.get(reason) == value
+        same = self.pvDB[reason].value == value
         if type(same) == bool and not same or hasattr(same, 'all') and not same.all():
-            self.pvData[reason] = value
-            self.pvFlag[reason] = True
+            self.pvDB[reason].value = value
+            self.pvDB[reason].flag  = True
+            self.pvDB[reason].time = cas.epicsTimeStamp()
+
+    def setParamStatus(self, reason, alarm=None, severity=None):
+        """set PV status and serverity and request update"""
+        if alarm is not None:
+            self.pvDB[reason].alarm = alarm
+        if severity is not None:
+            self.pvDB[reason].severity = severity
+        self.pvDB[reason].flag  = True
 
     def getParam(self, reason):
         """retrieve PV value"""
-        return self.pvData[reason]
+        return self.pvDB[reason].value
+
+    def getParamDB(self, reason):
+        return self.pvDB[reason]
 
     def callbackPV(self, reason):
         """inform asynchronous write completion"""
@@ -70,9 +96,9 @@ class Driver(object):
     def updatePVs(self):
         """post update event on changed values"""
         for reason, pv in manager.pvs[self.port].items():
-            if self.pvFlag[reason] and pv.info.scan == 0:
-                pv.updateValue(self.pvData[reason])
-                self.pvFlag[reason] = False
+            if self.pvDB[reason].flag and pv.info.scan == 0:
+                pv.updateValue(self.pvDB[reason])
+                self.pvDB[reason].flag = False
 
 # map aitType to string representation
 _ait_d = {'enum'   : cas.aitEnumEnum16,
@@ -123,8 +149,10 @@ class SimplePV(cas.casPV):
         while True:
             driver = manager.driver.get(self.info.port)
             if driver:
-                value = driver.read(self.info.reason)
-                self.updateValue(value)
+                gddValue = cas.gdd()
+                self.getValue(gddValue)
+                gddValue.setTimeStamp()
+                self.updateValue(gddValue)
             time.sleep(self.info.scan)
 
     def interestRegister(self):
@@ -138,11 +166,11 @@ class SimplePV(cas.casPV):
         # get driver object
         driver = manager.driver.get(self.info.port)
         if not driver: return S_casApp_undefined
-        # call out driver support 
+        # call out driver support
         success = driver.write(self.info.reason, value.get())
-        self.updateValue(driver.getParam(self.info.reason))
+        self.updateValue(driver.getParamDB(self.info.reason))
         return success
-    
+
     def write(self, context, value):
         # delegate asynchronous to python writeNotify method
         # only if writeNotify not present in C++ library
@@ -151,7 +179,7 @@ class SimplePV(cas.casPV):
         else:
             success = self.writeValue(value)
             return cas.S_casApp_success
-    
+
     def writeNotify(self, context, value):
         success = self.writeValue(value)
         # do asynchronous only if PV supports
@@ -169,11 +197,12 @@ class SimplePV(cas.casPV):
             if type(value) != cas.gdd:
                 gddValue = cas.gdd()
                 gddValue.setPrimType(self.info.type)
-                gddValue.put(value)
-                gddValue.setTimeStamp()
+                gddValue.put(value.value)
+                gddValue.setTimeStamp(value.time)
+                gddValue.setStatSevr(value.alarm, value.severity)
                 value = gddValue
-            self.postEvent(value);
-        
+            self.postEvent(value)
+
     def getValue(self, value):
         # get driver object
         driver = manager.driver.get(self.info.port)
@@ -184,7 +213,10 @@ class SimplePV(cas.casPV):
         # set gdd value
         newValue = driver.read(self.info.reason)
         value.put(newValue)
-        self.updateValue(newValue)
+        # set gdd info
+        dbValue = driver.getParamDB(self.info.reason)
+        value.setStatSevr(dbValue.alarm, dbValue.severity)
+        value.setTimeStamp(dbValue.time)
         return cas.S_casApp_success
 
     def getPrecision(self, prec):
@@ -210,7 +242,7 @@ class SimplePV(cas.casPV):
 
     def bestExternalType(self):
         return self.info.type
-   
+
     def maxDimension(self):
         if self.info.count > 1:
             return 1
