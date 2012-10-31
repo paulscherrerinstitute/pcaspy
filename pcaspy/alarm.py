@@ -7,7 +7,7 @@ class Severity:
 class Alarm:
     NO_ALARM        = 0
     READ_ALARM      = 1
-    WRITE_ALARM     = 2       
+    WRITE_ALARM     = 2
     HIHI_ALARM      = 3
     HIGH_ALARM      = 4
     LOLO_ALARM      = 5
