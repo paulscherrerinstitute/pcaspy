@@ -118,6 +118,10 @@ class PVInfo(object):
         self.unit  = info.get('unit', '')
         self.lolim = info.get('lolim', 0.0)
         self.hilim = info.get('hilim', 0.0)
+        self.hihi  = info.get('hihi', 0.0)
+        self.lolo  = info.get('lolo', 0.0)
+        self.high  = info.get('high', 0.0)
+        self.low   = info.get('low',  0.0)
         self.scan  = info.get('scan', 0)
         self.asyn  = info.get('asyn', False)
         self.asg   = info.get('asg', '')
@@ -140,6 +144,7 @@ class SimplePV(cas.casPV):
         self.interest = False
         if info.asg:
             self.setAccessSecurityGroup(info.asg)
+        # scan thread
         if self.info.scan > 0:
             self.tid = threading.Thread(target=self.scan)
             self.tid.setDaemon(True)
@@ -165,10 +170,14 @@ class SimplePV(cas.casPV):
     def writeValue(self, value):
         # get driver object
         driver = manager.driver.get(self.info.port)
-        if not driver: return S_casApp_undefined
+        if not driver: return cas.S_casApp_undefined
         # call out driver support
         success = driver.write(self.info.reason, value.get())
-        self.updateValue(driver.getParamDB(self.info.reason))
+        value = driver.getParamDB(self.info.reason)
+        if not success:
+            value.severity = Severity.INVALID_ALARM
+            value.alarm    = Alarm.WRITE_ALARM
+        self.updateValue(value)
         return success
 
     def write(self, context, value):
@@ -177,7 +186,7 @@ class SimplePV(cas.casPV):
         if not cas.EPICS_HAS_WRITENOTIFY and self.info.asyn:
             return self.writeNotify(context, value)
         else:
-            success = self.writeValue(value)
+            self.writeValue(value)
             return cas.S_casApp_success
 
     def writeNotify(self, context, value):
@@ -206,7 +215,7 @@ class SimplePV(cas.casPV):
     def getValue(self, value):
         # get driver object
         driver = manager.driver.get(self.info.port)
-        if not driver: return S_casApp_undefined
+        if not driver: return cas.S_casApp_undefined
         # set gdd type if necessary
         if value.primitiveType() == cas.aitEnumInvalid:
             value.setPrimType(self.info.type)
