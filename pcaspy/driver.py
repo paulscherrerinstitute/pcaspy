@@ -71,6 +71,9 @@ class Driver(object):
             self.pvDB[reason].value = value
             self.pvDB[reason].flag  = True
             self.pvDB[reason].time = cas.epicsTimeStamp()
+            alarm, severity = self._checkAlarm(reason, value)
+            if alarm is not None: self.pvDB[reason].alarm = alarm
+            if severity is not None: self.pvDB[reason].severity = severity
 
     def setParamStatus(self, reason, alarm=None, severity=None):
         """set PV status and serverity and request update"""
@@ -100,6 +103,69 @@ class Driver(object):
                 pv.updateValue(self.pvDB[reason])
                 self.pvDB[reason].flag = False
 
+    def _checkAlarm(self, reason, value):
+        info =  manager.pvs[self.port][reason].info
+        if info.type == cas.aitEnumEnum16:
+            return self._checkEnumAlarm(info, value)
+        elif info.type in [cas.aitEnumFloat64, cas.aitEnumInt32]:
+            return self._checkNumericAlarm(info, value)
+        else:
+            return None,None
+
+    def _checkNumericAlarm(self, info, value):
+        severity = Severity.NO_ALARM
+        alarm = Alarm.NO_ALARM
+        lolo = info.lolo
+        hihi = info.hihi
+        low  = info.low
+        high = info.high
+
+        if lolo >= hihi:
+            valid_lolo_hihi = False
+        else:
+            valid_lolo_hihi = True
+
+        if low >= high:
+            valid_low_high = False
+        else:
+            valid_low_high = True
+
+        if valid_low_high and value <= low:
+            alarm = Alarm.LOW_ALARM
+            severity = Severity.MINOR_ALARM
+
+        if valid_lolo_hihi and value <= lolo:
+            alarm = Alarm.LOLO_ALARM
+            severity = Severity.MAJOR_ALARM
+
+        if valid_low_high and value >= high:
+            alarm = Alarm.HIGH_ALARM
+            severity = Severity.MINOR_ALARM
+
+        if valid_lolo_hihi and value >= hihi:
+            alarm = Alarm.HIHI_ALARM
+            severity = Severity.MAJOR_ALARM
+
+        return alarm, severity
+
+
+    def _checkEnumAlarm(self, info, value):
+        severity = Severity.NO_ALARM
+        alarm = Alarm.NO_ALARM
+
+        states = info.states
+
+        if value>=0 and value < len(states):
+            severity = states[value]
+            if severity != Severity.NO_ALARM:
+                alarm = Alarm.STATE_ALARM
+        else:
+            severity = Severity.MAJOR_ALARM
+            alarm = Alarm.STATE_ALARM
+
+        return alarm, severity
+
+
 # map aitType to string representation
 _ait_d = {'enum'   : cas.aitEnumEnum16,
           'str'    : cas.aitEnumString,
@@ -114,6 +180,10 @@ class PVInfo(object):
         self.count = info.get('count', 1)
         self.type  = _ait_d[info.get('type', 'float')]
         self.enums = info.get('enums', [])
+        self.states= info.get('states',[])
+        # initialize enum severity states if not specified
+        if not self.states:
+            self.states = len(self.enums) * [Severity.NO_ALARM]
         self.prec  = info.get('prec', 0.0)
         self.unit  = info.get('unit', '')
         self.lolim = info.get('lolim', 0.0)
