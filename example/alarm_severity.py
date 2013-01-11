@@ -14,7 +14,6 @@ pvdb = {
         'enums':  ['OK', 'ERROR'],
         'states': [Severity.NO_ALARM, Severity.MAJOR_ALARM]
     },
-    'MSG' : []
 }
 
 class myDriver(Driver):
