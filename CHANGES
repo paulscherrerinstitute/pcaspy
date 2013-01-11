@@ -1,8 +1,23 @@
-0.4 (XX-XX-2011)
+0.4 (14-01-2013)
     * Change from GPL to New BSD License for broader audience.
-    * Added access security control
-    * Added new type char
     * Added __version__ info
+    * Added access security control
+        access security control file can be loaded using SimpleServer.initAccessSecurityFile(filename, **subst). 
+        The loaded rules can then be assigned to PV's "asg" field.
+        example/access_control.py provides an example and better exaplained in UserDocuments
+        https://code.google.com/p/pcaspy/wiki/UserDocuments#Example_5:_Access_Security_Control
+
+    * Added new type char. 
+        It is used to represent a long string (>40 chars). And it behaves just like string parameters in driver.
+        example/pysh.py provides a concrete example, in PV "COMMAND" and "OUTPUT".
+
+    * Added timestamp info. 
+        The timestamp is set at each setParam call with new value different to current value.
+    
+    * Added alarm/severity info.
+        For "enum" type PV, the severity is configued by its "state" field. It is a list of severity states, which can be NO_ALARM, MINOR_ALARM, MAJOR_ALARM, INVALID_ALARM. If current state's severity is other than NO_ALARM, alarm is STATE_ALARM.
+        For "int" or "float" type PV, the alarm state is configured by its "low","high","lolo","hihi" fields, in analogue to EPICS database. 
+        example/alarm_severity provides an example.
 
 0.3 (21-09-2011)
     * Fixed gdd vector memory leak introduced in 0.2
