@@ -1,0 +1,39 @@
+pcaspy Documentation
+===============================
+
+Overview
+--------
+PCASpy provides not only the low level python binding to EPICS Portable Channel Access Server but also the necessary high level abstraction to ease the server tool programming.
+
+Prerequisites
+--------------
+
+* EPICS base 3.14.8+ and environment variables EPICS_BASE and EPICS_HOST_ARCH are defined according to your actual EPICS base installation.
+* Python 2.4+
+* SWIG 1.3.29+
+
+Build
+---------------------
+::
+
+    python setup.py build
+    [sudo] python setup.py install
+
+API
+===
+.. autoclass:: pcaspy.Driver
+    :members: read, write, getParam, setParam, setParamStatus, callbackPV, updatePVs
+.. autoclass:: pcaspy.SimpleServer
+    :members: createPV, initAccessSecurityFile, process
+
+Indices and tables
+==================
+
+* :ref:`genindex`
+* :ref:`modindex`
+* :ref:`search`
+
+.. toctree::
+   :maxdepth: 2
+
+
