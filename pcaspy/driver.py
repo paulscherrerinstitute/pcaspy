@@ -49,9 +49,9 @@ class Driver(object):
         self.pvDB    = {}
         # init pvData with pv instance
         for reason, pv in manager.pvs[self.port].items():
-            self.pvDB[reason] = Data()
-            self.setParam(reason, pv.info.value)
-            self.setParamStatus(reason, 0, 0)
+            data = Data()
+            data.value = pv.info.value
+            self.pvDB[reason] = data
 
     def read(self, reason):
         """

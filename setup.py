@@ -3,6 +3,11 @@
 """
 setup.py file for pcaspy
 """
+# Use setuptools to include build_sphinx, upload/sphinx commands
+try:
+    from setuptools import setup, find_packages
+except:
+    pass
 
 # Use 2to3 to support Python 3
 try:
@@ -99,7 +104,7 @@ setup (name = 'pcaspy',
        platforms   = ["Windows","Linux", "Mac OS X"],
        classifiers = [
             'Development Status :: 4 - Beta',
-            'Environment :: Console', 
+            'Environment :: Console',
             'Intended Audience :: Developers',
             'License :: OSI Approved :: BSD License',
             'Programming Language :: C++',
