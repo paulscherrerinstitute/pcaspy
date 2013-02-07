@@ -54,12 +54,41 @@ class Driver(object):
             self.setParamStatus(reason, 0, 0)
 
     def read(self, reason):
-        """driver reimplemente this method to PV read request"""
+        """
+        Return PV current value
+
+        Parameters
+        ----------
+        reason : str
+            PV base name
+        Return
+        ------
+            PV current value
+        Note
+        ----
+        driver reimplemente this method to PV read request
+
+        """
         return self.getParam(reason)
 
     def write(self, reason, value):
-        """driver reimplemente this method to PV write request
-        return False if the value is not accepted.
+        """
+        Write PV new value
+
+        Parameters
+        ----------
+        reason : str
+            PV base name
+        value :
+            PV new value
+        Return
+        ------
+            True if the new value is accepted
+            False if the new value is rejected
+        Note
+        ----
+        driver reimplemente this method to PV write request
+
         """
         self.setParam(reason, value)
         return True
@@ -351,6 +380,23 @@ class SimpleServer(cas.caServer):
         return manager.pvf.get(fullname, cas.S_casApp_pvNotFound)
 
     def createPV(self, prefix, pvdb):
+        """
+        Create PV based on prefix and database definition
+
+        Parameters
+        ----------
+        prefix : str
+            Name prefixing the basename
+        pvdb : dict
+            PV database definition::
+
+                {
+                    'PVNAME' : {
+                        'field' : value
+                    }
+                    ...
+                }
+        """
         for basename, pvinfo in pvdb.items():
             pvinfo = PVInfo(pvinfo)
             pvinfo.reason = basename
@@ -361,6 +407,17 @@ class SimpleServer(cas.caServer):
             manager.pvs[pvinfo.port][basename] = pv
 
     def initAccessSecurityFile(self, filename, **subst):
+        """
+        Load access security configuration file
+
+        Parameters
+        ----------
+        filename : str
+            Name of the access security configuration file
+        **subst : dict
+            Substitute macros
+
+        """
         macro = ','.join(['%s=%s'%(k,v) for k,v in subst.items()])
         cas.asInitFile(filename, macro)
         cas.asCaStart()
