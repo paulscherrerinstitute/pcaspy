@@ -96,7 +96,7 @@ class Driver(object):
     def setParam(self, reason, value):
         """set PV value and request update"""
         same = self.pvDB[reason].value == value
-        if type(same) == bool and not same or hasattr(same, 'all') and not same.all():
+        if (type(same) == bool and not same) or (hasattr(same, 'all') and not same.all()):
             self.pvDB[reason].value = value
             self.pvDB[reason].flag  = True
             self.pvDB[reason].time = cas.epicsTimeStamp()
