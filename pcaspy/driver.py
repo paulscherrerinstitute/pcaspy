@@ -95,8 +95,14 @@ class Driver(object):
 
     def setParam(self, reason, value):
         """set PV value and request update"""
+        # check wether update is needed
         same = self.pvDB[reason].value == value
         if (type(same) == bool and not same) or (hasattr(same, 'all') and not same.all()):
+            # make a copy of mutable objects, list, numpy.ndarray
+            if isinstance(value, list):
+                value = value[:]
+            elif str(type(value)) == "<type 'numpy.ndarray'>":
+                value = value.copy()
             self.pvDB[reason].value = value
             self.pvDB[reason].flag  = True
             self.pvDB[reason].time = cas.epicsTimeStamp()
