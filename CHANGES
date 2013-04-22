@@ -1,5 +1,6 @@
 0.4.1 (XX-XX-2013)
     * Fixed PV initial status. By startup, it is UDF/INVALID.
+    * Driver.setParam makes a copy of list/numpy.ndarray objects. This solves the racing condition, in which the value could be in the middle of updating while CA client reads the value. 
 
 0.4 (14-01-2013)
     * Change from GPL to New BSD License for broader audience.
