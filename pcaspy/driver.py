@@ -284,7 +284,8 @@ class SimplePV(cas.casPV):
         if not success:
             value.severity = Severity.INVALID_ALARM
             value.alarm    = Alarm.WRITE_ALARM
-        self.updateValue(value)
+        else:
+            self.updateValue(value)
         return success
 
     def write(self, context, value):
@@ -328,6 +329,8 @@ class SimplePV(cas.casPV):
             value.setPrimType(self.info.type)
         # set gdd value
         newValue = driver.read(self.info.reason)
+        if newValue is None:
+            return cas.S_casApp_undefined
         value.put(newValue)
         # set gdd info
         dbValue = driver.getParamDB(self.info.reason)
