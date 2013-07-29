@@ -1,5 +1,3 @@
-.. _installation:
-
 Installation
 ============
 
@@ -7,9 +5,21 @@ Getting EPICS
 -------------
 On Windows, EPICS libraies are statically builtin.
 
-On Linux and OS X, you need to follow http://www.aps.anl.gov/epics/base/R3-14/12-docs/README.html.
+On Linux and Mac OS X you need to follow http://www.aps.anl.gov/epics/base/R3-14/12-docs/README.html.
 Here is a short guide,
-- 
+
+- Get the source tarball from http://www.aps.anl.gov/epics/base/R3-14/12.php.
+- Unpack it to a proper path.
+- Set the following environment variables:
+
+  - EPICS_BASE : the path containing the EPICS base installation. 
+  - EPICS_HOST_ARCH :
+
+    - linux-x86 on 32bit Linux
+    - linux-x86_64 on 64bit Linux.
+    - darwin-x86 on Mac OS X
+
+- Run "make".
 
 Windows
 -------
@@ -26,7 +36,6 @@ Linux/Mac OS X
 - EPICS 3.14.8+
 
 Download the most recent source tarball, uncompress and run::
+
     $ python setup.py build
     $ [sudo] python setup.py install
-
-
