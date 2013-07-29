@@ -15,6 +15,14 @@
 %feature("director") PV;
 %feature("director") casChannel;
 
+/* print exceptions originated from Python */
+%feature("director:except") {
+    if ($error != NULL) {
+        PyErr_Print();
+        Swig::DirectorMethodException::raise("Exception Calling Python Code");
+    }
+}
+
 %include "errMdef.i"
 %include "gdd.i"
 
