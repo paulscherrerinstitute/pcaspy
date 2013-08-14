@@ -7,21 +7,24 @@ In general please follow http://www.aps.anl.gov/epics/base/R3-14/12-docs/README.
 
 On Windows, EPICS libraies are already built in the installer. 
 If you need to build from source, it is suggested to  build EPICS libraries 
-statically by changeing these two lines in EPICS_BASE/configure/CONFIG_ITE::
+statically by changeing these two lines in ``EPICS_BASE/configure/CONFIG_SITE``::
 
     SHARED_LIBRARIES=NO
     STATIC_BUILD=YES
 
 And one has to use same version Visual Studio as the one used to build Python.
 
-+------------------+--------------------+
-| Python 2.4 - 2.5 | Visual Studio 2003 |
-+------------------+--------------------+
-| Python 2.6 - 2.7,|                    |
-| 3.0 - 3.2        | Visual Studio 2008 |
-+------------------+--------------------+
-| Python 3.3 - 3.4 | Visual Studio 2010 |
-+------------------+--------------------+
++------------------+-----------------------+
+| Python Version   | Visual Studio Version |
++==================+=======================+
+| 2.4 - 2.5        |  2003                 |
++------------------+-----------------------+
+| 2.6 - 2.7,       |                       |
+| 3.0 - 3.2        |  2008                 |
++------------------+-----------------------+
+| 3.3 - 3.4        |  2010                 |
++------------------+-----------------------+
+
 Mismatching may cause crashes!
 
 
@@ -34,13 +37,23 @@ Here is a short guide,
   - EPICS_BASE : the path containing the EPICS base installation. 
   - EPICS_HOST_ARCH :
 
-    - linux-x86 on 32bit Linux
-    - linux-x86_64 on 64bit Linux.
-    - win32-x86 on 32bit Windows
-    - windows-x64 on 64bit Windows
-    - darwin-x86 on Mac OS X
+    +---------+-------+-----------------+
+    |    OS   | Arch  | EPICS_HOST_ARCH |
+    +=========+=======+=================+
+    |         | 32bit | linux-x86       |
+    | Linux   +-------+-----------------+
+    |         | 64bit | linux-x86_64    |
+    +---------+-------+-----------------+
+    |         | 32bit | linux-x86       |
+    | Windows +-------+-----------------+
+    |         | 64bit | linux-x86_64    |
+    +---------+-------+-----------------+
+    |         | PPC   | darwin-ppcx86   |
+    |  OS X   +-------+-----------------+
+    |         | Intel | darwin-x86      |
+    +---------+-------+-----------------+
 
-- Run "make".
+- Run ``make``.
 
 Windows
 -------
