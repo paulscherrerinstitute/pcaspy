@@ -5,7 +5,7 @@ setup.py file for pcaspy
 """
 # Use setuptools to include build_sphinx, upload/sphinx commands
 try:
-    from setuptools import setup, find_packages
+    from setuptools import setup
 except:
     pass
 
@@ -17,7 +17,10 @@ except ImportError:
     from distutils.command.build_py import build_py
 
 from distutils.core import setup, Extension
-import os, platform, sys, imp
+import os
+import platform
+import sys
+import imp
 
 # raw_input is renamed to input in Python 3
 if sys.version_info[0] > 2:
@@ -68,21 +71,18 @@ elif UNAME == 'Windows':
     lflags += ['/LTCG','/NODEFAULTLIB:libcmt.lib']
     umacros+= ['_DLL']
 cas_module = Extension('pcaspy._cas',
-                            sources  =[os.path.join('pcaspy','casdef.i'),
-                                       os.path.join('pcaspy','pv.cpp'),
-                                       os.path.join('pcaspy','channel.cpp'),],
-                            swig_opts=['-c++','-threads','-nodefaultdtor','-I%s'% os.path.join(EPICSBASE, 'include')],
-                            extra_compile_args=cflags,
-                            include_dirs = [ os.path.join(EPICSBASE, 'include'),
-                                             os.path.join(EPICSBASE, 'include', 'os', UNAME),
-                                           ],
-                            library_dirs = [ os.path.join(EPICSBASE, 'lib', HOSTARCH),
-                                           ],
-                            libraries = libraries,
-                            extra_link_args = lflags,
-                            define_macros = macros,
-                            undef_macros  = umacros,
-                    )
+                       sources  =[os.path.join('pcaspy','casdef.i'),
+                                  os.path.join('pcaspy','pv.cpp'),
+                                  os.path.join('pcaspy','channel.cpp'),],
+                       swig_opts=['-c++','-threads','-nodefaultdtor','-I%s'% os.path.join(EPICSBASE, 'include')],
+                       extra_compile_args=cflags,
+                       include_dirs = [ os.path.join(EPICSBASE, 'include'),
+                                        os.path.join(EPICSBASE, 'include', 'os', UNAME),],
+                       library_dirs = [ os.path.join(EPICSBASE, 'lib', HOSTARCH),],
+                       libraries = libraries,
+                       extra_link_args = lflags,
+                       define_macros = macros,
+                       undef_macros  = umacros,)
 # *NIX linker has runtime library path option
 if UNAME != 'WIN32':
     cas_module.runtime_library_dirs += os.path.join(EPICSBASE, 'lib', HOSTARCH),
@@ -102,14 +102,12 @@ setup (name = 'pcaspy',
        cmdclass    = {'build_py':build_py, 'build_ext':build_ext},
        license     = "BSD",
        platforms   = ["Windows","Linux", "Mac OS X"],
-       classifiers = [
-            'Development Status :: 4 - Beta',
-            'Environment :: Console',
-            'Intended Audience :: Developers',
-            'License :: OSI Approved :: BSD License',
-            'Programming Language :: C++',
-            'Programming Language :: Python :: 2',
-            'Programming Language :: Python :: 3',
-           ],
+       classifiers = ['Development Status :: 4 - Beta',
+                      'Environment :: Console',
+                      'Intended Audience :: Developers',
+                      'License :: OSI Approved :: BSD License',
+                      'Programming Language :: C++',
+                      'Programming Language :: Python :: 2',
+                      'Programming Language :: Python :: 3',
+                      ],
        )
-
