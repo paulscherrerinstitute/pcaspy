@@ -1,6 +1,7 @@
 import cas
 import threading
 import time
+import logging
 
 from alarm import Severity, Alarm
 
@@ -109,9 +110,11 @@ class Driver(object):
         alarm, severity = self._checkAlarm(reason, value)
         if alarm is not None: self.pvDB[reason].alarm = alarm
         if severity is not None: self.pvDB[reason].severity = severity
+        logging.getLogger('pcaspy.Driver.setParam')\
+            .debug('%s: %s %s %s', reason, value, Alarm.nameOf(alarm), Severity.nameOf(severity))
 
     def setParamStatus(self, reason, alarm=None, severity=None):
-        """set PV status and serverity and request update"""
+        """set PV status and severity and request update"""
         if alarm is not None:
             self.pvDB[reason].alarm = alarm
         if severity is not None:
@@ -274,14 +277,19 @@ class SimplePV(cas.casPV):
     def interestDelete(self):
         self.interest = False
 
-    def writeValue(self, value):
+    def writeValue(self, gddValue):
         # get driver object
         driver = manager.driver.get(self.info.port)
-        if not driver: return cas.S_casApp_undefined
+        if not driver:
+            logging.getLogger('pcaspy.SimplePV.writeValue').\
+                warn('%s: No driver is registered for port %s', self.info.reason, self.info.port)
+            return cas.S_casApp_undefined
         # call out driver support
-        success = driver.write(self.info.reason, value.get())
+        success = driver.write(self.info.reason, gddValue.get())
         value = driver.getParamDB(self.info.reason)
         if not success:
+            logging.getLogger('pcaspy.SimplePV.writeValue').\
+                warn('%s: Driver rejects value %s', self.info.reason, gddValue.get())
             value.severity = Severity.INVALID_ALARM
             value.alarm    = Alarm.WRITE_ALARM
         else:
@@ -289,7 +297,7 @@ class SimplePV(cas.casPV):
         return success
 
     def write(self, context, value):
-        # delegate asynchronous to python writeNotify method
+        # delegate asynchronous write to python writeNotify method
         # only if writeNotify not present in C++ library
         if not cas.EPICS_HAS_WRITENOTIFY and self.info.asyn:
             return self.writeNotify(context, value)
@@ -323,14 +331,21 @@ class SimplePV(cas.casPV):
     def getValue(self, value):
         # get driver object
         driver = manager.driver.get(self.info.port)
-        if not driver: return cas.S_casApp_undefined
+        if not driver:
+            logging.getLogger('pcaspy.SimplePV.getValue')\
+                .warn('%s: No driver is registered for port %s', self.info.reason, self.info.port)
+            return cas.S_casApp_undefined
         # set gdd type if necessary
         if value.primitiveType() == cas.aitEnumInvalid:
             value.setPrimType(self.info.type)
         # set gdd value
         newValue = driver.read(self.info.reason)
         if newValue is None:
+            logging.getLogger('pcaspy.SimplePV.getValue')\
+                .warn('%s: Driver returns None', self.info.reason)
             return cas.S_casApp_undefined
+        logging.getLogger('pcaspy.SimplePV.getValue')\
+            .debug('%s: Read value %s', self.info.reason, newValue)
         value.put(newValue)
         # set gdd info
         dbValue = driver.getParamDB(self.info.reason)
