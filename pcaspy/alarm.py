@@ -1,8 +1,15 @@
+#
+# macro definition from alarm.h
+
 class Severity:
     NO_ALARM        = 0
     MINOR_ALARM     = 1
     MAJOR_ALARM     = 2
     INVALID_ALARM   = 3
+
+    @staticmethod
+    def nameOf(index):
+        return SeverityStrings[index]
 
 class Alarm:
     NO_ALARM        = 0
@@ -27,3 +34,41 @@ class Alarm:
     SIMM_ALARM      =19
     READ_ACCESS_ALARM =20
     WRITE_ACCESS_ALARM=21
+
+    @staticmethod
+    def nameOf(index):
+        return AlarmStrings[index]
+#
+# string representation from alarmString.h
+
+SeverityStrings = [
+    "NO_ALARM",
+    "MINOR",
+    "MAJOR",
+    "INVALID"
+]
+
+AlarmStrings = [
+    "NO_ALARM",
+    "READ",
+    "WRITE",
+    "HIHI",
+    "HIGH",
+    "LOLO",
+    "LOW",
+    "STATE",
+    "COS",
+    "COMM",
+    "TIMEOUT",
+    "HWLIMIT",
+    "CALC",
+    "SCAN",
+    "LINK",
+    "SOFT",
+    "BAD_SUB",
+    "UDF",
+    "DISABLE",
+    "SIMM",
+    "READ_ACCESS",
+    "WRITE_ACCESS"
+]
