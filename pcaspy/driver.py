@@ -105,10 +105,10 @@ class Driver(object):
                 value = value.copy()
             self.pvDB[reason].value = value
             self.pvDB[reason].flag  = True
-            self.pvDB[reason].time = cas.epicsTimeStamp()
-            alarm, severity = self._checkAlarm(reason, value)
-            if alarm is not None: self.pvDB[reason].alarm = alarm
-            if severity is not None: self.pvDB[reason].severity = severity
+        self.pvDB[reason].time = cas.epicsTimeStamp()
+        alarm, severity = self._checkAlarm(reason, value)
+        if alarm is not None: self.pvDB[reason].alarm = alarm
+        if severity is not None: self.pvDB[reason].severity = severity
 
     def setParamStatus(self, reason, alarm=None, severity=None):
         """set PV status and serverity and request update"""
