@@ -212,6 +212,7 @@ _ait_d = {'enum'   : cas.aitEnumEnum16,
           'string' : cas.aitEnumString,
           'float'  : cas.aitEnumFloat64,
           'int'    : cas.aitEnumInt32,
+          'short'  : cas.aitEnumInt16,
           'char'   : cas.aitEnumUint8,
           }
 class PVInfo(object):
