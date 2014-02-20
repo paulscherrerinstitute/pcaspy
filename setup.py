@@ -54,7 +54,7 @@ if not HOSTARCH:
     HOSTARCH = raw_input("Please define EPICS host arch: ")
 
 # common libraries to link
-libraries = ['ca', 'Com', 'gdd','cas', 'asIoc']
+libraries = ['asIoc', 'cas', 'ca', 'gdd', 'Com']
 umacros = []
 macros   = []
 cflags = []
@@ -65,10 +65,22 @@ if  UNAME.find('CYGWIN') == 0:
     UNAME = "cygwin32"
 elif UNAME == 'Windows':
     UNAME = 'WIN32'
-    libraries += ['ws2_32', 'msvcrt', 'user32', 'advapi32']
-    macros += [('_CRT_SECURE_NO_WARNINGS', 'None')]
-    cflags += ['/EHsc']
-    lflags += ['/LTCG','/NODEFAULTLIB:libcmt.lib']
+    libraries += ['ws2_32', 'user32', 'advapi32']
+    # MSVC compiler
+    if HOSTARCH in ['win32-x86', 'windows-x64']:
+        macros += [('_CRT_SECURE_NO_WARNINGS', 'None')]
+        cflags += ['/EHsc']
+        lflags += ['/LTCG']
+        if HOSTARCH[-5:] == 'debug':
+            libraries += ['msvcrtd']
+            lflags += ['/NODEFAULTLIB:libcmtd.lib']
+        else:
+            libraries += 'msvcrt'
+            lflags += ['/NODEFAULTLIB:libcmt.lib']
+    # GCC compiler
+    if HOSTARCH in ['win32-x86-mingw', 'windows-x64-mingw']:
+        macros += [('_MINGW', ''), ('EPICS_DLL_NO','')]
+        lflags += ['-static',]
     umacros+= ['_DLL']
 cas_module = Extension('pcaspy._cas',
                        sources  =[os.path.join('pcaspy','casdef.i'),
