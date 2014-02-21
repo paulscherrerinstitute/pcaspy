@@ -81,6 +81,8 @@ elif UNAME == 'Windows':
     if HOSTARCH in ['win32-x86-mingw', 'windows-x64-mingw']:
         macros += [('_MINGW', ''), ('EPICS_DLL_NO','')]
         lflags += ['-static',]
+    if HOSTARCH == 'windows-x64-mingw':
+        macros += [('MS_WIN64', '')]
     umacros+= ['_DLL']
 cas_module = Extension('pcaspy._cas',
                        sources  =[os.path.join('pcaspy','casdef.i'),
