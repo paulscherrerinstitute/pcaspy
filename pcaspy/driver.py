@@ -2,6 +2,7 @@ import cas
 import threading
 import time
 import logging
+logging.getLogger('pcaspy').addHandler(logging.NullHandler())
 
 from alarm import Severity, Alarm
 
@@ -43,6 +44,13 @@ class Data(object):
         return "Value: %s\nAlarm: %s\nSeverity: %s\nTime: %s" % (self.value, self.alarm, self.severity, self.time)
 
 class Driver(object):
+    """
+    This class reacts to PV's read/write requests. The default behavior is to accept any value of a write request
+    and return it to a read request, an echo alike.
+
+    To specify the behavior, override methods :meth:`read` and :meth:`write` in a derived class.
+
+    """
     port = 'default'
 
     __metaclass__ = DriverType
@@ -58,16 +66,8 @@ class Driver(object):
         """
         Return PV current value
 
-        Parameters
-        ----------
-        reason : str
-            PV base name
-        Return
-        ------
-            PV current value
-        Note
-        ----
-        driver reimplemente this method to PV read request
+        :param str reason: PV base name
+        :return: PV current value
 
         """
         return self.getParam(reason)
@@ -76,26 +76,25 @@ class Driver(object):
         """
         Write PV new value
 
-        Parameters
-        ----------
-        reason : str
-            PV base name
-        value :
-            PV new value
-        Return
-        ------
-            True if the new value is accepted
-            False if the new value is rejected
-        Note
-        ----
-        driver reimplemente this method to PV write request
+        :param str reason: PV base name
+        :param value: PV new value
+        :return: True if the new value is accepted, False if rejected.
 
         """
         self.setParam(reason, value)
         return True
 
     def setParam(self, reason, value):
-        """set PV value and request update"""
+        """set PV value and request update
+
+        :param str reason: PV base name
+        :param value: PV new value
+
+        Store the PV's new value if it is indeed different from the old.
+        This new value will be pushed to registered client the next time when :meth:`updatePVs` is called.
+        Alarm and severity status is updated as well.
+
+        """
         # check wether update is needed
         same = self.pvDB[reason].value == value
         if (type(same) == bool and not same) or (hasattr(same, 'all') and not same.all()):
@@ -114,7 +113,13 @@ class Driver(object):
             .debug('%s: %s %s %s', reason, value, Alarm.nameOf(alarm), Severity.nameOf(severity))
 
     def setParamStatus(self, reason, alarm=None, severity=None):
-        """set PV status and severity and request update"""
+        """set PV status and severity and request update
+
+        :param str reason: PV base name
+        :param alarm: alarm state
+        :param severity: severity state
+
+        """
         if alarm is not None:
             self.pvDB[reason].alarm = alarm
         if severity is not None:
@@ -122,20 +127,38 @@ class Driver(object):
         self.pvDB[reason].flag  = True
 
     def getParam(self, reason):
-        """retrieve PV value"""
+        """retrieve PV value
+
+        :param str reason: PV base name
+        :return: PV current value
+
+        """
         return self.pvDB[reason].value
 
     def getParamDB(self, reason):
+        """
+        Return the PV data information
+
+        :param str reason: PV base name
+        :return: PV current data information
+        :rtype: :class:`Data`
+
+        """
+
         return self.pvDB[reason]
 
     def callbackPV(self, reason):
-        """inform asynchronous write completion"""
+        """Inform asynchronous write completion
+
+        :param str reason: PV base name
+
+        """
         pv = manager.pvs[self.port][reason]
         if pv.info.asyn:
             pv.endAsyncWrite(cas.S_casApp_success)
 
     def updatePVs(self):
-        """post update event on changed values"""
+        """Post update event on changed values"""
         for reason, pv in manager.pvs[self.port].items():
             if self.pvDB[reason].flag and pv.info.scan == 0:
                 pv.updateValue(self.pvDB[reason])
@@ -391,6 +414,21 @@ class SimplePV(cas.casPV):
         return self.name
 
 class SimpleServer(cas.caServer):
+    """
+    This class encapsulates transactions performed by channel access server.
+    It stands between the channel access client and the driver object.
+    It answers the basic channel access discover requests and forwards the
+    read/write requests to driver object.
+
+    In addition calling method :meth:`createPV` to create the PV database.
+    ::
+
+        server = SimpleServer()
+        server.createPV(prefix, pvdb)
+        while True:
+            server.process(0.1)
+
+    """
     def __init__(self):
         cas.caServer.__init__(self)
 
@@ -408,21 +446,59 @@ class SimpleServer(cas.caServer):
 
     def createPV(self, prefix, pvdb):
         """
-        Create PV based on prefix and database definition
+        Create PV based on prefix and database definition pvdb
 
-        Parameters
-        ----------
-        prefix : str
-            Name prefixing the basename
-        pvdb : dict
-            PV database definition::
+        :param str prefix:          Name prefixing the *base_name* defined in *pvdb*
+        :param dict pvdb:           PV database configuration
 
-                {
-                    'PVNAME' : {
-                        'field' : value
-                    }
-                    ...
-                }
+        pvdb is a Python *dict* assuming the following format,
+        ::
+
+          pvdb = {
+            'base_name' : {
+              'field_name' : value,
+            },
+          }
+
+        The base_name is unique and will be prefixed to create PV full name.
+        This PV configuration is expressed again in a dict. The *field_name*
+        is used to configure the PV properties.
+
+        ========  =======    ===============================================
+        Field     Default    Description
+        ========  =======    ===============================================
+        type      'float'    PV data type. enum, string, char, float or int
+        count     1          Number of elements
+        enums     []         String representations of the enumerate states
+        states    []         Severity values of the enumerate states.
+                             Any of the following, Severity.NO_ALARM, Severity.MINOR_ALARM,
+                             Severity.MAJOR_ALARM, Severity.INVALID_ALARM
+        prec      0          Data precision
+        unit      ''         Physical meaning of data
+        lolim     0          Data low limit for graphics display
+        hilim     0          Data high limit for graphics display
+        low       0          Data low limit for alarm
+        high      0          Data high limit for alarm
+        lolo      0          Data low low limit for alarm
+        hihi      0          Data high high limit for alarm
+        scan      0          Scan period in second. 0 means passive
+        asyn      False      Process finishes asynchronously if True
+        asg       ''         Access security group name
+        value     0 or ''    Data initial value
+        ========  =======    ===============================================
+
+        The data type supported has been greatly reduced from C++ PCAS to match Python native types.
+        Numeric types are 'float' and 'int', corresponding to DBF_DOUBLE and DBF_LONG of EPICS IOC.
+        The display limits are defined by *lolim* abd *hilim*.
+        The alarm limits are defined by *low*, *high*, *lolo*, *hihi*.
+
+        Fixed width string, 40 characters as of EPICS 3.14, is of type 'string'.
+        Long string is supported using 'char' type and specify the *count* field large enough.
+        'enum' type defines a list of choices by *enums* field, and optional associated severity by *states*.
+
+        *asyn* if set to be True. Any channel access client write with callback option, i.e. calling `ca_put_callback`,
+        will be noticed only when `Driver.callbackPV` being called.
+
         """
         for basename, pvinfo in pvdb.items():
             pvinfo = PVInfo(pvinfo)
@@ -437,12 +513,11 @@ class SimpleServer(cas.caServer):
         """
         Load access security configuration file
 
-        Parameters
-        ----------
-        filename : str
-            Name of the access security configuration file
-        **subst : dict
-            Substitute macros
+        :param str filename:    Name of the access security configuration file
+        :param subst:           Substitute macros specified by keyword arguments
+
+        .. note::
+            This must be called before :meth:`createPV`.
 
         """
         macro = ','.join(['%s=%s'%(k,v) for k,v in subst.items()])
@@ -450,4 +525,19 @@ class SimpleServer(cas.caServer):
         cas.asCaStart()
 
     def process(self, time):
+        """
+        Process server transactions.
+
+        :param float time: Processing time in second
+
+        This method should be called so frequent so that the incoming channel access
+        requests are answered in time. Normally called in the loop::
+
+            server = SimpleServer()
+            ...
+            while True:
+                server.process(0.1)
+
+
+        """
         cas.process(time)
