@@ -290,7 +290,7 @@ To best check how it functions, launch the medm panel,::
 
 [http://pcaspy.googlecode.com/hg/example/simscope.png]
 
-Here is some aspects to notice:
+Here are some aspects to notice:
   * The value passed to ``setParam`` could be Python builtin types: str, float, int, list, tuple or numpy data types: int8/16/32, float32/64, ndarray. 
 
 Example 4: Integrate into GUI applications

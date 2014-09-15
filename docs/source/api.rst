@@ -1,34 +1,37 @@
-API
-===
+Reference
+=========
 
 .. module:: pcaspy
 
 :class:`SimpleServer`
 ---------------------
-.. class:: SimpleServer
+.. autoclass:: SimpleServer
 
-    .. method:: createPV(prefix, pvdb)
+    .. automethod:: createPV(prefix, pvdb)
 
-    .. method:: initAccessSecurityFile(asfile, macro)
+    .. automethod:: initAccessSecurityFile(asfile, macro)
 
-    .. method:: process(time)
+    .. automethod:: process(time)
 
 :class:`Driver`
 ---------------
-.. class:: Driver
+.. autoclass:: Driver
 
-    .. method:: read(reason)
+    .. automethod:: read(reason)
 
-    .. method:: write(reason, value)
+    .. automethod:: write(reason, value)
 
-    .. method:: getParam(reason)
+    .. automethod:: getParam(reason)
 
-    .. method:: setParam(reason)
+    .. automethod:: setParam(reason)
 
-    .. method:: setParamStatus(reason, alarm, severity)
+    .. automethod:: setParamStatus(reason, alarm, severity)
 
-    .. method:: callbackPV(reason)
+    .. automethod:: callbackPV(reason)
 
-    .. method:: updatePVs()
+    .. automethod:: updatePVs()
 
+
+Implementation Details
+----------------------
 
