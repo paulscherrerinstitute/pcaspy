@@ -60,7 +60,7 @@ class PV : public casPV {
                                     const char * const pHostName); 
     
     private:
-        AsyncWriteIO * pAsyncWrite;
+        volatile AsyncWriteIO * pAsyncWrite;
         /* application function table */
         static gddAppFuncTable<PV> ft;
         static int initialized;

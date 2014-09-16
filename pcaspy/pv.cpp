@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <epicsString.h>
+#include <errlog.h>
 
 #include "channel.h"
 #include "pv.h"
@@ -69,8 +70,12 @@ void PV :: startAsyncWrite( const casCtx & ctx )
 // called by server application when it finishes async write operation
 void PV :: endAsyncWrite(caStatus status)
 {
-    if (pAsyncWrite) 
-        pAsyncWrite->postIOCompletion ( status );
+    // Get copy of volatile pointer
+    AsyncWriteIO *io = (AsyncWriteIO *)pAsyncWrite;
+    if (io)
+        io->postIOCompletion ( status );
+    else
+        errlogPrintf("%s\n has invalid AsyncWriteIO pointer", this->getName());
 }
 // called by AsyncWriteIO destructor to remove pending async write
 void PV :: removeAsyncWrite()
