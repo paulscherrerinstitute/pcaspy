@@ -60,13 +60,13 @@ class PV : public casPV {
                                     const char * const pHostName); 
     
     private:
-        AsyncWriteIO * pAsyncWrite; 
+        AsyncWriteIO * pAsyncWrite;
         /* application function table */
         static gddAppFuncTable<PV> ft;
         static int initialized;
         /* access security group name and member pointer*/
-        char *asg; 
-        ASMEMBERPVT member; 
+        char *asg;
+        ASMEMBERPVT member;
 };
 
 #endif
