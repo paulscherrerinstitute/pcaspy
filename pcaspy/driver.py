@@ -49,7 +49,6 @@ class Driver(object):
     and return it to a read request, an echo alike.
 
     To specify the behavior, override methods :meth:`read` and :meth:`write` in a derived class.
-
     """
     port = 'default'
 
@@ -69,6 +68,8 @@ class Driver(object):
         :param str reason: PV base name
         :return: PV current value
 
+        This method is invoked by server library when clients issue read access to a PV.
+        By default it returns the value stored in the parameter library.
         """
         return self.getParam(reason)
 
@@ -119,6 +120,9 @@ class Driver(object):
         :param alarm: alarm state
         :param severity: severity state
 
+        Explicitly set the PVs' alarm status and severity. This is not necessary in normal cases.
+        Numeric PVs' alarm levels are configured by fields *lolo, low, high, hihi*.
+        Enumerate PVs' alarm states are configured by field *states*.
         """
         if alarm is not None:
             self.pvDB[reason].alarm = alarm
@@ -330,15 +334,26 @@ class SimplePV(cas.casPV):
             return cas.S_casApp_success
 
     def writeNotify(self, context, value):
-        success = self.writeValue(value)
+        # postpone request if one already in process
+        if self.hasAsyncWrite():
+            return cas.S_casApp_postponeAsyncIO
+
         # do asynchronous only if PV supports
-        if success and self.info.asyn:
-            # async write will finish later
+        if self.info.asyn:
+            # register async write io
             self.startAsyncWrite(context)
+            # call out driver
+            success = self.writeValue(value)
+            # if not successful, clean the async write io
+            # pass status S_cas_success instead of cas.S_casApp_canceledAsyncIO
+            # so that client wont see error message.
+            if not success:
+                self.endAsyncWrite(cas.S_cas_success)
+            # server library expects status S_casApp_asynCompletion if async write io has been initiated.
             return cas.S_casApp_asyncCompletion
-        elif self.hasAsyncWrite():
-            return  cas.S_casApp_postponeAsyncIO
         else:
+            # call out driver
+            success = self.writeValue(value)
             return cas.S_casApp_success
 
     def updateValue(self, value):
