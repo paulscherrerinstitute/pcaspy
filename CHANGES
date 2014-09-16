@@ -1,3 +1,16 @@
+0.5.0 (01-10-2014)
+    * Added 16bit short integer type.
+    * Added printout of exceptions that are raised inside Python code.
+    * Added basic logging support. To enable console logging::
+
+        logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(name)s: %(message)s')
+
+    * Changed so that timestamp is updated whenever Driver.setParam is calledc.
+      It was only updated when the values are new. The new behavior is the same as EPICS IOC.
+    * Packaging changes:
+        * Binary packages are distributed through PyPI.
+        * Document is hosted at https://pcaspy.readthedocs.org
+
 0.4.1 (23-04-2013)
     * Fixed PV initial status. By startup, it is UDF/INVALID.
     * Driver.setParam makes a copy of list/numpy.ndarray objects. This solves the racing condition, in which the value could be in the middle of updating while CA client reads the value. 
