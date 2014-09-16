@@ -75,7 +75,7 @@ void PV :: endAsyncWrite(caStatus status)
     if (io)
         io->postIOCompletion ( status );
     else
-        errlogPrintf("%s\n has invalid AsyncWriteIO pointer", this->getName());
+        errlogPrintf("%s has invalid AsyncWriteIO pointer\n", this->getName());
 }
 // called by AsyncWriteIO destructor to remove pending async write
 void PV :: removeAsyncWrite()
