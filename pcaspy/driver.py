@@ -275,6 +275,14 @@ class PVInfo(object):
         self.value = info.get('value', value)
 
 class SimplePV(cas.casPV):
+    """
+    This class represent the PV entity and its associated attributes.
+
+    It is to be created by server application on startup.
+    Its *get* methods are called when PV are accessed.
+
+    .. note:: This is considered an internal class and should not be referenced by module users.
+    """
     def __init__(self, name, info):
         cas.casPV.__init__(self)
         self.name = name
