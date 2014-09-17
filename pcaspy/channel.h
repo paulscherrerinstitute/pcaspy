@@ -13,7 +13,7 @@ class Channel : public casChannel {
                 const char * const pHostNameIn); 
         ~Channel(); 
 
-        /* server library calls these methods to determin 
+        /* server library calls these methods to determine
          * client's access rights.
          */
         bool readAccess() const;
