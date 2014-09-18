@@ -1,5 +1,9 @@
+.. _tutorials-label:
+
 Tutorial
 ========
+
+.. py:currentmodule:: pcaspy
 
 Example 1: Expose some random number(s)
 ---------------------------------------
@@ -30,15 +34,15 @@ Two classes are required,::
     import time
     from pcaspy import SimpleServer, Driver
 
-:class:`pcaspy.Driver` class is the base class that connects channel access requests with real world data source. 
+:class:`Driver` class is the base class that connects channel access requests with real world data source.
 The base class implementation simply stores the value written by user and retrieves upon request.
-All the derived class does is to call base class's `__init__` to ensure proper setup.::
+All the derived class does is to call base class's :meth:`Driver.__init__` to ensure proper setup.::
 
     class myDriver(Driver):
         def __init__(self):
             super(myDriver, self).__init__()
 
-:class:`pcaspy.SimpleServer` is the class that responds to channel access requests.
+:class:`SimpleServer` is the class that responds to channel access requests.
 We would never need to modify it. We only need to instantiate it.::
 
     if __name__ == '__main__':
@@ -89,7 +93,7 @@ We need to override `read` method in our subclass `myDriver`.::
 
 .. note::
 
-   * ``pcaspy.Driver.__init__`` must be called **before** using any ``getParam/setParam`` calls.
+   * :meth:`Driver.__init__` must be called **before** using any :meth:`Driver.getParam` :meth:`Driver.setParam` calls.
    * The ``read`` method accepts one parameter ``reason`` and it is the PV base name as defined in ``pvdb``. 
      In this function, we return a random number when ``RAND`` is being read.
 
@@ -182,7 +186,7 @@ We do the normal inheritance of ``Driver``,::
             # shell execution thread id
             self.tid = None
 
-In this driver, readout is done through the default implementation of Driver, which retrieves the value with ``getParam``.
+In this driver, readout is done through the default implementation of Driver, which retrieves the value with :meth:`Driver.getParam`.
 
 ``write`` method
 ^^^^^^^^^^^^^^^^
@@ -260,7 +264,7 @@ Add a new field *asyn* to ``COMMAND`` to indicate that this PV finishes writing 
             'asyn' : True
         },
 
-In thread `runShell`, we call `callbackPV` to notify the processing is done.::
+In thread `runShell`, we call :meth:`Driver.callbackPV` to notify the processing is done.::
 
             # run shell
             ...
@@ -288,22 +292,21 @@ To best check how it functions, launch the medm panel,::
 
     medm -x -macro P=MTEST simscope.adl
 
-[http://pcaspy.googlecode.com/hg/example/simscope.png]
+
+.. image:: _static/simscope.png
 
 Here are some aspects to notice:
   * The value passed to ``setParam`` could be Python builtin types: str, float, int, list, tuple or numpy data types: int8/16/32, float32/64, ndarray. 
 
+.. py:currentmodule:: pcaspy.tools
+
 Example 4: Integrate into GUI applications
 ------------------------------------------
-In the above examples, the server process loop is running in the main thread. GUI applications require their own event loop running in the main thread also. In such application the server process loop could run in a separate thread and yield the main thread to the GUI event loop. 
+In the above examples, the server process loop is running in the main thread.
+GUI applications require their own event loop running in the main thread also.
+In such application the server process loop could run in a separate thread and yield the main thread to the GUI event loop.
 
-`pcas.tools.ServerThread`
-^^^^^^^^^^^^^^^^^^^^^^^^^
-This is a helper class to start/stop server process thread with two methods,
-  
-  * `__init__`: take the `SimpleServer` instance as argument
-  * `start`: start process thread
-  * `stop`: stop process thread
+A helper class :class:`ServerThread` can be used to execute the server in a separate thread.
 
 The following runs the server for ~4 seconds and exits. The debug output shows the server process.::
 
@@ -317,6 +320,8 @@ The following runs the server for ~4 seconds and exits. The debug output shows t
     time.sleep(4)
     server_thread.stop()
 
+
+.. py:currentmodule:: pcaspy
 
 Qt GUI integration
 ^^^^^^^^^^^^^^^^^^
@@ -416,8 +421,8 @@ Later in the driver application, it can be accessed just like string parameter, 
 
 Create PVs using different prefix
 ---------------------------------
-Suppose one would want to create PVs with different prefix, maybe to distingush their subsystem.
-It turns out to be quite easy, call ``SimpleServer.createPV`` for each of them.::
+Suppose one would want to create PVs with different prefix, maybe to distinguish their subsystem.
+It turns out to be quite easy, call :meth:`SimpleServer.createPV` for each of them.::
 
     prefix1='MTEST-1'
     pvdb1={
@@ -431,4 +436,4 @@ It turns out to be quite easy, call ``SimpleServer.createPV`` for each of them.:
         server.createPV(prefix1, pvdb1)
         server.createPV(prefix2, pvdb2)
 
-Note however that the PV base name must not be the same, because ``Driver`` class uses PV base name as its identity.
+Note however that the PV base name must not be the same, because :class:`Driver` class uses PV base name as its identity.

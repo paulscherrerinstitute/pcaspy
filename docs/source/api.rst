@@ -1,3 +1,5 @@
+.. _reference-label:
+
 Reference
 =========
 
@@ -17,6 +19,8 @@ Reference
 ---------------
 .. autoclass:: Driver
 
+    .. automethod:: __init__()
+
     .. automethod:: read(reason)
 
     .. automethod:: write(reason, value)
@@ -34,6 +38,21 @@ Reference
 :class:`SimplePV`
 -----------------
 .. autoclass:: SimplePV
+
+.. module:: pcaspy.tools
+
+:class:`ServerThread`
+---------------------
+.. autoclass:: ServerThread
+
+    .. automethod:: __init__(server)
+
+    .. automethod:: start()
+
+    .. automethod:: stop()
+
+
+.. py:currentmodule:: pcaspy
 
 Implementation Details
 ----------------------
