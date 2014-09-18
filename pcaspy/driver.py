@@ -41,7 +41,8 @@ class Data(object):
         self.time  = cas.epicsTimeStamp()
 
     def __repr__(self):
-        return "Value: %s\nAlarm: %s\nSeverity: %s\nTime: %s" % (self.value, self.alarm, self.severity, self.time)
+        return "value=%s alarm=%s severity=%s flag=%s time=%s" % \
+               (self.value, Alarm.nameOf(self.alarm), Severity.nameOf(self.severity), self.flag, self.time)
 
 class Driver(object):
     """
@@ -63,13 +64,16 @@ class Driver(object):
 
     def read(self, reason):
         """
-        Return PV current value
+        Read PV current value
 
         :param str reason: PV base name
         :return: PV current value
 
         This method is invoked by server library when clients issue read access to a PV.
         By default it returns the value stored in the parameter library.
+
+        .. note:: This method is called by the server library main thread. Time consuming tasks
+                  should not be performed here. It is suggested to work in an auxiliary thread.
         """
         return self.getParam(reason)
 
@@ -80,6 +84,12 @@ class Driver(object):
         :param str reason: PV base name
         :param value: PV new value
         :return: True if the new value is accepted, False if rejected.
+
+        This method is invoked by server library when clients write to a PV.
+        By default it stores the value in the parameter library by calling :meth:`setParam`.
+
+        .. note:: This method is called by the server library main thread. Time consuming tasks
+                  should not be performed here. It is suggested to work in an auxiliary thread.
 
         """
         self.setParam(reason, value)
@@ -92,11 +102,27 @@ class Driver(object):
         :param value: PV new value
 
         Store the PV's new value if it is indeed different from the old.
+        For list and numpy array, a copy will be made.
         This new value will be pushed to registered client the next time when :meth:`updatePVs` is called.
-        Alarm and severity status is updated as well.
+
+        Alarm and severity status are updated as well. For numeric type, the alarm/severity is determined as the
+        following:
+
+            ========================    ============  ============
+            value                       alarm         severity
+            ========================    ============  ============
+            value < *lolo*              LOLO_ALARM    MAJOR_ALARM
+            *lolo* < value < *low*      LOW_ALARM     MINOR_ALARM
+            *low* < value < *high*      NO_ALARM      NO_ALARM
+            *high* < value < *hihi*     HIGH_ALARM    MINOR_ALARM
+            value > *hihi*              HIHI_ALARM    MAJOR_ALARM
+            ========================    ============  ============
+
+        For enumerate type, the alarm severity is defined by field *states*. And if severity is other than NO_ALARM,
+        the alarm status is STATE_ALARM.
 
         """
-        # check wether update is needed
+        # check whether update is needed
         same = self.pvDB[reason].value == value
         if (type(same) == bool and not same) or (hasattr(same, 'all') and not same.all()):
             # make a copy of mutable objects, list, numpy.ndarray
@@ -111,7 +137,7 @@ class Driver(object):
         if alarm is not None: self.pvDB[reason].alarm = alarm
         if severity is not None: self.pvDB[reason].severity = severity
         logging.getLogger('pcaspy.Driver.setParam')\
-            .debug('%s: %s %s %s', reason, value, Alarm.nameOf(alarm), Severity.nameOf(severity))
+            .debug('%s: %s', reason, self.pvDB[reason])
 
     def setParamStatus(self, reason, alarm=None, severity=None):
         """set PV status and severity and request update
@@ -120,15 +146,32 @@ class Driver(object):
         :param alarm: alarm state
         :param severity: severity state
 
-        Explicitly set the PVs' alarm status and severity. This is not necessary in normal cases.
-        Numeric PVs' alarm levels are configured by fields *lolo, low, high, hihi*.
-        Enumerate PVs' alarm states are configured by field *states*.
+        The PVs' alarm status and severity are automatically set in :meth:`setParam`.
+        If the status and severity need to be set explicitly to override the defaults, :meth:`setParamStatus` must
+        be called *after* :meth:`setParam`.
         """
         if alarm is not None:
             self.pvDB[reason].alarm = alarm
         if severity is not None:
             self.pvDB[reason].severity = severity
         self.pvDB[reason].flag  = True
+
+    def setParamEnums(self, reason, enums, states=None):
+        """ set PV enumerate strings and severity states
+
+        :param str reason: PV base name
+        :param list enums: string representation of the enumerate states
+        :param list states: alarm severity of the enumerate states
+
+        .. note:: The monitoring client will not receive this update. An explicit get is needed.
+        """
+        if states is None:
+            states = [Alarm.NO_ALARM] * len(enums)
+        if len(enums) != len(states):
+            raise ValueError('enums and states must have the same length')
+        pv = manager.pvs[self.port][reason]
+        pv.info.enums = enums
+        pv.info.states = states
 
     def getParam(self, reason):
         """retrieve PV value
@@ -520,7 +563,7 @@ class SimpleServer(cas.caServer):
         'enum' type defines a list of choices by *enums* field, and optional associated severity by *states*.
 
         *asyn* if set to be True. Any channel access client write with callback option, i.e. calling `ca_put_callback`,
-        will be noticed only when `Driver.callbackPV` being called.
+        will be noticed only when :meth:`Driver.callbackPV` being called.
 
         """
         for basename, pvinfo in pvdb.items():
