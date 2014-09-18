@@ -1,7 +1,8 @@
 0.5.0 (01-10-2014)
-    * Fixed that put callback may fail if driver invokes `callbackPV` too soon.
+    * Fixed that put callback may fail if driver invokes `callbackPV` too soon(Issue #9). Thanks to Kay Kasemir.
     * Added 16bit short integer type.
     * Added printout of exceptions that are raised inside Python code.
+    * Added method `Driver.setParamEnum` to change the states of enumerate PV (Issue #4).
     * Added basic logging support. To enable console logging::
 
         logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(name)s: %(message)s')
@@ -14,7 +15,9 @@
 
 0.4.1 (23-04-2013)
     * Fixed PV initial status. By startup, it is UDF/INVALID.
-    * Driver.setParam makes a copy of list/numpy.ndarray objects. This solves the racing condition, in which the value could be in the middle of updating while CA client reads the value. 
+    * Driver.setParam makes a copy of list/numpy.ndarray objects.
+      This solves the racing condition, in which the value could be in the middle of updating
+      while CA client reads the value. Thanks to Kay Kasemir.
 
 0.4 (14-01-2013)
     * Change from GPL to New BSD License for broader audience.
