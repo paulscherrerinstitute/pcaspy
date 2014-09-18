@@ -55,6 +55,9 @@ class Driver(object):
 
     __metaclass__ = DriverType
     def __init__(self):
+        """
+        Initialize parameters database. This method must be called by subclasses in the first place.
+        """
         self.pvDB    = {}
         # init pvData with pv instance
         for reason, pv in manager.pvs[self.port].items():
