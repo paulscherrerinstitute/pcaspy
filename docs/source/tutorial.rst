@@ -141,6 +141,16 @@ We modify the ``read`` method to return a list of 10 random numbers,::
 
 The final source code is at [http://code.google.com/p/pcaspy/source/browse/example/get_random.py]
 
+Remark
+~~~~~~
+The first demo shows the basics of how to configure PV attributes and respond to read access.
+One thing to emphasise is that :meth:`Driver.read` is called each time a ca_get request comes in.
+In a realistic application, the PV values are normally polled, in a periodical or triggered way,
+from external sources. As so the PV values will be stored in a parameter cache (:meth:`Driver.setParam`) at the point of being fetched.
+The derived driver does not need to override :meth:`Driver.read`.
+The values are simply fetched from the parameter cache (:meth:`Driver.getParam`).
+This principle is followed by all the following examples.
+
 Example 2: Interface to any shell command
 -----------------------------------------
 The full source code is at [http://code.google.com/p/pcaspy/source/browse/example/pysh.py]
@@ -178,7 +188,7 @@ We do the normal inheritance of ``Driver``,::
     import subprocess
     import shlex
 
-    from pcas import Driver, SimpleServer
+    from pcaspy import Driver, SimpleServer
 
     class myDriver(Driver):
         def __init__(self, server):
@@ -187,6 +197,7 @@ We do the normal inheritance of ``Driver``,::
             self.tid = None
 
 In this driver, readout is done through the default implementation of Driver, which retrieves the value with :meth:`Driver.getParam`.
+So we will not override :meth:`Driver.read`.
 
 ``write`` method
 ^^^^^^^^^^^^^^^^
@@ -212,14 +223,18 @@ If there is no command running, we spawn a new thread to run the command in ``ru
 .. note::
   * Portable channel access server is single threaded so we should avoid blocking the ``write`` method by any means. 
     In this case we run the command in a new thread.
-  * We have limited the running command to one. Until the running thread finishes, ``status = False`` is returned for further requests and the client may see a put failure.
-  * We assign ``status = False`` to refuse change requests of ``OUTPUT``, ``ERROR`` and ``STATUS``. This makes them effectively read-only.
+  * We have limited the running command to one. Until the running thread finishes, ``status = False`` is returned
+    to refuse further requests and the client may see a put failure.
+  * We assign ``status = False`` to refuse change requests of ``OUTPUT``, ``ERROR`` and ``STATUS``.
+    This makes them effectively read-only.
 
 Execution thread
 ^^^^^^^^^^^^^^^^
-In our command execution thread, we run the command with ``subprocess`` module. The subprocess's *stdout* and *stderr* outputs are redirected to channel ``MTEST:OUTPUT`` and ``MTEST:ERROR``. Upon exception ``MTEST:ERROR`` has the exception message.
+In our command execution thread, we run the command with :mod:`subprocess` module.
+The subprocess's *stdout* and *stderr* outputs are redirected to channel ``MTEST:OUTPUT`` and ``MTEST:ERROR``.
+Upon exception ``MTEST:ERROR`` has the exception message.
 
-Before and after command execution we update ``MTEST:STATUS`` channel. We call ``updatePVs`` to inform clients about PV value change.::
+Before and after command execution we update ``MTEST:STATUS`` channel. We call :meth:`Driver.updatePVs` to inform clients about PV value change.::
 
         def runShell(self, command):
             # set status BUSY
@@ -254,7 +269,7 @@ Now we can run some commands to see the output,::
 
 Make it asynchronous
 ^^^^^^^^^^^^^^^^^^^^
-As we have noted, the command normally would take some time to finish running. In addiction to yield ``MTEST:STATUS`` to indicate completion.
+As we have noted, the command normally would take undetermined time to finish running. In addiction to yield ``MTEST:STATUS`` to indicate completion.
 We could make ``MTEST:COMMAND`` asynchronous, and notify upon completion if client has called *ca_array_put_callback*.
 
 Add a new field *asyn* to ``COMMAND`` to indicate that this PV finishes writing asynchronously,::
@@ -399,24 +414,57 @@ Test
         Element count:    1
 
 
+
+.. py:currentmodule:: pcaspy
+
 Other Tips
 ==========
 Hold string having more than 40 characters
 ------------------------------------------
-``string`` type is limited to 40 characters (at least in EPICS 3.14). To overcome this limit, use ``char`` type.::
+``string`` type is limited to 40 characters (at least in EPICS 3.14). To overcome this limit, use ``char`` type::
 
-    pvdb = {
         'STATUS' : {
             'type': 'char',
             'count' : 300,
             'value' : 'some initial message. but it can become very long.'
         }
-    }
 
 Later in the driver application, it can be accessed just like string parameter, e.g.::
 
     self.setParam('STATUS', 'an error is happened')
     print self.getParam('STATUS')
+
+
+Alarm status and severity
+-------------------------
+* For numerical type, the fields *lolo*, *low*, *high*, *hihi* determine the alarm status and severity::
+
+        'VOLTAGE' : {
+            'hihi' : 10,
+            'high' :  5,
+            'low'  : -5,
+            'lolo' :-10
+        }
+
+* For enumerate type, the fields *states* determine the alarm status::
+
+        'STATUS' : {
+            'type' : 'enum',
+            'enums':  ['OK', 'ERROR'],
+            'states': [Severity.NO_ALARM, Severity.MAJOR_ALARM]
+        }
+
+* For string type, the alarm status and severity can be changed by :meth:`Driver.setParamStatus`.
+
+Check out the reference :meth:`Driver.setParam` and :meth:`Driver.setParamStatus`,
+and `alarm severity example <http://code.google.com/p/pcaspy/source/browse/example/alarm_severity.py>`_.
+
+
+Dynamic enumerate states
+------------------------
+For enumerate type, the choices are specified by field *enums* at startup. If in case the choices should be changed
+at runtime, :meth:`Driver.setParamEnums` can be used. Check out the
+`dynamic enums example <http://code.google.com/p/pcaspy/source/browse/example/dynamic_enums.py>`_.
 
 
 Create PVs using different prefix
