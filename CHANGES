@@ -11,7 +11,7 @@
       It was only updated when the values are new. The new behavior is the same as EPICS IOC.
     * Packaging changes:
         * Binary packages are distributed through PyPI.
-        * Document is hosted at https://pythonhosted.org/pcaspy
+        * Document is hosted at https://pcaspy.readthedocs.org
 
 0.4.1 (23-04-2013)
     * Fixed PV initial status. By startup, it is UDF/INVALID.
