@@ -75,7 +75,7 @@ elif UNAME == 'Windows':
             libraries += ['msvcrtd']
             lflags += ['/NODEFAULTLIB:libcmtd.lib']
         else:
-            libraries += 'msvcrt'
+            libraries += ['msvcrt']
             lflags += ['/NODEFAULTLIB:libcmt.lib']
     # GCC compiler
     if HOSTARCH in ['win32-x86-mingw', 'windows-x64-mingw']:
