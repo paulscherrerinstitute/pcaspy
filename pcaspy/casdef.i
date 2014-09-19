@@ -26,6 +26,18 @@
 %include "errMdef.i"
 %include "gdd.i"
 
+%include "cstring.i"
+
+%defaultdtor caNetAddr;
+class caNetAddr {
+public:
+    caNetAddr();
+    caNetAddr operator = ( const caNetAddr & naIn );
+
+    %cstring_output_maxsize(char *pString, unsigned stringLength)
+    void stringConvert (char *pString, unsigned stringLength) const;
+};
+
 typedef aitUint32 caStatus;
 /* pvExistReturn */
 enum pvExistReturnEnum { pverExistsHere, pverDoesNotExistHere, pverAsyncCompletion };
