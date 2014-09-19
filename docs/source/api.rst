@@ -31,6 +31,8 @@ Reference
 
     .. automethod:: setParamStatus(reason, alarm, severity)
 
+    .. automethod:: setParamEnums(reason, enums, states=None)
+
     .. automethod:: callbackPV(reason)
 
     .. automethod:: updatePVs()
