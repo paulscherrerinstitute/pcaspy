@@ -23,6 +23,10 @@ from mock import Mock as MagickMock
 class Mock(MagickMock):
     def __call__(self, *args, **kwargs):
         return Mock()
+    class caServer(object):
+        pass
+    class casPV(object):
+        pass
     @classmethod
     def __getattr__(cls, name):
         if name in ('__file__', '__path__'):
@@ -33,7 +37,7 @@ class Mock(MagickMock):
             return mockType
         else:
             return Mock()
-MOCK_MODULES = ['_cas','cas']
+MOCK_MODULES = ['cas']
 sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
 
 # -- General configuration -----------------------------------------------------
