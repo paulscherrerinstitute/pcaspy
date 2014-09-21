@@ -5,25 +5,31 @@ Installation
 
 Binary Installers
 -----------------
-PCASpy has binary installers that has EPICS 3.14.12 libraries statically builtin for Windows and OS X.
-Refer to the project `download page <https://code.google.com/p/pcaspy/downloads/list>`_ for installers.
+The binary packages are distributed at PyPI in *wheel* format. 
+They have EPICS 3.14.12.4 libraries statically builtin.
 
-We also provide *wheel* packages. Make sure you have ``pip`` and ``wheel`` package installed, and run::
+Make sure you have `pip <https://pypi.python.org/pypi/pip>`_ and 
+`wheel <https://pypi.python.org/pypi/wheel>`_  installed, and run::
 
-    # (OS X)
-    $ [sudo] pip install pcaspy
-    # (Windows)
+    # OS X
+    $ sudo pip install pcaspy
+    # Windows
     > C:\Python27\Scripts\pip.exe install pcaspy
 
-If we do not have a *wheel* for your system. then pip will try to build from source. And then you would need
-to have EPICS base installed, see :ref:`getting-epics`.
+If we do not have a *wheel* for your system, then pip will try to 
+build from source. And then you would need EPICS base installed, 
+see :ref:`getting-epics`.
 
 Source
 ------
-You can get the current source tarball from project download page,
+The source can be downloaded in various ways:
 
-The mercurial repository is at https://code.google.com/p/pcaspy/. You can download the current development
-version as a zip package, or clone the repository::
+  * The released source tarballs can be found at `PyPI <https://pypi.python.org/pypi/pcaspy>`_.
+
+  * From the `mercurial repository <https://code.google.com/p/pcaspy/source/browse/>`_, 
+    the source can be downloaded as a zip package. 
+
+  * Clone the repository if you feel adventurous::
 
     $ hg clone https://code.google.com/p/pcaspy/
 
@@ -34,8 +40,7 @@ Build
 
 Getting EPICS
 ~~~~~~~~~~~~~
-In general please follow `the official installation instruction <http://www.aps.anl.gov/epics/base/R3-14/12-docs/README.html>`_.
-Here is a short guide,
+In general please follow `the official installation instruction <http://www.aps.anl.gov/epics/base/R3-14/12-docs/README.html>`_. Here is a short guide,
 
 - Get the source tarball from http://www.aps.anl.gov/epics/base/R3-14/12.php.
 - Unpack it to a proper path.
@@ -60,27 +65,27 @@ Here is a short guide,
     |         | Intel | darwin-x86      |
     +---------+-------+-----------------+
 
-- It is suggested to build EPICS libraries statically on Windows. Change these two lines in ``EPICS_BASE/configure/CONFIG_SITE``::
+- On Windows it is suggested to build EPICS libraries statically, by changing these two lines in ``EPICS_BASE/configure/CONFIG_SITE``::
 
     SHARED_LIBRARIES=NO
     STATIC_BUILD=YES
 
 - Run ``make``.
 
-Note: On windows, one has to use the same version of Visual Studio as the one used to build Python.
+.. note:: On windows, one has to use the same version of Visual Studio as the one used to build Python.
 
-+------------------+-----------------------+
-| Python Version   | Visual Studio Version |
-+==================+=======================+
-| 2.4 - 2.5        |  2003                 |
-+------------------+-----------------------+
-| 2.6 - 2.7,       |                       |
-| 3.0 - 3.2        |  2008                 |
-+------------------+-----------------------+
-| 3.3 - 3.4        |  2010                 |
-+------------------+-----------------------+
+          +------------------+-----------------------+
+          | Python Version   | Visual Studio Version |
+          +==================+=======================+
+          | 2.4 - 2.5        |  2003                 |
+          +------------------+-----------------------+
+          | 2.6 - 2.7,       |                       |
+          | 3.0 - 3.2        |  2008                 |
+          +------------------+-----------------------+
+          | 3.3 - 3.4        |  2010                 |
+          +------------------+-----------------------+
 
-Mismatching may cause crashes!
+          Mismatching may cause crashes!
 
 Windows
 ~~~~~~~
@@ -93,14 +98,24 @@ Download the most recent source tarball, uncompress and run::
     > C:\Python27\python.exe setup.py build install
 
 
-Linux / OS X
-~~~~~~~~~~~~~~
+Linux
+~~~~~
 - Python 2.4+ including 3.x
 - Python headers (package name "python-dev" or similar)
-- SWIG 1.3.29+
+- SWIG 1.3.29+ (package name "swig")
 
-Download the most recent source tarball, uncompress and run::
+In the source directory, run::
 
-    $ python setup.py build
-    $ [sudo] python setup.py install
+    $ sudo python setup.py install
 
+or install only for the current user::
+
+    $ python setup.py build install --user
+
+OS X
+~~~~
+- SWIG (MacPorts package "swig-python")
+
+In the source directory, run::
+
+    $ sudo python setup.py install
