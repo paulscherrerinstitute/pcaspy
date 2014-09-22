@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <epicsString.h>
-#include <errlog.h>
 
 #include "channel.h"
 #include "pv.h"
@@ -74,8 +73,6 @@ void PV :: endAsyncWrite(caStatus status)
     AsyncWriteIO *io = (AsyncWriteIO *)pAsyncWrite;
     if (io)
         io->postIOCompletion ( status );
-    else
-        errlogPrintf("%s has invalid AsyncWriteIO pointer\n", this->getName());
 }
 // called by AsyncWriteIO destructor to remove pending async write
 void PV :: removeAsyncWrite()
