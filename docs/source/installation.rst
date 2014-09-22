@@ -72,7 +72,7 @@ In general please follow `the official installation instruction <http://www.aps.
 
 - Run ``make``.
 
-.. note:: On windows, one has to use the same version of Visual Studio as the one used to build Python.
+.. note:: On windows, the Visual Studio version has to match that used to build Python.
 
           +------------------+-----------------------+
           | Python Version   | Visual Studio Version |
