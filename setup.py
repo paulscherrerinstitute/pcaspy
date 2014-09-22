@@ -104,7 +104,7 @@ if UNAME != 'WIN32':
 long_description = open('README').read()
 _version = imp.load_source('_version','pcaspy/_version.py')
 
-setup (name = 'pcaspy',
+dist = setup (name = 'pcaspy',
        version = _version.__version__,
        description = """Portable Channel Access Server in Python""",
        long_description = long_description,
@@ -125,3 +125,8 @@ setup (name = 'pcaspy',
                       'Programming Language :: Python :: 3',
                       ],
        )
+
+# Re-run the build_py to ensure that swig generated py files are also copied
+build_py = build_py(dist)
+build_py.ensure_finalized()
+build_py.run()
