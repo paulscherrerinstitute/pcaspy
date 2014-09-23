@@ -1,23 +1,26 @@
+
+.. py:currentmodule:: pcaspy
+
 0.5.0 (01-10-2014)
 ------------------
-    * Fixed that put callback may fail if driver invokes `callbackPV` too soon(Issue #9). Thanks to Kay Kasemir.
+    * Fixed that put callback may fail if driver invokes :meth:`Driver.callbackPV` too soon(Issue #9). Thanks to Kay Kasemir.
     * Added 16bit short integer type.
     * Added printout of exceptions that are raised inside Python code.
-    * Added method `Driver.setParamEnum` to change the states of enumerate PV (Issue #4).
+    * Added :meth:`Driver.setParamEnums` to change the states of enumerate PV at runtime (Issue #4).
     * Added basic logging support. To enable console logging::
 
         logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(name)s: %(message)s')
 
-    * Changed so that timestamp is updated whenever Driver.setParam is called.
+    * Changed so that timestamp is updated whenever :meth:`Driver.setParam` is called.
       It was only updated when the values are new. The new behavior is the same as EPICS IOC.
     * Packaging changes:
-        * Binary packages are distributed through PyPI.
-        * Document is hosted at https://pcaspy.readthedocs.org
+        * Binary packages are distributed through `PyPI <https://pypi.python.org/pypi/pcaspy>`_.
+        * Document is hosted at `Read the Docs <https://pcaspy.readthedocs.org>`_.
 
 0.4.1 (23-04-2013)
 ------------------
     * Fixed PV initial status. By startup, it is UDF/INVALID.
-    * Driver.setParam makes a copy of list/numpy.ndarray objects.
+    * :meth:`Driver.setParam` makes a copy of list/numpy.ndarray objects.
       This solves the racing condition, in which the value could be in the middle of updating
       while CA client reads the value. Thanks to Kay Kasemir.
 
@@ -26,25 +29,25 @@
     * Change from GPL to New BSD License for broader audience.
     * Added __version__ info
     * Added access security control
-        access security control file can be loaded using SimpleServer.initAccessSecurityFile(filename, **subst). 
-        The loaded rules can then be assigned to PV's "asg" field.
-        example/access_control.py provides an example and better exaplained in UserDocuments
+        access security control file can be loaded using :meth:`SimpleServer.initAccessSecurityFile`.
+        The loaded rules can then be assigned to PV's *asg* field.
+        `example/access_control.py` provides an example and better explained in UserDocuments
         https://code.google.com/p/pcaspy/wiki/UserDocuments#Example_5:_Access_Security_Control
 
     * Added new type char. 
         It is used to represent a long string (>40 chars). And it behaves just like string parameters in driver.
-        example/pysh.py provides a concrete example, in PV "COMMAND" and "OUTPUT".
+        example/pysh.py provides a concrete example, in PV `COMMAND` and `OUTPUT`.
 
     * Added timestamp info. 
         The timestamp is set at each setParam call with new value different to current value.
     
     * Added alarm/severity info.
-        For "enum" type PV, the severity is configued by its "state" field.
+        For *enum* type PV, the severity is configured by its *states* field.
         It is a list of severity states, which can be NO_ALARM, MINOR_ALARM, MAJOR_ALARM, INVALID_ALARM.
         If current state's severity is other than NO_ALARM, alarm is STATE_ALARM.
-        For "int" or "float" type PV, the alarm state is configured by its "low","high","lolo","hihi" fields,
+        For *int* or *float* type PV, the alarm state is configured by its *low*,*high*,*lolo*,*hihi* fields,
         in analogue to EPICS database.
-        example/alarm_severity provides an example.
+        `example/alarm_severity` provides an example.
 
 0.3 (21-09-2011)
 ----------------
