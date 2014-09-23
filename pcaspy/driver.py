@@ -107,6 +107,7 @@ class Driver(object):
         Store the PV's new value if it is indeed different from the old.
         For list and numpy array, a copy will be made.
         This new value will be pushed to registered client the next time when :meth:`updatePVs` is called.
+        The timestamp will be updated to the current time anyway.
 
         Alarm and severity status are updated as well. For numeric type, the alarm/severity is determined as the
         following:
