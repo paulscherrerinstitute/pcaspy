@@ -164,8 +164,10 @@ class Driver(object):
 
         :param str reason: PV base name
         :param list enums: string representation of the enumerate states
-        :param list states: alarm severity of the enumerate states. The number of element must match that of *enums*.
-                            If *None* is given, the list is populated with *Severity.NO_ALARM*.
+        :param list states: alarm severity of the enumerate states.
+
+        The number of elements in *states* must match that of *enums*.
+        If *None* is given, the list is populated with *Severity.NO_ALARM*.
 
         .. note:: The monitoring client will not receive this update. An explicit get is needed.
         """
