@@ -18,7 +18,7 @@ Suppose we want to have one PV returning a random number, we define it like this
         },
     }
 
-``pvdb`` is a plain Python dict, in which keys are PV base names and values are their configurations, a dict also.
+``pvdb`` is a plain Python :class:`dict`, in which keys are PV base names and values are their configurations, a dict also.
 In this case we specify that the PV has base name ``RAND`` and 3 digits precision. 
 ``prefix`` will be the prefixed to the PV base names and create the PV ``MTEST:RAND``. 
 
@@ -26,12 +26,11 @@ Refer to :ref:`database-field-definition` about full description of database def
 
 Dummy server
 ^^^^^^^^^^^^
-The source is at [http://code.google.com/p/pcaspy/source/browse/example/dummy.py]. 
+Here is the source code `dummy.py <http://code.google.com/p/pcaspy/source/browse/example/dummy.py>`_.
 
 Our first attempt is to implement a server so it blindly accepts any value written and gives it back upon request.
 Two classes are required,::
 
-    import time
     from pcaspy import SimpleServer, Driver
 
 :class:`Driver` class is the base class that connects channel access requests with real world data source.
@@ -110,8 +109,7 @@ Until now this PV updates only when clients read. It can also update itself peri
 
 Now the PV will update every second. Monitor the change,::
 
-    [bash SLSBASE=/work]$ camonitor MTEST:RAND
-    MTEST:RAND                     <undefined> 0.177182
+    $ camonitor MTEST:RAND
     MTEST:RAND                     2011-07-19 12:32:06.574775 0.646198
     MTEST:RAND                     2011-07-19 12:32:07.574704 0.872313
     MTEST:RAND                     2011-07-19 12:32:08.581681 0.171537
@@ -139,11 +137,11 @@ We modify the ``read`` method to return a list of 10 random numbers,::
             return [random.random() for i in range(10)]
         ...
 
-The final source code is at [http://code.google.com/p/pcaspy/source/browse/example/get_random.py]
+Here is the final source code `get_random.py <http://code.google.com/p/pcaspy/source/browse/example/get_random.py>`_
 
 Remark
 ~~~~~~
-The first demo shows the basics of how to configure PV attributes and respond to read access.
+This first demo shows the basics of how to configure PV attributes and respond to read access.
 One thing to emphasise is that :meth:`Driver.read` is called each time a ca_get request comes in.
 In a realistic application, the PV values are normally polled, in a periodical or triggered way,
 from external sources. As so the PV values will be stored in a parameter cache (:meth:`Driver.setParam`) at the point of being fetched.
@@ -153,7 +151,7 @@ This principle is followed by all the following examples.
 
 Example 2: Interface to any shell command
 -----------------------------------------
-The full source code is at [http://code.google.com/p/pcaspy/source/browse/example/pysh.py]
+Here is the full source code `pysh.py <http://code.google.com/p/pcaspy/source/browse/example/pysh.py>`_
 
 Define PV database
 ^^^^^^^^^^^^^^^^^^
@@ -297,12 +295,15 @@ Now run it again and notice the delay,::
 Example 3: A Simulated Oscilloscope
 -----------------------------------
 Until now the driver principles have all been introduced by these two trivial examples. 
-I cannot find more realistic examples, so I port this [http://www.aps.anl.gov/epics/modules/soft/asyn/R4-12/asynPortDriver.html asynPortDriver example]. 
+I cannot find more realistic examples, so I port this
+`asynPortDriver example <http://www.aps.anl.gov/epics/modules/soft/asyn/R4-12/asynPortDriver.html>`_.
 Its intention is stated clearly by Mark Rivers,
 
-  This example is a simple digital oscilloscope emulator. In this example all of output control and input data is done in a calculated simulation. But it is easy to see how to use the driver as a basis for real device control. The code doing the simulation would simply be changed to talk to an actual device.
+  This example is a simple digital oscilloscope emulator. In this example all of output control and input data
+  is done in a calculated simulation. But it is easy to see how to use the driver as a basis for real device control.
+  The code doing the simulation would simply be changed to talk to an actual device.
 
-The final source code is at [http://code.google.com/p/pcaspy/source/browse/example/simscope.py]
+The python version in PCASpy is `simscope.py <http://code.google.com/p/pcaspy/source/browse/example/simscope.py>`_.
 To best check how it functions, launch the medm panel,::
 
     medm -x -macro P=MTEST simscope.adl
@@ -310,7 +311,7 @@ To best check how it functions, launch the medm panel,::
 
 .. image:: _static/simscope.png
 
-Here are some aspects to notice:
+.. note::
   * The value passed to ``setParam`` could be Python builtin types: str, float, int, list, tuple or numpy data types: int8/16/32, float32/64, ndarray. 
 
 .. py:currentmodule:: pcaspy.tools
@@ -340,7 +341,7 @@ The following runs the server for ~4 seconds and exits. The debug output shows t
 
 Qt GUI integration
 ^^^^^^^^^^^^^^^^^^
-[http://code.google.com/p/pcaspy/source/browse/example/qtgui.py] shows how to combine it with Qt GUI event loop.
+`qtqui.py <http://code.google.com/p/pcaspy/source/browse/example/qtgui.py>`_ shows how to combine it with Qt GUI event loop.
 
 Example 5: Access Security Control
 ----------------------------------
@@ -363,7 +364,8 @@ We want to refuse user's filling request when level is above 5.::
     }
 
 It defines a rule *fill*, which grants read access but limits write access to ``$(P)LEVEL`` below 5.
-Refer to `EPICS Application Developer's Guide <http://www.aps.anl.gov/epics/base/R3-14/12-docs/AppDevGuide/node9.html>` about details.
+Refer to `EPICS Application Developer's Guide <http://www.aps.anl.gov/epics/base/R3-14/12-docs/AppDevGuide/node9.html>`_
+about details.
 
 Use security rules
 ^^^^^^^^^^^^^^^^^^
