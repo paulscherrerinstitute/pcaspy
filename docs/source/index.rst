@@ -20,6 +20,7 @@ Contents
     installation.rst
     tutorial.rst
     api.rst
+    development.rst
     news.rst
 
 Indices and tables
