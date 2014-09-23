@@ -3,7 +3,6 @@ import time
 import sys
 import threading
 import subprocess
-import tempfile
 import shlex
 
 from pcaspy import Driver, SimpleServer

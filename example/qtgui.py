@@ -1,6 +1,5 @@
 import sys
 from PyQt4 import QtGui, QtCore
-import threading
 
 from pcaspy import SimpleServer, Driver
 from pcaspy.tools import ServerThread

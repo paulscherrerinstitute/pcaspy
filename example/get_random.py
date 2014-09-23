@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 from pcaspy import SimpleServer, Driver
-import time
 import random
 
 prefix = 'MTEST:'
