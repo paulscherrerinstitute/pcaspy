@@ -149,6 +149,8 @@ The derived driver does not need to override :meth:`Driver.read`.
 The values are simply fetched from the parameter cache (:meth:`Driver.getParam`).
 This principle is followed by all the following examples.
 
+.. _shell-command-example:
+
 Example 2: Interface to any shell command
 -----------------------------------------
 Here is the full source code `pysh.py <http://code.google.com/p/pcaspy/source/browse/example/pysh.py>`_
@@ -291,6 +293,8 @@ Now run it again and notice the delay,::
     Old : MTEST:COMMAND                  whoami
     New : MTEST:COMMAND                  sleep 5
 
+
+.. _simscope-example:
 
 Example 3: A Simulated Oscilloscope
 -----------------------------------
