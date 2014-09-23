@@ -534,28 +534,31 @@ class SimpleServer(cas.caServer):
         This PV configuration is expressed again in a dict. The *field_name*
         is used to configure the PV properties.
 
-        ========  =======    ===============================================
-        Field     Default    Description
-        ========  =======    ===============================================
-        type      'float'    PV data type. enum, string, char, float or int
-        count     1          Number of elements
-        enums     []         String representations of the enumerate states
-        states    []         Severity values of the enumerate states.
-                             Any of the following, Severity.NO_ALARM, Severity.MINOR_ALARM,
-                             Severity.MAJOR_ALARM, Severity.INVALID_ALARM
-        prec      0          Data precision
-        unit      ''         Physical meaning of data
-        lolim     0          Data low limit for graphics display
-        hilim     0          Data high limit for graphics display
-        low       0          Data low limit for alarm
-        high      0          Data high limit for alarm
-        lolo      0          Data low low limit for alarm
-        hihi      0          Data high high limit for alarm
-        scan      0          Scan period in second. 0 means passive
-        asyn      False      Process finishes asynchronously if True
-        asg       ''         Access security group name
-        value     0 or ''    Data initial value
-        ========  =======    ===============================================
+        .. _database-field-definition:
+        .. table:: Database Field Definition
+
+          ========  =======    ===============================================
+          Field     Default    Description
+          ========  =======    ===============================================
+          type      'float'    PV data type. enum, string, char, float or int
+          count     1          Number of elements
+          enums     []         String representations of the enumerate states
+          states    []         Severity values of the enumerate states.
+                               Any of the following, Severity.NO_ALARM, Severity.MINOR_ALARM,
+                               Severity.MAJOR_ALARM, Severity.INVALID_ALARM
+          prec      0          Data precision
+          unit      ''         Physical meaning of data
+          lolim     0          Data low limit for graphics display
+          hilim     0          Data high limit for graphics display
+          low       0          Data low limit for alarm
+          high      0          Data high limit for alarm
+          lolo      0          Data low low limit for alarm
+          hihi      0          Data high high limit for alarm
+          scan      0          Scan period in second. 0 means passive
+          asyn      False      Process finishes asynchronously if True
+          asg       ''         Access security group name
+          value     0 or ''    Data initial value
+          ========  =======    ===============================================
 
         The data type supported has been greatly reduced from C++ PCAS to match Python native types.
         Numeric types are 'float' and 'int', corresponding to DBF_DOUBLE and DBF_LONG of EPICS IOC.
