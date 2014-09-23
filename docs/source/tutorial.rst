@@ -22,7 +22,7 @@ Suppose we want to have one PV returning a random number, we define it like this
 In this case we specify that the PV has base name ``RAND`` and 3 digits precision. 
 ``prefix`` will be the prefixed to the PV base names and create the PV ``MTEST:RAND``. 
 
-Refer to :meth:`SimpleServer.createPV` about full description of database definition.
+Refer to :ref:`database-field-definition` about full description of database definition.
 
 Dummy server
 ^^^^^^^^^^^^
