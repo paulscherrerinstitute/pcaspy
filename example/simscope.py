@@ -64,7 +64,7 @@ class myDriver(Driver):
                 self.eid.wait()
             run = self.getParam('Run')
             if not run: continue
-            # retieve parameters
+            # retrieve parameters
             noiseAmplitude    = self.getParam('NoiseAmplitude')
             timePerDivision   = self.getParam('TimePerDivision')
             voltsPerDivision  = self.getParam('VoltsPerDivision')
