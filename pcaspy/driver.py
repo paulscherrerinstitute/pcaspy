@@ -73,7 +73,10 @@ class Driver(object):
         :return: PV current value
 
         This method is invoked by server library when clients issue read access to a PV.
-        By default it returns the value stored in the parameter library.
+        By default it returns the value stored in the parameter library by calling :meth:`getParam`.
+
+        The derived class might leave this method untouched and update the PV values from
+        a separate polling thread. See :ref:`shell-command-example`, :ref:`simscope-example`.
 
         .. note:: This method is called by the server library main thread. Time consuming tasks
                   should not be performed here. It is suggested to work in an auxiliary thread.
