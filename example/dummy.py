@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 from pcaspy import Driver, SimpleServer
-import time
 
 prefix = 'MTEST:'
 pvdb = {
