@@ -43,15 +43,12 @@ if not EPICSBASE:
     EPICSROOT = os.environ.get("EPICS")
     if EPICSROOT:
         EPICSBASE = os.path.join(EPICSROOT, 'base')
-if not EPICSBASE:
-    while True:
-        EPICSBASE = raw_input("Please define EPICS base path: ")
-        if os.path.exists(EPICSBASE):
-            break
+if not EPICSBASE or os.path.exists(EPICSBASE):
+    raise IOError("Please define EPICS_BASE environment variable")
 
 HOSTARCH  = os.environ.get("EPICS_HOST_ARCH")
 if not HOSTARCH:
-    HOSTARCH = raw_input("Please define EPICS host arch: ")
+    raise IOError("Please define EPICS_HOST_ARCH environment variable")
 
 # common libraries to link
 libraries = ['asIoc', 'cas', 'ca', 'gdd', 'Com']
