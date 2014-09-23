@@ -332,7 +332,7 @@ class SimplePV(cas.casPV):
     This class represent the PV entity and its associated attributes.
 
     It is to be created by server application on startup.
-    Its *get* methods are called when PV are accessed.
+    It derives from :cpp:class:`PV` and implements the virtual methods.
 
     .. note:: This is considered an internal class and should not be referenced by module users.
     """
@@ -496,7 +496,8 @@ class SimpleServer(cas.caServer):
     It answers the basic channel access discover requests and forwards the
     read/write requests to driver object.
 
-    In addition calling method :meth:`createPV` to create the PV database.
+    It derives from :cpp:class:`caServer`. In addition to implement the virtual methods,
+    it adds method :meth:`createPV` to create the PVs and :meth:`process` to process server requests.
     ::
 
         server = SimpleServer()
