@@ -12,23 +12,18 @@ to the CA requests, when it implements the following interfaces.
 caServer
 --------
 
-.. cpp:type:: enum pvExistReturnEnum
-
-   * pverExistsHere
-   * pverDoesNotExistHere
-   * pverAsyncCompletion
-
 .. cpp:class:: caServer
 
 
 The virtual methods are,
 
-    .. cpp:function:: pvExistReturn caServer::pvExistTest(const casCtx & ctx, const caNetAddr & clientAddress, const char * pPVAliasName)
+    .. cpp:function:: pvExistReturn pvExistTest(const casCtx & ctx, const caNetAddr & clientAddress, const char * pPVAliasName)
 
        This function is called by the server library when it needs to determine if a named PV exists (or could be created)
-       in the server application. This method should return pverExistsHere if server has this PV or pverDoesNotExistHere otherwise.
+       in the server application.
+       This method should return *pverExistsHere* if server has this PV or *pverDoesNotExistHere* otherwise.
 
-    .. cpp:function:: pvAttachReturn caServer::pvAttach ( const casCtx &ctx, const char *pPVAliasName )
+    .. cpp:function:: pvAttachReturn pvAttach ( const casCtx &ctx, const char *pPVAliasName )
 
        This function is called **every** time that a client attaches to the PV. It should return a :cpp:class:`PV` pointer
        on success, S_casApp_pvNotFound if this PV does not exist here.
@@ -117,7 +112,7 @@ Helper methods
 ~~~~~~~~~~~~~~
     .. cpp:function:: caStatus postEvent(const gdd & event)
 
-      Server application calls this function to post a PV event.
+      Server application calls this function to post a PV *DBE_VALUE | DBE_LOG* event.
 
     .. cpp:function:: void startAsyncWrite()
 
