@@ -43,7 +43,7 @@ if not EPICSBASE:
     EPICSROOT = os.environ.get("EPICS")
     if EPICSROOT:
         EPICSBASE = os.path.join(EPICSROOT, 'base')
-if not EPICSBASE or os.path.exists(EPICSBASE):
+if not EPICSBASE or not os.path.exists(EPICSBASE):
     raise IOError("Please define EPICS_BASE environment variable")
 
 HOSTARCH  = os.environ.get("EPICS_HOST_ARCH")
