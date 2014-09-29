@@ -11,6 +11,10 @@ Then to get started with, check out a series of :ref:`tutorials-label`.
 It walks through the principles of a PCASpy application. After that you should feel confident
 to start your adventure. If necessary consult the :ref:`reference-label` about the API.
 
+After you have created an application, be it generic or site specific,
+share your experience at `success stories <https://code.google.com/p/pcaspy/wiki/Success>`_ and let others be inspired.
+
+
 Contents
 --------
 
