@@ -5,7 +5,8 @@ Installation
 
 Binary Installers
 -----------------
-The binary packages are distributed at PyPI. They have EPICS 3.14.12.4 libraries statically builtin.
+The binary packages are distributed at `PyPI <https://pypi.python.org/pypi/pcaspy>`_.
+They have EPICS 3.14.12.4 libraries statically builtin.
 If we do not have a *wheel* or *egg* package for your system, *pip* or *easy_install* will try to
 build from source. And then you would need EPICS base installed, see :ref:`getting-epics`.
 
@@ -25,7 +26,7 @@ Make sure you have `pip <https://pypi.python.org/pypi/pip>`_ and
 
     > C:\Python27\Scripts\pip.exe install pcaspy
 
-Another option is the .msi installers.
+Another option is the windows installers.
 
 Linux
 ~~~~~
