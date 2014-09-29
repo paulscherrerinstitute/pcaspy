@@ -1,8 +1,16 @@
 import cas
 import threading
 import time
+import sys
 import logging
-logging.getLogger('pcaspy').addHandler(logging.NullHandler())
+if sys.hexversion >= 0x02070000:
+    from logging import NullHandler
+else:
+    class NullHandler(logging.Handler):
+        def emit(self, record):
+            pass
+
+logging.getLogger('pcaspy').addHandler(NullHandler())
 
 from alarm import Severity, Alarm
 
