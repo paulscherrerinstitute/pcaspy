@@ -81,6 +81,10 @@ elif UNAME == 'Windows':
     if HOSTARCH == 'windows-x64-mingw':
         macros += [('MS_WIN64', '')]
     umacros+= ['_DLL']
+else:
+    # necessary when EPICS is statically linked
+    libraries += ['readline', 'rt']
+
 cas_module = Extension('pcaspy._cas',
                        sources  =[os.path.join('pcaspy','casdef.i'),
                                   os.path.join('pcaspy','pv.cpp'),
