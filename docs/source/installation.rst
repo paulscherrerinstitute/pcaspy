@@ -5,20 +5,39 @@ Installation
 
 Binary Installers
 -----------------
-The binary packages are distributed at PyPI in *wheel* format. 
-They have EPICS 3.14.12.4 libraries statically builtin.
+The binary packages are distributed at PyPI. They have EPICS 3.14.12.4 libraries statically builtin.
+If we do not have a *wheel* or *egg* package for your system, *pip* or *easy_install* will try to
+build from source. And then you would need EPICS base installed, see :ref:`getting-epics`.
+
+OS X
+~~~~
 
 Make sure you have `pip <https://pypi.python.org/pypi/pip>`_ and 
 `wheel <https://pypi.python.org/pypi/wheel>`_  installed, and run::
 
-    # OS X
     $ sudo pip install pcaspy
-    # Windows
+
+Windows
+~~~~~~~
+
+Make sure you have `pip <https://pypi.python.org/pypi/pip>`_ and
+`wheel <https://pypi.python.org/pypi/wheel>`_  installed, and run::
+
     > C:\Python27\Scripts\pip.exe install pcaspy
 
-If we do not have a *wheel* for your system, then pip will try to 
-build from source. And then you would need EPICS base installed, 
-see :ref:`getting-epics`.
+Another option is the .msi installers.
+
+Linux
+~~~~~
+PyPI does not allow upload linux-specific wheels package, yet (as of 2014).
+The old *egg* format is used then::
+
+    $ sudo easy_install pcaspy
+
+Or install only for the current user::
+
+    $ easy_install --user pcaspy
+
 
 Source
 ------
