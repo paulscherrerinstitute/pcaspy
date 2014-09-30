@@ -81,7 +81,7 @@ elif UNAME == 'Windows':
     if HOSTARCH == 'windows-x64-mingw':
         macros += [('MS_WIN64', '')]
     umacros+= ['_DLL']
-else:
+elif UNAME == 'Linux':
     # necessary when EPICS is statically linked
     libraries += ['readline', 'rt']
 
