@@ -142,3 +142,38 @@ This class could be used to finely control read/write access based on the client
 In C++ class `Channel`, the control access is implemented using Access Security Group.
 Library user does not need to instantiate this class, it is done inside `PV::createChannel`.
 As such this class is not exposed to Python.
+
+
+.. py:currentmodule:: pcaspy.cas
+
+:class:`gdd`
+------------
+
+.. py:class:: gdd
+
+gdd stands for `General Data Descriptor <http://www.aps.anl.gov/epics/EpicsDocumentation/EpicsGeneral/gdd.html>`_.
+It is a generic, descriptive data container. Although designed to be generic, its usage in EPICS is limited to
+Portable Channel Access Server programming, more specifically in the getters of :class:`pcaspy.SimplePV`.
+
+    .. py:classmethod:: gdd.get()
+
+        Retrieve the data. The gdd primitive types are up cast to Python types.
+
+    .. classmethod:: gdd.set(value)
+
+        Store the data.
+
+    .. classmethod:: gdd.setPrimType(type)
+
+        Force the GDD to change the primitive type of the data it describes.
+        Changing the primitive type code is generally an unnatural thing to do.
+        Force a GDD to change the application type, which effectively changes the high-level meaning of the data held within the GDD.
+
+    .. classmethod:: gdd.setStatServ(status, severity)
+
+        Manipulate the status field of a GDD as a combination status and severity field.
+
+    .. classmethod:: gdd.setTimeStamp()
+
+        Manipulate the time stamp field of the GDD to the current time.
+
