@@ -3,6 +3,11 @@
 """
 setup.py file for pcaspy
 """
+import os
+import platform
+import sys
+import imp
+
 # Use setuptools to include build_sphinx, upload/sphinx commands
 try:
     from setuptools import setup, Extension
@@ -15,11 +20,6 @@ try:
 except ImportError:
     # 2.x
     from distutils.command.build_py import build_py
-
-import os
-import platform
-import sys
-import imp
 
 # Python 2.4 below does not check the -c++ option in setup
 # This is a workaound.
