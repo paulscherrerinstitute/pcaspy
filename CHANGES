@@ -1,8 +1,9 @@
 
 .. py:currentmodule:: pcaspy
 
-0.5.0 (01-10-2014)
+0.5.0 (06-10-2014)
 ------------------
+    * Fixed that cas.py is not installed (Issue #10).
     * Fixed that put callback may fail if driver invokes :meth:`Driver.callbackPV` too soon(Issue #9). Thanks to Kay Kasemir.
     * Added 16bit short integer type.
     * Added printout of exceptions that are raised inside Python code.
