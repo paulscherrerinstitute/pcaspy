@@ -16,10 +16,10 @@ except:
 
 # Use 2to3 to support Python 3
 try:
-    from distutils.command.build_py import build_py_2to3 as build_py
+    from distutils.command.build_py import build_py_2to3 as _build_py
 except ImportError:
     # 2.x
-    from distutils.command.build_py import build_py
+    from distutils.command.build_py import build_py as _build_py
 
 # Python 2.4 below does not check the -c++ option in setup
 # This is a workaound.
@@ -31,6 +31,14 @@ if sys.hexversion < 0x02050000:
             self.swig_cpp = True
 else:
     build_ext = _build_ext
+
+# build_py runs before build_ext so that swig generated module is not copied
+# See http://bugs.python.org/issue7562
+# This is a workaround to run build_ext ahead of build_py
+class build_py(_build_py):
+    def run(self):
+        self.run_command('build_ext')
+        _build_py.run(self)
 
 # define EPICS base path and host arch
 EPICSBASE = os.environ.get("EPICS_BASE")
