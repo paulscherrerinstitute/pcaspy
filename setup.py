@@ -5,9 +5,9 @@ setup.py file for pcaspy
 """
 # Use setuptools to include build_sphinx, upload/sphinx commands
 try:
-    from setuptools import setup
+    from setuptools import setup, Extension
 except:
-    pass
+    from distutils.core import setup, Extension
 
 # Use 2to3 to support Python 3
 try:
@@ -16,7 +16,6 @@ except ImportError:
     # 2.x
     from distutils.command.build_py import build_py
 
-from distutils.core import setup, Extension
 import os
 import platform
 import sys
