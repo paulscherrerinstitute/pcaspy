@@ -22,10 +22,6 @@ import platform
 import sys
 import imp
 
-# raw_input is renamed to input in Python 3
-if sys.version_info[0] > 2:
-    raw_input = input
-
 # Python 2.4 below does not check the -c++ option in setup
 # This is a workaound.
 from distutils.command.build_ext import build_ext as _build_ext
