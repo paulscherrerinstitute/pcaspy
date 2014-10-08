@@ -118,6 +118,10 @@ public:
     virtual caStatus getPrecision(gdd &prec);
     virtual caStatus getHighLimit(gdd &hilim);
     virtual caStatus getLowLimit(gdd &lolim);
+    virtual caStatus getHighAlarmLimit(gdd &hilim);
+    virtual caStatus getLowAlarmLimit(gdd &lolim);
+    virtual caStatus getHighWarnLimit(gdd &hilim);
+    virtual caStatus getLowWarnLimit(gdd &lolim);
     virtual caStatus getUnits(gdd &units);
     virtual caStatus getEnums(gdd &enums);
 
