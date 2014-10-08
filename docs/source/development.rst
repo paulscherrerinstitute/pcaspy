@@ -73,12 +73,19 @@ Virtual methods
       The PV enumerated states.
 
     .. cpp:function:: caStatus getLowLimit(gdd & value)
-
-      The PV low limit
-
     .. cpp:function:: caStatus getHighLimit(gdd & value)
 
-      The PV high limit
+      The PV display/control limit
+
+    .. cpp:function:: caStatus getLowAlarmLimit(gdd & value)
+    .. cpp:function:: caStatus getHighAlarmLimit(gdd & value)
+
+      The PV alarm limit
+
+    .. cpp:function:: caStatus getLowWarnLimit(gdd & value)
+    .. cpp:function:: caStatus getHighWarnLimit(gdd & value)
+
+      The PV warning limit
 
     .. cpp:function:: caStatus write(const casCtx & ctx, const gdd & value)
     .. cpp:function:: caStatus writeNotify(const casCtx & ctx, const gdd & value)
