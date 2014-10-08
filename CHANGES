@@ -1,6 +1,10 @@
 
 .. py:currentmodule:: pcaspy
 
+0.5.1 (Not Released)
+-------------------
+    * Fixed that alarm and warn limits are taken from *lolo*/*hihi* and *low*/*high* fields. (Issue #11).
+
 0.5.0 (06-10-2014)
 ------------------
     * Fixed that cas.py is not installed (Issue #10).
