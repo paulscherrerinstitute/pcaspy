@@ -482,6 +482,22 @@ class SimplePV(cas.casPV):
         lolim.put(self.info.lolim)
         return cas.S_casApp_success
 
+    def getHighAlarmLimit(self, hilim):
+        hilim.put(self.info.hihi)
+        return cas.S_casApp_success
+
+    def getLowAlarmLimit(self, lolim):
+        lolim.put(self.info.lolo)
+        return cas.S_casApp_success
+
+    def getHighWarnLimit(self, hilim):
+        hilim.put(self.info.high)
+        return cas.S_casApp_success
+
+    def getLowWarnLimit(self, lolim):
+        lolim.put(self.info.low)
+        return cas.S_casApp_success
+
     def bestExternalType(self):
         return self.info.type
 

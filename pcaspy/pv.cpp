@@ -100,10 +100,10 @@ void PV :: initFT()
         PV::ft.installReadFunc ("graphicLow", &PV::getLowLimit);
         PV::ft.installReadFunc ("controlHigh", &PV::getHighLimit);
         PV::ft.installReadFunc ("controlLow", &PV::getLowLimit);
-        PV::ft.installReadFunc ("alarmHigh", &PV::getHighLimit);
-        PV::ft.installReadFunc ("alarmLow", &PV::getLowLimit);
-        PV::ft.installReadFunc ("alarmHighWarning", &PV::getHighLimit);
-        PV::ft.installReadFunc ("alarmLowWarning", &PV::getLowLimit);
+        PV::ft.installReadFunc ("alarmHigh", &PV::getHighAlarmLimit);
+        PV::ft.installReadFunc ("alarmLow", &PV::getLowAlarmLimit);
+        PV::ft.installReadFunc ("alarmHighWarning", &PV::getHighWarnLimit);
+        PV::ft.installReadFunc ("alarmLowWarning", &PV::getLowWarnLimit);
         PV::ft.installReadFunc ("units", &PV::getUnits);
         PV::ft.installReadFunc ("enums", &PV::getEnums);
         PV::initialized = 1;

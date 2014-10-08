@@ -29,6 +29,10 @@ class PV : public casPV {
         virtual caStatus getPrecision(gdd &prec) {return S_casApp_success;};
         virtual caStatus getHighLimit(gdd &hilim) {return S_casApp_success;};
         virtual caStatus getLowLimit(gdd &lolim) {return S_casApp_success;};
+        virtual caStatus getHighAlarmLimit(gdd &hilim) {return S_casApp_success;};
+        virtual caStatus getLowAlarmLimit(gdd &lolim) {return S_casApp_success;};
+        virtual caStatus getHighWarnLimit(gdd &hilim) {return S_casApp_success;};
+        virtual caStatus getLowWarnLimit(gdd &lolim) {return S_casApp_success;};
         virtual caStatus getUnits(gdd &units) {return S_casApp_success;};
         virtual caStatus getEnums(gdd &enums) {return S_casApp_success;};
 
