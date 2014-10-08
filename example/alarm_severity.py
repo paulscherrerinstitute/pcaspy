@@ -34,6 +34,10 @@ class myDriver(Driver):
                 self.setParamStatus(reason, Alarm.COMM_ALARM, Severity.MINOR_ALARM)
             else:
                 self.setParamStatus(reason, Alarm.NO_ALARM, Severity.NO_ALARM)
+        else:
+            status = True
+            # store the value and this also resets alarm status and severity for string type
+            self.setParam(reason, value)
 
         return status
 
