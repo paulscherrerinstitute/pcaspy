@@ -1,9 +1,10 @@
 
 .. py:currentmodule:: pcaspy
 
-0.5.1 (Not Released)
+0.5.1 (10-10-2014)
 -------------------
     * Fixed that alarm and warn limits are taken from *lolo*/*hihi* and *low*/*high* fields. (Issue #11).
+    * Fixed `example/alarm_severity.py` so that `MTEST:STATUS` and `MTEST:RAND` are writable.
 
 0.5.0 (06-10-2014)
 ------------------
