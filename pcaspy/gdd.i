@@ -152,6 +152,8 @@ public:
                 # if aitEnumUint8 then string is converted to char array
                 if primitiveType in [aitEnumUint8, aitEnumInt8]:
                     valueChar = [ord(v) for v in value]
+                    # null terminate
+                    valueChar.append(0)
                     self.setDimension(1)
                     self.setBound(0, 0, len(valueChar))
                     self.putCharArray(valueChar)
