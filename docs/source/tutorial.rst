@@ -26,7 +26,7 @@ Refer to :ref:`database-field-definition` about full description of database def
 
 Dummy server
 ^^^^^^^^^^^^
-Here is the source code `dummy.py <http://code.google.com/p/pcaspy/source/browse/example/dummy.py>`_.
+Here is the source code `dummy.py <https://github.com/paulscherrerinstitute/pcaspy/blob/master/example/dummy.py>`_.
 
 Our first attempt is to implement a server so it blindly accepts any value written and gives it back upon request.
 Two classes are required,::
@@ -137,7 +137,7 @@ We modify the ``read`` method to return a list of 10 random numbers,::
             return [random.random() for i in range(10)]
         ...
 
-Here is the final source code `get_random.py <http://code.google.com/p/pcaspy/source/browse/example/get_random.py>`_
+Here is the final source code `get_random.py <https://github.com/paulscherrerinstitute/pcaspy/blob/master/example/get_random.py>`_
 
 Remark
 ~~~~~~
@@ -153,7 +153,7 @@ This principle is followed by all the following examples.
 
 Example 2: Interface to any shell command
 -----------------------------------------
-Here is the full source code `pysh.py <http://code.google.com/p/pcaspy/source/browse/example/pysh.py>`_
+Here is the full source code `pysh.py <https://github.com/paulscherrerinstitute/pcaspy/blob/master/example/pysh.py>`_
 
 Define PV database
 ^^^^^^^^^^^^^^^^^^
@@ -307,7 +307,7 @@ Its intention is stated clearly by Mark Rivers,
   is done in a calculated simulation. But it is easy to see how to use the driver as a basis for real device control.
   The code doing the simulation would simply be changed to talk to an actual device.
 
-The python version in PCASpy is `simscope.py <http://code.google.com/p/pcaspy/source/browse/example/simscope.py>`_.
+The python version in PCASpy is `simscope.py <https://github.com/paulscherrerinstitute/pcaspy/blob/master/example/simscope.py>`_.
 To best check how it functions, launch the medm panel,::
 
     medm -x -macro P=MTEST simscope.adl
@@ -345,7 +345,7 @@ The following runs the server for ~4 seconds and exits. The debug output shows t
 
 Qt GUI integration
 ^^^^^^^^^^^^^^^^^^
-`qtqui.py <http://code.google.com/p/pcaspy/source/browse/example/qtgui.py>`_ shows how to combine it with Qt GUI event loop.
+`qtqui.py <https://github.com/paulscherrerinstitute/pcaspy/blob/master/example/qtgui.py>`_ shows how to combine it with Qt GUI event loop.
 
 Example 5: Access Security Control
 ----------------------------------
@@ -463,14 +463,14 @@ Alarm status and severity
 * For string type, the alarm status and severity can be changed by :meth:`Driver.setParamStatus`.
 
 Check out the reference :meth:`Driver.setParam` and :meth:`Driver.setParamStatus`,
-and `alarm severity example <http://code.google.com/p/pcaspy/source/browse/example/alarm_severity.py>`_.
+and `alarm severity example <https://github.com/paulscherrerinstitute/pcaspy/blob/master/example/alarm_severity.py>`_.
 
 
 Dynamic enumerate states
 ------------------------
 For enumerate type, the choices are specified by field *enums* at startup. If in case the choices should be changed
 at runtime, :meth:`Driver.setParamEnums` can be used. Check out the
-`dynamic enums example <http://code.google.com/p/pcaspy/source/browse/example/dynamic_enums.py>`_.
+`dynamic enums example <https://github.com/paulscherrerinstitute/pcaspy/blob/master/example/dynamic_enums.py>`_.
 
 
 Create PVs using different prefix

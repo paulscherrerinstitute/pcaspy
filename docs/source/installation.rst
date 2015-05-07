@@ -46,12 +46,12 @@ The source can be downloaded in various ways:
 
   * The released source tarballs can be found at `PyPI <https://pypi.python.org/pypi/pcaspy>`_.
 
-  * From the `mercurial repository <https://code.google.com/p/pcaspy/source/browse/>`_, 
+  * From the `git repository <https://github.com/paulscherrerinstitute/pcaspy>`_, 
     the source can be downloaded as a zip package. 
 
   * Clone the repository if you feel adventurous::
 
-    $ hg clone https://code.google.com/p/pcaspy/
+    $ git clone https://github.com/paulscherrerinstitute/pcaspy.git
 
 Build
 -----
