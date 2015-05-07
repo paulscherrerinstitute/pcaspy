@@ -105,7 +105,7 @@ cas_module = Extension('pcaspy._cas',
 if UNAME != 'WIN32':
     cas_module.runtime_library_dirs += os.path.join(EPICSBASE, 'lib', HOSTARCH),
 
-long_description = open('README').read()
+long_description = open('README.rst').read()
 _version = imp.load_source('_version','pcaspy/_version.py')
 
 dist = setup (name = 'pcaspy',
