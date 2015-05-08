@@ -12,7 +12,7 @@ It walks through the principles of a PCASpy application. After that you should f
 to start your adventure. If necessary consult the :ref:`reference-label` about the API.
 
 After you have created an application, be it generic or site specific,
-share your experience at `success stories <https://code.google.com/p/pcaspy/wiki/Success>`_ and let others be inspired.
+share your experience at `success stories <https://github.com/paulscherrerinstitute/pcaspy/issues/15>`_ and let others be inspired.
 
 
 Contents
