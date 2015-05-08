@@ -1,6 +1,10 @@
 
 .. py:currentmodule:: pcaspy
 
+0.6.0 (XX-XX-2015)
+------------------
+    * Fixed that PV of char type cannot be set to empty string. (Issue #14).
+
 0.5.1 (10-10-2014)
 -------------------
     * Fixed that alarm and warn limits are taken from *lolo*/*hihi* and *low*/*high* fields. (Issue #11).
