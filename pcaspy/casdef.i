@@ -175,9 +175,9 @@ void process(double delay) {
 }
 %}
 
+// rename original class casPV to _casPV because it is
+// not meant for use instead PV should be used.
 %pythoncode {
-# rename original class casPV to _casPV because it is not meant for use
-# instead PV should be used
 _casPV = casPV
 casPV = PV
 }
