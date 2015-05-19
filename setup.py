@@ -50,7 +50,7 @@ if not EPICSBASE:
     raise IOError("Please define EPICS_BASE environment variable")
 if not os.path.exists(EPICSBASE):
     raise IOError("Please correct EPICS_BASE environment variable, "
-                  "the path {} does not exist".format(EPICSBASE))
+                  "the path {0} does not exist".format(EPICSBASE))
 
 
 HOSTARCH  = os.environ.get("EPICS_HOST_ARCH")
