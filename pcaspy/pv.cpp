@@ -80,11 +80,19 @@ void PV :: removeAsyncWrite()
     pAsyncWrite = NULL; 
 }
 // called by server application when it changes value and notifies clients
-caStatus PV :: postEvent(gdd &value)
+caStatus PV :: postEvent(int mask, gdd &value)
 {
     caServer * pCAS = this->getCAS();
     if ( pCAS != NULL ) {
-        casEventMask select ( pCAS->valueEventMask() | pCAS->logEventMask() );
+        casEventMask select;
+        if (mask & DBE_VALUE)
+            select |= pCAS->valueEventMask();
+        if (mask & DBE_LOG)
+            select |= pCAS->logEventMask();
+        if (mask & DBE_ALARM)
+            select |= pCAS->alarmEventMask();
+        if (mask & DBE_PROPERTY)
+            select |= pCAS->propertyEventMask();
         casPV::postEvent(select, value);
     }
     return S_casApp_success;

@@ -3,7 +3,7 @@
 
 #include <casdef.h>
 #include <gddAppFuncTable.h>
-
+#include <caeventmask.h>
 #include <asLib.h>
 
 class PV; 
@@ -36,8 +36,8 @@ class PV : public casPV {
         virtual caStatus getUnits(gdd &units) {return S_casApp_success;};
         virtual caStatus getEnums(gdd &enums) {return S_casApp_success;};
 
-        /* Post value change event */
-        caStatus postEvent(gdd &value);
+        /* Post value/alarm change event */
+        caStatus postEvent(int mask, gdd &value);
 
         /* Server library calls this function when all channel are disconnected 
          * or server is shutting down.

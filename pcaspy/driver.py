@@ -46,11 +46,13 @@ class Data(object):
         self.flag  = False
         self.severity  = Severity.INVALID_ALARM
         self.alarm = Alarm.UDF_ALARM
+        self.udf = True
+        self.mask = 0
         self.time  = cas.epicsTimeStamp()
 
     def __repr__(self):
-        return "value=%s alarm=%s severity=%s flag=%s time=%s" % \
-               (self.value, Alarm.nameOf(self.alarm), Severity.nameOf(self.severity), self.flag, self.time)
+        return "value=%s alarm=%s severity=%s flag=%s mask=%s time=%s" % \
+               (self.value, Alarm.nameOf(self.alarm), Severity.nameOf(self.severity), self.flag, self.mask, self.time)
 
 class Driver(object):
     """
@@ -137,6 +139,18 @@ class Driver(object):
         the alarm status is STATE_ALARM.
 
         """
+        self.setParamValue(reason, value)
+        alarm, severity = self._checkAlarm(reason, value)
+        self.setParamStatus(reason, alarm, severity)
+        logging.getLogger('pcaspy.Driver.setParam')\
+            .debug('%s: %s', reason, self.pvDB[reason])
+
+    def setParamValue(self, reason, value):
+        """set PV value and request update
+
+        :param str reason:
+        :param value: new value
+        """
         # check whether update is needed
         same = self.pvDB[reason].value == value
         if (type(same) == bool and not same) or (hasattr(same, 'all') and not same.all()):
@@ -146,13 +160,9 @@ class Driver(object):
             elif str(type(value)) == "<type 'numpy.ndarray'>":
                 value = value.copy()
             self.pvDB[reason].value = value
-            self.pvDB[reason].flag  = True
+            self.pvDB[reason].flag = True
+            self.pvDB[reason].mask = (cas.DBE_VALUE | cas.DBE_LOG)
         self.pvDB[reason].time = cas.epicsTimeStamp()
-        alarm, severity = self._checkAlarm(reason, value)
-        if alarm is not None: self.pvDB[reason].alarm = alarm
-        if severity is not None: self.pvDB[reason].severity = severity
-        logging.getLogger('pcaspy.Driver.setParam')\
-            .debug('%s: %s', reason, self.pvDB[reason])
 
     def setParamStatus(self, reason, alarm=None, severity=None):
         """set PV status and severity and request update
@@ -165,11 +175,22 @@ class Driver(object):
         If the status and severity need to be set explicitly to override the defaults, :meth:`setParamStatus` must
         be called *after* :meth:`setParam`.
         """
-        if alarm is not None:
+        print "alarm", self.pvDB[reason].alarm, alarm
+        print "severity", self.pvDB[reason].severity, severity
+        if alarm is not None and self.pvDB[reason].alarm != alarm:
             self.pvDB[reason].alarm = alarm
-        if severity is not None:
+            if self.pvDB[reason].flag:
+                self.pvDB[reason].mask |= cas.DBE_ALARM
+            else:
+                self.pvDB[reason].mask = cas.DBE_ALARM
+            self.pvDB[reason].flag = True
+        if severity is not None and self.pvDB[reason].severity != severity:
             self.pvDB[reason].severity = severity
-        self.pvDB[reason].flag  = True
+            if self.pvDB[reason].flag:
+                self.pvDB[reason].mask |= cas.DBE_ALARM
+            else:
+                self.pvDB[reason].mask = cas.DBE_ALARM
+            self.pvDB[reason].flag = True
 
     def setParamEnums(self, reason, enums, states=None):
         """ set PV enumerate strings and severity states
@@ -190,6 +211,8 @@ class Driver(object):
         pv = manager.pvs[self.port][reason]
         pv.info.enums = enums
         pv.info.states = states
+        pv.mask |= cas.DBE_PROPERTY
+        pv.flag = True
 
     def getParam(self, reason):
         """retrieve PV value
@@ -228,6 +251,7 @@ class Driver(object):
             if self.pvDB[reason].flag and pv.info.scan == 0:
                 pv.updateValue(self.pvDB[reason])
                 self.pvDB[reason].flag = False
+                self.pvDB[reason].mask = 0
 
     def _checkAlarm(self, reason, value):
         info =  manager.pvs[self.port][reason].info
@@ -236,41 +260,27 @@ class Driver(object):
         elif info.type in [cas.aitEnumFloat64, cas.aitEnumInt32]:
             return self._checkNumericAlarm(info, value)
         elif  info.type in [cas.aitEnumString, cas.aitEnumFixedString, cas.aitEnumUint8]:
-            return Alarm.NO_ALARM,Severity.NO_ALARM
+            return None,None
         else:
             return None,None
 
     def _checkNumericAlarm(self, info, value):
         severity = Severity.NO_ALARM
         alarm = Alarm.NO_ALARM
-        lolo = info.lolo
-        hihi = info.hihi
-        low  = info.low
-        high = info.high
 
-        if lolo >= hihi:
-            valid_lolo_hihi = False
-        else:
-            valid_lolo_hihi = True
-
-        if low >= high:
-            valid_low_high = False
-        else:
-            valid_low_high = True
-
-        if valid_low_high and value <= low:
+        if info.valid_low_high and value <= info.low:
             alarm = Alarm.LOW_ALARM
             severity = Severity.MINOR_ALARM
 
-        if valid_lolo_hihi and value <= lolo:
+        if info.valid_lolo_hihi and value <= info.lolo:
             alarm = Alarm.LOLO_ALARM
             severity = Severity.MAJOR_ALARM
 
-        if valid_low_high and value >= high:
+        if info.valid_low_high and value >= info.high:
             alarm = Alarm.HIGH_ALARM
             severity = Severity.MINOR_ALARM
 
-        if valid_lolo_hihi and value >= hihi:
+        if info.valid_lolo_hihi and value >= info.hihi:
             alarm = Alarm.HIHI_ALARM
             severity = Severity.MAJOR_ALARM
 
@@ -326,6 +336,16 @@ class PVInfo(object):
         self.asg   = info.get('asg', '')
         self.reason= ''
         self.port  = info.get('port', 'default')
+        # validate alarm limit
+        if self.lolo >= self.hihi:
+            self.valid_lolo_hihi = False
+        else:
+            self.valid_lolo_hihi = True
+
+        if self.low >= self.high:
+            self.valid_low_high = False
+        else:
+            self.valid_low_high = True
         # initialize value based on type and count
         if self.type in [cas.aitEnumString, cas.aitEnumFixedString, cas.aitEnumUint8]:
             value = ''
@@ -390,7 +410,9 @@ class SimplePV(cas.casPV):
             value.severity = Severity.INVALID_ALARM
             value.alarm    = Alarm.WRITE_ALARM
         else:
-            self.updateValue(value)
+            if value.flag:
+                self.updateValue(value)
+                value.flag = False
         return success
 
     def write(self, context, value):
@@ -426,6 +448,7 @@ class SimplePV(cas.casPV):
             return cas.S_casApp_success
 
     def updateValue(self, value):
+        mask = (cas.DBE_VALUE | cas.DBE_LOG)
         if (self.interest):
             if type(value) != cas.gdd:
                 gddValue = cas.gdd()
@@ -433,8 +456,9 @@ class SimplePV(cas.casPV):
                 gddValue.put(value.value)
                 gddValue.setTimeStamp(value.time)
                 gddValue.setStatSevr(value.alarm, value.severity)
+                mask = value.mask
                 value = gddValue
-            self.postEvent(value)
+            self.postEvent(mask, value)
 
     def getValue(self, value):
         # get driver object
