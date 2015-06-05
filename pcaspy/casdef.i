@@ -26,6 +26,12 @@
 %include "errMdef.i"
 %include "gdd.i"
 
+#define DBE_VALUE    (1<<0)
+#define DBE_ARCHIVE  (1<<1)
+#define DBE_LOG      DBE_ARCHIVE
+#define DBE_ALARM    (1<<2)
+#define DBE_PROPERTY (1<<3)
+
 %include "cstring.i"
 
 %defaultdtor caNetAddr;
@@ -112,7 +118,7 @@ public:
     virtual ~PV();
 
     caStatus read (const casCtx &ctx, gdd &protoIn);
-    caStatus postEvent (gdd &value);
+    caStatus postEvent (int mask, gdd &value);
 
     virtual caStatus getValue(gdd &value);
     virtual caStatus getPrecision(gdd &prec);
