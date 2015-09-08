@@ -102,6 +102,7 @@ void PV :: initFT()
 {
     if (!PV::initialized)
     {
+        PV::ft.installReadFunc ("class", &PV::getClass);
         PV::ft.installReadFunc ("value", &PV::getValue);
         PV::ft.installReadFunc ("precision", &PV::getPrecision);
         PV::ft.installReadFunc ("graphicHigh", &PV::getHighLimit);

@@ -25,6 +25,7 @@ class PV : public casPV {
         caStatus read ( const casCtx & ctx, gdd & protoIn);
         /* application function table */
         static void initFT();
+        virtual caStatus getClass(gdd &klass) { klass.put(""); return S_casApp_success; };
         virtual caStatus getValue(gdd &value) { return S_casApp_success; };
         virtual caStatus getPrecision(gdd &prec) {return S_casApp_success;};
         virtual caStatus getHighLimit(gdd &hilim) {return S_casApp_success;};

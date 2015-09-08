@@ -4,6 +4,7 @@
 0.6.0 (XX-XX-2015)
 ------------------
     * Fixed that PV of char type cannot be set to empty string. (Issue #14).
+    * Added support of request type DBR_CLASS_NAME in casPV base class. It is not overloaded in :class:`SimplePV`. The default implementation returns an empty string.
 
 0.5.1 (10-10-2014)
 -------------------
