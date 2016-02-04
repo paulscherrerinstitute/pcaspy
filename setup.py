@@ -91,6 +91,9 @@ elif UNAME == 'Windows':
 elif UNAME == 'Linux':
     # necessary when EPICS is statically linked
     libraries += ['readline', 'rt']
+elif UNAME == 'SunOS':
+    # OS_CLASS used by EPICS
+    UNAME = 'solaris'
 
 cas_module = Extension('pcaspy._cas',
                        sources  =[os.path.join('pcaspy','casdef.i'),
