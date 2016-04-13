@@ -8,6 +8,7 @@ elif [ $PLATFORM == "darwin" ] ; then
   export EPICS_HOST_ARCH=darwin-x86
 fi
 
+echo Using EPICS_BASE=$EPICS_BASE
 echo Using EPICS_HOST_ARCH=$EPICS_HOST_ARCH
 
  # echo $(uname | tr '[:upper:]' '[:lower:]')-$(uname -m)
