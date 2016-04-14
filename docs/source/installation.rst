@@ -3,6 +3,12 @@
 Installation
 ============
 
+Anaconda
+--------
+Packages for Anaconda can be installed via::
+
+    conda install -c https://conda.anaconda.org/paulscherrerinstitute pcaspy
+
 Binary Installers
 -----------------
 The binary packages are distributed at `PyPI <https://pypi.python.org/pypi/pcaspy>`_.
