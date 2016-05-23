@@ -175,8 +175,6 @@ class Driver(object):
         If the status and severity need to be set explicitly to override the defaults, :meth:`setParamStatus` must
         be called *after* :meth:`setParam`.
         """
-        print "alarm", self.pvDB[reason].alarm, alarm
-        print "severity", self.pvDB[reason].severity, severity
         if alarm is not None and self.pvDB[reason].alarm != alarm:
             self.pvDB[reason].alarm = alarm
             if self.pvDB[reason].flag:
