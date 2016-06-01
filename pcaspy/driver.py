@@ -408,9 +408,7 @@ class SimplePV(cas.casPV):
             value.severity = Severity.INVALID_ALARM
             value.alarm    = Alarm.WRITE_ALARM
         else:
-            if value.flag:
-                self.updateValue(value)
-                value.flag = False
+            driver.updatePVs()
         return success
 
     def write(self, context, value):
