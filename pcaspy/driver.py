@@ -402,7 +402,7 @@ class SimplePV(cas.casPV):
         # call out driver support
         success = driver.write(self.info.reason, gddValue.get())
         value = driver.getParamDB(self.info.reason)
-        if not success:
+        if success == False:
             logging.getLogger('pcaspy.SimplePV.writeValue').\
                 warn('%s: Driver rejects value %s', self.info.reason, gddValue.get())
             value.severity = Severity.INVALID_ALARM
