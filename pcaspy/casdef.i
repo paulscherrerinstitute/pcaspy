@@ -10,6 +10,11 @@
 %}
 %include <epicsVersion.h>
 
+
+#define MAX_ENUM_STRING_SIZE        26
+#define MAX_ENUM_STATES             16
+
+
 %feature("director") caServer;
 %feature("director") casPV;
 %feature("director") PV;

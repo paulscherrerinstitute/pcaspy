@@ -316,7 +316,19 @@ class PVInfo(object):
         # initialize from info dict with defaults
         self.count = info.get('count', 1)
         self.type  = _ait_d[info.get('type', 'float')]
-        self.enums = info.get('enums', [])
+        # check the number of enum states and
+        # the state string do not exceed the maximum
+        enums = info.get('enums', [])
+        if len(enums) > cas.MAX_ENUM_STATES:
+            sys.stderr.write('enums exceeds the maximum allowed states %d\n' % cas.MAX_ENUM_STATES)
+            enums = enums[:cas.MAX_ENUM_STATES]
+        self.enums = []
+        for enum in enums:
+            if len(enum) >= cas.MAX_ENUM_STRING_SIZE:
+                sys.stderr.write('enums state "%s" exceeds the maximum length %d\n'
+                      % (enum, cas.MAX_ENUM_STRING_SIZE-1))
+                enum = enum[:cas.MAX_ENUM_STRING_SIZE-1]
+            self.enums.append(enum)
         self.states= info.get('states',[])
         # initialize enum severity states if not specified
         if not self.states:
