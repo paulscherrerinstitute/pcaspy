@@ -207,10 +207,11 @@ class Driver(object):
         if len(enums) != len(states):
             raise ValueError('enums and states must have the same length')
         pv = manager.pvs[self.port][reason]
-        pv.info.enums = enums
-        pv.info.states = states
-        pv.mask |= cas.DBE_PROPERTY
-        pv.flag = True
+        if pv.info.enums != enums:
+            pv.info.enums = enums
+            pv.info.states = states
+            self.pvDB[reason].mask |= cas.DBE_PROPERTY
+            self.pvDB[reason].flag = True
 
     def getParam(self, reason):
         """retrieve PV value
