@@ -12,11 +12,11 @@ source:
 requirements:
   build:
     - setuptools
-    - epics-base
+    - epics-base # [not win]
     - swig
 
   run:
-    - epics-base
+    - epics-base # [not win]
 
 test:
   # Python imports
