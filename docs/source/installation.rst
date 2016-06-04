@@ -32,8 +32,6 @@ Make sure you have `pip <https://pypi.python.org/pypi/pip>`_ and
 
     > C:\Python27\Scripts\pip.exe install pcaspy
 
-Another option is the windows installers.
-
 Linux
 ~~~~~
 PyPI does not allow upload linux-specific wheels package, yet (as of 2014).
