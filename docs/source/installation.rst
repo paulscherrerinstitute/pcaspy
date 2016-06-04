@@ -73,28 +73,23 @@ In general please follow `the official installation instruction <http://www.aps.
 - Set the following environment variables:
 
   - EPICS_BASE : the path containing the EPICS base source tree.
-  - EPICS_HOST_ARCH :
+  - EPICS_HOST_ARCH : EPICS is built into static libraries on Windows.
 
-    +---------+-------+-----------------+
-    |    OS   | Arch  | EPICS_HOST_ARCH |
-    +=========+=======+=================+
-    |         | 32bit | linux-x86       |
-    | Linux   +-------+-----------------+
-    |         | 64bit | linux-x86_64    |
-    +---------+-------+-----------------+
-    |         | 32bit | win32-x86       |
-    | Windows +-------+-----------------+
-    |         | 64bit | windows-x64     |
-    +---------+-------+-----------------+
-    |         | PPC   | darwin-ppcx86   |
-    |  OS X   +-------+-----------------+
-    |         | Intel | darwin-x86      |
-    +---------+-------+-----------------+
-
-- On Windows it is suggested to build EPICS libraries statically, by changing these two lines in ``EPICS_BASE/configure/CONFIG_SITE``::
-
-    SHARED_LIBRARIES=NO
-    STATIC_BUILD=YES
+    +---------+-------+--------------------+
+    |    OS   | Arch  | EPICS_HOST_ARCH    |
+    +=========+=======+====================+
+    |         | 32bit | linux-x86          |
+    | Linux   +-------+--------------------+
+    |         | 64bit | linux-x86_64       |
+    +---------+-------+--------------------+
+    |         | 32bit | win32-x86-static   |
+    | Windows +-------+--------------------+
+    |         | 64bit | windows-x64-static |
+    +---------+-------+--------------------+
+    |         | PPC   | darwin-ppcx86      |
+    |  OS X   +-------+--------------------+
+    |         | Intel | darwin-x86         |
+    +---------+-------+--------------------+
 
 - Run ``make``.
 
@@ -109,6 +104,8 @@ In general please follow `the official installation instruction <http://www.aps.
           | 3.0 - 3.2        |  2008                 |
           +------------------+-----------------------+
           | 3.3 - 3.4        |  2010                 |
+          +------------------+-----------------------+
+          | 3.5              |  2015                 |
           +------------------+-----------------------+
 
           Mismatching may cause crashes!
