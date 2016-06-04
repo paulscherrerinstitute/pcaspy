@@ -1,7 +1,7 @@
 
 .. py:currentmodule:: pcaspy
 
-0.6.0 (XX-XX-2015)
+0.6.0 (06-06-2016)
 ------------------
     * Added support of request type DBR_CLASS_NAME in casPV base class. It is not overloaded in :class:`SimplePV`. The default implementation returns an empty string.
     * Warns and truncates if enums type PV has more than 16 states or any state string length > 25. (Issue #18)
