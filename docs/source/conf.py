@@ -55,7 +55,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'pcaspy'
-copyright = u'2011-2014, Xiaoqiang Wang'
+copyright = u'2011-2016, Xiaoqiang Wang'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
