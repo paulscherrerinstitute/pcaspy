@@ -71,9 +71,19 @@ if  UNAME.find('CYGWIN') == 0:
     UNAME = "cygwin32"
 elif UNAME == 'Windows':
     UNAME = 'WIN32'
-    libraries += ['ws2_32', 'user32', 'advapi32']
     # MSVC compiler
-    if HOSTARCH in ['win32-x86-static', 'windows-x64-static']:
+    static = False
+    if HOSTARCH in ['win32-x86', 'windows-x64', 'win32-x86-debug', 'windows-x64-debug']:
+        dlls = ['dbIoc.dll', 'dbStaticIoc.dll', 'asIoc.dll', 'cas.dll', 'ca.dll', 'gdd.dll', 'Com.dll']
+        for dll in dlls:
+            dllpath = os.path.join(EPICSBASE, 'bin', HOSTARCH, dll)
+            if not os.path.exists(dllpath):
+                static = True
+                break
+            shutil.copy(dllpath,
+                os.path.join(os.path.dirname(os.path.abspath(__file__)), 'pcaspy'))
+    if HOSTARCH in ['win32-x86-static', 'windows-x64-static'] or static:
+        libraries += ['ws2_32', 'user32', 'advapi32']
         macros += [('_CRT_SECURE_NO_WARNINGS', 'None'), ('EPICS_DLL_NO', '')]
         cflags += ['/EHsc']
         lflags += ['/LTCG']
@@ -83,11 +93,6 @@ elif UNAME == 'Windows':
         else:
             libraries += ['msvcrt']
             lflags += ['/NODEFAULTLIB:libcmt.lib']
-    if HOSTARCH in ['win32-x86', 'windows-x64', 'win32-x86-debug', 'windows-x64-debug']:
-        dlls = ['dbIoc.dll', 'dbStaticIoc.dll', 'asIoc.dll', 'cas.dll', 'ca.dll', 'gdd.dll', 'Com.dll']
-        for dll in dlls:
-            shutil.copy(os.path.join(EPICSBASE, 'bin', HOSTARCH, dll),
-                os.path.join(os.path.dirname(os.path.abspath(__file__)), 'pcaspy'))
     # GCC compiler
     if HOSTARCH in ['win32-x86-mingw', 'windows-x64-mingw']:
         macros += [('_MINGW', ''), ('EPICS_DLL_NO', '')]
