@@ -7,6 +7,7 @@ import os
 import platform
 import sys
 import imp
+import shutil
 
 # Use setuptools to include build_sphinx, upload/sphinx commands
 try:
@@ -83,11 +84,10 @@ elif UNAME == 'Windows':
             libraries += ['msvcrt']
             lflags += ['/NODEFAULTLIB:libcmt.lib']
     if HOSTARCH in ['win32-x86', 'windows-x64', 'win32-x86-debug', 'windows-x64-debug']:
-        dlls = [os.path.join(EPICSBASE, 'bin', HOSTARCH, 'asIoc.dll'),
-                os.path.join(EPICSBASE, 'bin', HOSTARCH, 'cas.dll'),
-                os.path.join(EPICSBASE, 'bin', HOSTARCH, 'ca.dll'),
-                os.path.join(EPICSBASE, 'bin', HOSTARCH, 'gdd.dll'),
-                os.path.join(EPICSBASE, 'bin', HOSTARCH, 'Com.dll')]
+        dlls = ['dbIoc.dll', 'dbStaticIoc.dll', 'asIoc.dll', 'cas.dll', 'ca.dll', 'gdd.dll', 'Com.dll']
+        for dll in dlls:
+            shutil.copy(os.path.join(EPICSBASE, 'bin', HOSTARCH, dll),
+                os.path.join(os.path.dirname(os.path.abspath(__file__)), 'pcaspy'))
     # GCC compiler
     if HOSTARCH in ['win32-x86-mingw', 'windows-x64-mingw']:
         macros += [('_MINGW', ''), ('EPICS_DLL_NO', '')]
@@ -131,6 +131,7 @@ dist = setup (name = 'pcaspy',
        url         = "http://code.google.com/p/pcaspy/",
        ext_modules = [cas_module],
        packages    = ["pcaspy"],
+       package_data={"pcaspy" : dlls},
        cmdclass    = {'build_py':build_py, 'build_ext':build_ext},
        license     = "BSD",
        platforms   = ["Windows","Linux", "Mac OS X"],
