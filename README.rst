@@ -7,7 +7,7 @@ but also the necessary high level abstraction to ease the server tool programmin
 Check out `PCASpy documents <https://pcaspy.readthedocs.org>`_ to get started.
 
 * Home: https://github.com/paulscherrerinstitute/pcaspy/wiki
-* Documents: https://pcaspy.readthedocs.org
+* Documents: https://pcaspy.readthedocs.io
 * Downloads: https://pypi.python.org/pypi/pcaspy
 * Source Repo: https://github.com/paulscherrerinstitute/pcaspy
 * Issue Tracker: https://github.com/paulscherrerinstitute/pcaspy/issues
