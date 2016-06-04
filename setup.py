@@ -63,6 +63,7 @@ umacros = []
 macros   = []
 cflags = []
 lflags = []
+dlls = []
 # platform dependent libraries and macros
 UNAME = platform.system()
 if  UNAME.find('CYGWIN') == 0:
@@ -71,7 +72,7 @@ elif UNAME == 'Windows':
     UNAME = 'WIN32'
     libraries += ['ws2_32', 'user32', 'advapi32']
     # MSVC compiler
-    if HOSTARCH in ['win32-x86', 'windows-x64', 'win32-x86-debug', 'windows-x64-debug']:
+    if HOSTARCH in ['win32-x86-static', 'windows-x64-static']:
         macros += [('_CRT_SECURE_NO_WARNINGS', 'None'), ('EPICS_DLL_NO', '')]
         cflags += ['/EHsc']
         lflags += ['/LTCG']
@@ -81,6 +82,12 @@ elif UNAME == 'Windows':
         else:
             libraries += ['msvcrt']
             lflags += ['/NODEFAULTLIB:libcmt.lib']
+    if HOSTARCH in ['win32-x86', 'windows-x64', 'win32-x86-debug', 'windows-x64-debug']:
+        dlls = [os.path.join(EPICSBASE, 'bin', HOSTARCH, 'asIoc.dll'),
+                os.path.join(EPICSBASE, 'bin', HOSTARCH, 'cas.dll'),
+                os.path.join(EPICSBASE, 'bin', HOSTARCH, 'ca.dll'),
+                os.path.join(EPICSBASE, 'bin', HOSTARCH, 'gdd.dll'),
+                os.path.join(EPICSBASE, 'bin', HOSTARCH, 'Com.dll')]
     # GCC compiler
     if HOSTARCH in ['win32-x86-mingw', 'windows-x64-mingw']:
         macros += [('_MINGW', ''), ('EPICS_DLL_NO', '')]
