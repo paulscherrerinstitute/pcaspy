@@ -22,7 +22,7 @@ except ImportError:
     from distutils.command.build_py import build_py as _build_py
 
 # Python 2.4 below does not check the -c++ option in setup
-# This is a workaound.
+# This is a workaround.
 from distutils.command.build_ext import build_ext as _build_ext
 if sys.hexversion < 0x02050000:
     class build_ext(_build_ext):
