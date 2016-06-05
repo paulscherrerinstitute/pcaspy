@@ -140,6 +140,13 @@ public:
             void getStringArray(aitString *dget, aitUint32 size) {
                 self->get(dget);
             }
+            gdd * __getitem__(aitIndex index) {
+                return self->getDD(index);
+            }
+
+            static gdd *createDD(aitUint32 app) {
+                return gddApplicationTypeTable::app_table.getDD(app);
+            }
         }
         %pythoncode %{
         def put(self, value):
