@@ -210,8 +210,7 @@ class Driver(object):
         if pv.info.enums != enums:
             pv.info.enums = enums
             pv.info.states = states
-            self.pvDB[reason].mask |= cas.DBE_PROPERTY
-            self.pvDB[reason].flag = True
+            pv.updateProperty(self.pvDB[reason].value)
 
     def getParam(self, reason):
         """retrieve PV value
@@ -468,6 +467,27 @@ class SimplePV(cas.casPV):
                 mask = value.mask
                 value = gddValue
             self.postEvent(mask, value)
+
+    def updateProperty(self, value):
+        if self.info.type == cas.aitEnumEnum16:
+            gddValue = cas.gdd.createDD(31) # gddAppType_dbr_ctrl_enum
+            gddValue[1].put(value)
+            gddValue[2].put(self.info.enums)
+        else:
+            gddValue = cas.gdd.createDD(34) # gddAppType_dbr_ctrl_double
+            gddValue[1].put(self.info.unit)
+            gddValue[2].put(self.info.low)
+            gddValue[3].put(self.info.high)
+            gddValue[4].put(self.info.lolo)
+            gddValue[5].put(self.info.hihi)
+            gddValue[6].put(self.info.lolim)
+            gddValue[7].put(self.info.hilim)
+            gddValue[8].put(self.info.lolim)
+            gddValue[9].put(self.info.hilim)
+            gddValue[10].put(self.info.prec)
+            gddValue[11].put(value)
+
+        self.postEvent(cas.DBE_PROPERTY, gddValue)
 
     def getValue(self, value):
         # get driver object
