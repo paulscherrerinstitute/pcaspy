@@ -58,8 +58,17 @@ HOSTARCH  = os.environ.get("EPICS_HOST_ARCH")
 if not HOSTARCH:
     raise IOError("Please define EPICS_HOST_ARCH environment variable")
 
+# check EPICS version
+PRE315 = True
+if os.path.exists(os.path.join(EPICSBASE, 'include', 'compiler')):
+    PRE315 = False
+
 # common libraries to link
-libraries = ['asIoc', 'cas', 'ca', 'gdd', 'Com']
+libraries = ['cas', 'ca', 'gdd', 'Com']
+if PRE315:
+    libraries += ['asIoc']
+else:
+    libraries += ['dbCore']
 umacros = []
 macros   = []
 cflags = []
@@ -69,12 +78,17 @@ dlls = []
 UNAME = platform.system()
 if  UNAME.find('CYGWIN') == 0:
     UNAME = "cygwin32"
+    CMPL = 'gcc'
 elif UNAME == 'Windows':
     UNAME = 'WIN32'
     # MSVC compiler
     static = False
     if HOSTARCH in ['win32-x86', 'windows-x64', 'win32-x86-debug', 'windows-x64-debug']:
-        dlls = ['dbIoc.dll', 'dbStaticIoc.dll', 'asIoc.dll', 'cas.dll', 'ca.dll', 'gdd.dll', 'Com.dll']
+        dlls = ['cas.dll', 'ca.dll', 'gdd.dll', 'Com.dll']
+        if PRE315:
+            dlls += ['dbIoc.dll', 'dbStaticIoc.dll', 'asIoc.dll']
+        else:
+            dlls += ['dbCore.dll']
         for dll in dlls:
             dllpath = os.path.join(EPICSBASE, 'bin', HOSTARCH, dll)
             if not os.path.exists(dllpath):
@@ -82,9 +96,11 @@ elif UNAME == 'Windows':
                 break
             shutil.copy(dllpath,
                 os.path.join(os.path.dirname(os.path.abspath(__file__)), 'pcaspy'))
+        CMPL = 'msvc'
     if HOSTARCH in ['win32-x86-static', 'windows-x64-static'] or static:
         libraries += ['ws2_32', 'user32', 'advapi32']
         macros += [('_CRT_SECURE_NO_WARNINGS', 'None'), ('EPICS_DLL_NO', '')]
+        umacros+= ['_DLL']
         cflags += ['/EHsc']
         lflags += ['/LTCG']
         if HOSTARCH[-5:] == 'debug':
@@ -93,19 +109,27 @@ elif UNAME == 'Windows':
         else:
             libraries += ['msvcrt']
             lflags += ['/NODEFAULTLIB:libcmt.lib']
+        CMPL = 'msvc'
     # GCC compiler
     if HOSTARCH in ['win32-x86-mingw', 'windows-x64-mingw']:
         macros += [('_MINGW', ''), ('EPICS_DLL_NO', '')]
         lflags += ['-static',]
+        CMPL = 'gcc'
     if HOSTARCH == 'windows-x64-mingw':
         macros += [('MS_WIN64', '')]
-    umacros+= ['_DLL']
+        CMPL = 'gcc'
+elif UNAME == 'Darwin':
+    CMPL = 'clang'
 elif UNAME == 'Linux':
     # necessary when EPICS is statically linked
     libraries += ['readline', 'rt']
+    CMPL = 'gcc'
 elif UNAME == 'SunOS':
     # OS_CLASS used by EPICS
     UNAME = 'solaris'
+    CMPL = 'solStudio'
+else:
+    raise IOError("Unsupported OS {0}".format(UNAME))
 
 cas_module = Extension('pcaspy._cas',
                        sources  =[os.path.join('pcaspy','casdef.i'),
@@ -114,8 +138,9 @@ cas_module = Extension('pcaspy._cas',
                        swig_opts=['-c++','-threads','-nodefaultdtor','-I%s'% os.path.join(EPICSBASE, 'include')],
                        extra_compile_args=cflags,
                        include_dirs = [ os.path.join(EPICSBASE, 'include'),
-                                        os.path.join(EPICSBASE, 'include', 'os', UNAME),],
-                       library_dirs = [ os.path.join(EPICSBASE, 'lib', HOSTARCH),],
+                                        os.path.join(EPICSBASE, 'include', 'os', UNAME),
+                                        os.path.join(EPICSBASE, 'include', 'compiler', CMPL)],
+                    library_dirs = [ os.path.join(EPICSBASE, 'lib', HOSTARCH),],
                        libraries = libraries,
                        extra_link_args = lflags,
                        define_macros = macros,
@@ -133,7 +158,7 @@ dist = setup (name = 'pcaspy',
        long_description = long_description,
        author      = "Xiaoqiang Wang",
        author_email= "xiaoqiangwang@gmail.com",
-       url         = "http://code.google.com/p/pcaspy/",
+       url         = "https://pypi.python.org/pypi/pcaspy",
        ext_modules = [cas_module],
        packages    = ["pcaspy"],
        package_data={"pcaspy" : dlls},
