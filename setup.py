@@ -96,6 +96,7 @@ elif UNAME == 'Windows':
                 break
             shutil.copy(dllpath,
                 os.path.join(os.path.dirname(os.path.abspath(__file__)), 'pcaspy'))
+        macros += [('_CRT_SECURE_NO_WARNINGS', 'None'),('EPICS_CALL_DLL', '')]
         CMPL = 'msvc'
     if HOSTARCH in ['win32-x86-static', 'windows-x64-static'] or static:
         libraries += ['ws2_32', 'user32', 'advapi32']
