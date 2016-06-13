@@ -3,6 +3,10 @@ typedef long gddStatus;
 
 %apply aitFloat64 &OUTPUT {aitFloat64 &d};
 %apply aitIndex   &OUTPUT {aitIndex &first, aitIndex &count};
+%apply aitInt16   &OUTPUT {aitInt16 &stat, aitInt16 &sevr};
+
+%newobject gdd::getTimeStamp();
+%newobject gdd::createDD(aitUint32 app);
 
 %include <std_string.i>
 
@@ -46,8 +50,15 @@ public:
 
         aitUint32 getDataSizeElements(void) const;
 
-        void getTimeStamp(epicsTimeStamp* const ts) const;
-        void setTimeStamp(const epicsTimeStamp* const ts);
+        void getTimeStamp(epicsTimeStamp* const ts);
+        %extend {
+            epicsTimeStamp * getTimeStamp() {
+                epicsTimeStamp *ts = new epicsTimeStamp();
+                self->getTimeStamp(ts);
+                return ts;
+            }
+        }
+        void setTimeStamp(const epicsTimeStamp* ts);
         %extend {
             // set current time
             void setTimeStamp() {
@@ -73,6 +84,7 @@ public:
         int isAtomic(void) const;
 
         gddStatus clear(void); // clear all fields of the DD, including arrays
+        void dump();
 
         gddStatus reference(void) const;
         gddStatus unreference(void) const;
@@ -104,6 +116,9 @@ public:
             }
         }
 
+        %rename (putDD) put(const gdd *dd);
+        gddStatus put(const gdd *dd);
+
         // copy the user data into the already set up DD array
         //%rename (putNumericArray) put(const aitFloat64 * const dput);
         //%rename (putFStringArray) put(const aitFixedString * const dput);
@@ -120,8 +135,6 @@ public:
         void putRef(aitFloat64 *dput, gddDestructor *dest);
         void putRef(aitFixedString *dput, gddDestructor *dest);
         void putRef(aitString *dput, gddDestructor *dest);
-
-        gddStatus put(const gdd* dd);
 
         // copy the array data out of the DD
         //%rename (getNumericArray) get(aitFloat64 *dget);
@@ -152,7 +165,13 @@ public:
         def put(self, value):
             primitiveType = self.primitiveType()
             if type(value) == gdd:
-                self.put(gdd)
+                if value.isAtomic():
+                    ndims = value.dimension()
+                    self.setDimension(ndims)
+                    for dim in range(ndims):
+                        status, index, size = value.getBound(dim)
+                        self.setBound(dim, index, size)
+                self.putDD(value)
             elif type(value) in [bool, int, float, long]:
                 self.putConvertNumeric(value)
             elif type(value) == str:
