@@ -8,6 +8,8 @@ pvdb = {
         'type' : 'enum',
         'enums': ['ONE', 'TWO']
     },
+    'RAND' : {
+    },
     'CHANGE' : {
         'type' : 'int',
         'value': 2,
@@ -22,12 +24,14 @@ class myDriver(Driver):
         super(myDriver, self).__init__()
 
     def write(self, reason, value):
-        status = False
+        status = True
         if reason == 'CHANGE':
             num_states = value
             if num_states >= 1 and num_states <= 11:
                 status = True
                 self.setParamEnums('ENUM', enums[:num_states])
+            info = {'hihi':value, 'unit': 'eV'}
+            self.setParamInfo('RAND', info)
         if status:
             self.setParam(reason, value)
         return status
