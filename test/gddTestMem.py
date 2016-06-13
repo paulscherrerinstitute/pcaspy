@@ -1,8 +1,8 @@
-import pcaspy
+from pcaspy.cas import gdd
 import time
 
 while True:
-    d = pcaspy.gdd()
+    d = gdd()
     d.put(range(1000000))
     v = d.get()
     time.sleep(0.2)
