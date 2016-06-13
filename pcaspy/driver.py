@@ -210,7 +210,32 @@ class Driver(object):
         if pv.info.enums != enums:
             pv.info.enums = enums
             pv.info.states = states
-            pv.updateProperty(self.pvDB[reason].value)
+            self.pvDB[reason].mask |= cas.DBE_PROPERTY
+            self.pvDB[reason].flag = True
+            self.updatePVs()
+
+    def setParamInfo(self, reason, info):
+        """
+        set PV meta info, limits, precision, limits, units.
+        :param str reason: PV base name
+        :param dict info: information dictionary, same as used in :meth:`SimpleServer.createPV`.
+        """
+        # copy new information
+        pv = manager.pvs[self.port][reason]
+        for k,v in info.items():
+            if hasattr(pv.info, k):
+                setattr(pv.info, k, v)
+        pv.info.validateLimit()
+
+        # recheck alarm
+        alarm, severity = self._checkAlarm(reason, self.pvDB[reason].value)
+        self.setParamStatus(reason, alarm, severity)
+
+        # mark event mask and flag
+        self.pvDB[reason].mask |= cas.DBE_PROPERTY
+        self.pvDB[reason].flag = True
+
+        self.updatePVs()
 
     def getParam(self, reason):
         """retrieve PV value
@@ -347,6 +372,19 @@ class PVInfo(object):
         self.reason= ''
         self.port  = info.get('port', 'default')
         # validate alarm limit
+        self.validateLimit()
+
+        # initialize value based on type and count
+        if self.type in [cas.aitEnumString, cas.aitEnumFixedString, cas.aitEnumUint8]:
+            value = ''
+        else:
+            value = 0
+        if self.count > 1 and self.type is not cas.aitEnumUint8:
+            value = [value] * self.count
+        self.value = info.get('value', value)
+
+    def validateLimit(self):
+        # validate alarm limit
         if self.lolo >= self.hihi:
             self.valid_lolo_hihi = False
         else:
@@ -356,14 +394,6 @@ class PVInfo(object):
             self.valid_low_high = False
         else:
             self.valid_low_high = True
-        # initialize value based on type and count
-        if self.type in [cas.aitEnumString, cas.aitEnumFixedString, cas.aitEnumUint8]:
-            value = ''
-        else:
-            value = 0
-        if self.count > 1 and self.type is not cas.aitEnumUint8:
-            value = [value] * self.count
-        self.value = info.get('value', value)
 
 class SimplePV(cas.casPV):
     """
@@ -456,38 +486,37 @@ class SimplePV(cas.casPV):
             return cas.S_casApp_success
 
     def updateValue(self, value):
-        mask = (cas.DBE_VALUE | cas.DBE_LOG)
-        if (self.interest):
-            if type(value) != cas.gdd:
-                gddValue = cas.gdd()
-                gddValue.setPrimType(self.info.type)
-                gddValue.put(value.value)
-                gddValue.setTimeStamp(value.time)
-                gddValue.setStatSevr(value.alarm, value.severity)
-                mask = value.mask
-                value = gddValue
-            self.postEvent(mask, value)
-
-    def updateProperty(self, value):
-        if self.info.type == cas.aitEnumEnum16:
-            gddValue = cas.gdd.createDD(31) # gddAppType_dbr_ctrl_enum
-            gddValue[1].put(value)
-            gddValue[2].put(self.info.enums)
+        if not self.interest:
+            return
+        if type(value) == cas.gdd:
+            gddValue = value
+            mask = (cas.DBE_VALUE | cas.DBE_LOG)
         else:
-            gddValue = cas.gdd.createDD(34) # gddAppType_dbr_ctrl_double
-            gddValue[1].put(self.info.unit)
-            gddValue[2].put(self.info.low)
-            gddValue[3].put(self.info.high)
-            gddValue[4].put(self.info.lolo)
-            gddValue[5].put(self.info.hihi)
-            gddValue[6].put(self.info.lolim)
-            gddValue[7].put(self.info.hilim)
-            gddValue[8].put(self.info.lolim)
-            gddValue[9].put(self.info.hilim)
-            gddValue[10].put(self.info.prec)
-            gddValue[11].put(value)
+            gddValue = cas.gdd(16, self.info.type) # gddAppType_value
+            gddValue.put(value.value)
+            gddValue.setTimeStamp(value.time)
+            gddValue.setStatSevr(value.alarm, value.severity)
+            mask = value.mask
 
-        self.postEvent(cas.DBE_PROPERTY, gddValue)
+        if self.info.type == cas.aitEnumEnum16:
+            gddCtrl = cas.gdd.createDD(31) # gddAppType_dbr_ctrl_enum
+            gddCtrl[1].put(gddValue)
+            gddCtrl[2].put(self.info.enums)
+        else:
+            gddCtrl = cas.gdd.createDD(34) # gddAppType_dbr_ctrl_double
+            gddCtrl[1].put(self.info.unit)
+            gddCtrl[2].put(self.info.low)
+            gddCtrl[3].put(self.info.high)
+            gddCtrl[4].put(self.info.lolo)
+            gddCtrl[5].put(self.info.hihi)
+            gddCtrl[6].put(self.info.lolim)
+            gddCtrl[7].put(self.info.hilim)
+            gddCtrl[8].put(self.info.lolim)
+            gddCtrl[9].put(self.info.hilim)
+            gddCtrl[10].put(self.info.prec)
+            gddCtrl[11].put(gddValue)
+
+        self.postEvent(mask, gddCtrl)
 
     def getValue(self, value):
         # get driver object
