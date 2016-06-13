@@ -8,6 +8,12 @@ class TestGDD(unittest.TestCase):
     def setUp(self):
         self.s = cas.gdd()
 
+    def test_copy(self):
+        d = cas.gdd()
+        d.put([1,2,3,4])
+        self.s.put(d)
+        self.assertEqual(self.s.get(), [1,2,3,4])
+
     def test_string(self):
         self.s.put("sdcsd")
         self.assertEqual(self.s.get(), "sdcsd")
