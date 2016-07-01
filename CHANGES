@@ -1,6 +1,12 @@
 
 .. py:currentmodule:: pcaspy
 
+0.6.1 (01-07-2016)
+------------------
+    * Fixed that PV graphics/control meta properties are not posted. See https://bugs.launchpad.net/epics-base/+bug/1510955 for the failure.
+    * Added support of EPICS 3.15
+    * Added :meth:`Driver.setParamInfo` to set PV graphics/control meta properties, e.g. limits, units, precision.
+
 0.6.0 (06-06-2016)
 ------------------
     * Added support of request type DBR_CLASS_NAME in casPV base class. It is not overloaded in :class:`SimplePV`. The default implementation returns an empty string.
