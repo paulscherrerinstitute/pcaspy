@@ -66,9 +66,9 @@ if os.path.exists(os.path.join(EPICSBASE, 'include', 'compiler')):
 # common libraries to link
 libraries = ['cas', 'ca', 'gdd', 'Com']
 if PRE315:
-    libraries += ['asIoc']
+    libraries.insert(0, 'asIoc')
 else:
-    libraries += ['dbCore']
+    libraries.insert(0, 'dbCore')
 umacros = []
 macros   = []
 cflags = []
