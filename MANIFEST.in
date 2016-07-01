@@ -8,6 +8,7 @@ include pcaspy/channel.*
 include pcaspy/*.i
 include pcaspy/*.py
 exclude pcaspy/cas.py
+exclude pcaspy/*.dll
 include example/*.py 
 include example/simscope.adl
 include example/simscope.opi
