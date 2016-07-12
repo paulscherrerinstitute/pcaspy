@@ -21,6 +21,7 @@ requirements:
 test:
   # Python imports
   imports:
+    - readline # [not win]
     - pcaspy
 
 about:
