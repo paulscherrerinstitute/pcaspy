@@ -8,6 +8,8 @@ source:
   # url: https://pypi.python.org/packages/source/p/pcaspy/pcaspy-0.5.1.tar.gz
   # md5: ba8c56ef136540cbaa463d35385b4c42
   path: ..
+  patches:
+    - readline.patch # [linux]
 
 requirements:
   build:
@@ -23,7 +25,6 @@ requirements:
 test:
   # Python imports
   imports:
-    - readline # [not win]
     - pcaspy
 
 about:
