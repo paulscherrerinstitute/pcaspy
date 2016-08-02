@@ -217,6 +217,7 @@ class Driver(object):
     def setParamInfo(self, reason, info):
         """
         set PV meta info, limits, precision, limits, units.
+
         :param str reason: PV base name
         :param dict info: information dictionary, same as used in :meth:`SimpleServer.createPV`.
         """

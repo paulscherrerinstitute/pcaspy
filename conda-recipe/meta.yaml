@@ -1,21 +1,25 @@
 
 package:
   name: pcaspy
-  version: 0.6.0
+  version: 0.6.1
 
 source:
   # fn: pcaspy-0.5.1.tar.gz
   # url: https://pypi.python.org/packages/source/p/pcaspy/pcaspy-0.5.1.tar.gz
   # md5: ba8c56ef136540cbaa463d35385b4c42
   path: ..
+  patches:
+    - readline.patch # [linux]
 
 requirements:
   build:
+    - python
     - setuptools
     - epics-base # [not win]
     - swig
 
   run:
+    - python
     - epics-base # [not win]
 
 test:

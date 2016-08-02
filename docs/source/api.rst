@@ -33,6 +33,8 @@ Reference
 
     .. automethod:: setParamEnums(reason, enums, states=None)
 
+    .. automethod:: setParamInfo(reason, info)
+
     .. automethod:: callbackPV(reason)
 
     .. automethod:: updatePVs()
