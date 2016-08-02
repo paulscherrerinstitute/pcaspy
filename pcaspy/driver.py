@@ -502,6 +502,8 @@ class SimplePV(cas.casPV):
             gddCtrl = cas.gdd.createDD(31) # gddAppType_dbr_ctrl_enum
             gddCtrl[1].put(gddValue)
             gddCtrl[2].put(self.info.enums)
+        elif self.info.type == cas.aitEnumString: # string type has no control info
+            gddCtrl = gddValue
         else:
             gddCtrl = cas.gdd.createDD(34) # gddAppType_dbr_ctrl_double
             gddCtrl[1].put(self.info.unit)
