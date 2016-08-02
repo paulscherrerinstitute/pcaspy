@@ -284,7 +284,7 @@ class Driver(object):
         elif info.type in [cas.aitEnumFloat64, cas.aitEnumInt32]:
             return self._checkNumericAlarm(info, value)
         elif  info.type in [cas.aitEnumString, cas.aitEnumFixedString, cas.aitEnumUint8]:
-            return None,None
+            return Alarm.NO_ALARM,Severity.NO_ALARM
         else:
             return None,None
 
