@@ -1,6 +1,11 @@
 
 .. py:currentmodule:: pcaspy
 
+0.6.2 (XX-08-2016)
+------------------
+    * Fixed that the alarm/severity of string type PVs remain UDF/INVALID. (Issue #23)
+    * Fixed that the monitor event of string type PVs are wrongly posted as double. (Issue #24)
+
 0.6.1 (01-07-2016)
 ------------------
     * Fixed that PV graphics/control meta properties are not posted. See https://bugs.launchpad.net/epics-base/+bug/1510955 for the failure.
