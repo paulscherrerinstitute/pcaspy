@@ -6,9 +6,15 @@ prefix = 'MTEST:'
 pvdb = {
     'ENUM' : {
         'type' : 'enum',
-        'enums': ['ONE', 'TWO']
+        'enums': ['ZERO', 'ONE']
     },
     'RAND' : {
+    },
+    'RAND.PREC': {
+        'type' : 'int'
+    },
+    'RAND.EGU' : {
+        'type' : 'str'
     },
     'CHANGE' : {
         'type' : 'int',
@@ -30,8 +36,13 @@ class myDriver(Driver):
             if num_states >= 1 and num_states <= 11:
                 status = True
                 self.setParamEnums('ENUM', enums[:num_states])
-            info = {'hihi':value, 'unit': 'eV'}
-            self.setParamInfo('RAND', info)
+            else:
+                status = False
+        elif reason == 'RAND.EGU':
+            self.setParamInfo('RAND', {'unit': value})
+        elif reason == 'RAND.PREC':
+            self.setParamInfo('RAND', {'prec': value})
+
         if status:
             self.setParam(reason, value)
         return status
