@@ -175,16 +175,16 @@ public:
             elif type(value) in [bool, int, float, long]:
                 self.putConvertNumeric(value)
             elif type(value) == str:
-                # if aitEnumUint8 then string is converted to char array
-                if primitiveType in [aitEnumUint8, aitEnumInt8]:
+                if self.isScalar():
+                    self.putConvertString(value)
+                else:
+                    # if atomic then string is converted to char array
                     valueChar = [ord(v) for v in value]
                     # null terminate
                     valueChar.append(0)
                     self.setDimension(1)
                     self.setBound(0, 0, len(valueChar))
                     self.putCharArray(valueChar)
-                else:
-                    self.putConvertString(value)
             elif hasattr(value, 'shape'): # numpy data type
                 if len(value.shape) == 0: # scalar
                     self.putConvertNumeric(value.astype(float))
