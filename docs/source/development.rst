@@ -166,9 +166,31 @@ Portable Channel Access Server programming, more specifically in the getters of 
 
         Retrieve the data. The gdd primitive types are up cast to Python types.
 
-    .. classmethod:: gdd.set(value)
+    .. classmethod:: gdd.put(value)
 
-        Store the data.
+        Store the data. The conversion table.
+
+        +--------------+------------------------------------------+
+        |              |               gdd                        |
+        |              +-------------------+----------------------+
+        |              |      Scalar       |      Atomic          |
+        |   Input      +---------+---------+----------+-----------+
+        |              | numeric | string  | numeric  | string    |
+        +--------------+---------+---------+----------+-----------+
+        | gdd          | copy dimension/bound info, then putDD    |
+        +--------------+------------------------------------------+
+        | numeric      |          putConvertNumeric               |
+        +--------------+-------------------+----------------------+
+        | string       | putConvertString  | convert to char array|
+        |              |                   | then putCharArray    |
+        +------+-------+-------------------+----------------------+
+        | numpy| scalar|          putConvertNumeric               |
+        |      +-------+------------------------------------------+
+        |      | array | flatten, then same as sequence           |
+        +------+-------+------------------------------------------+
+        | sequence     |  setup gdd dimension/bound, then         |
+        |              |  put(F)StringArray/putNumericArray       |
+        +--------------+------------------------------------------+
 
     .. classmethod:: gdd.setPrimType(type)
 
