@@ -136,6 +136,23 @@ public:
         void putRef(aitFixedString *dput, gddDestructor *dest);
         void putRef(aitString *dput, gddDestructor *dest);
 
+        %extend {
+            void putCharDataBuffer(void *dput) {
+                self->putRef(dput, aitEnumInt8, new pointerDestructor());
+            }
+            void putShortDataBuffer(void *dput) {
+                self->putRef(dput, aitEnumInt16, new pointerDestructor());
+            }
+            void putIntDataBuffer(void *dput) {
+                self->putRef(dput, aitEnumInt32, new pointerDestructor());
+            }
+            void putFloatDataBuffer(void *dput) {
+                self->putRef(dput, aitEnumFloat32, new pointerDestructor());
+            }
+            void putDoubleDataBuffer(void *dput) {
+                self->putRef(dput, aitEnumFloat64, new pointerDestructor());
+            }
+        }
         // copy the array data out of the DD
         //%rename (getNumericArray) get(aitFloat64 *dget);
         //%rename (getStringArray)  get(aitString  *dget);
@@ -189,16 +206,26 @@ public:
                 if len(value.shape) == 0: # scalar
                     self.putConvertNumeric(value.astype(float))
                 else:
-                    if len(value.shape) > 1: # ndarray
-                        value = value.flatten()
                     self.setDimension(1)
-                    self.setBound(0,0,len(value))
+                    self.setBound(0,0,value.size)
                     if self.primitiveType() == aitEnumFixedString:
                         self.putFStringArray([str2char(v) for v in value])
                     elif self.primitiveType() == aitEnumString:
                         self.putStringArray([str2char(v) for v in value])
                     else:
-                        self.putNumericArray(value)
+                        if value.dtype in ['i1', 'u1']:
+                            self.putCharDataBuffer(value.data)
+                        elif value.dtype in ['i2', 'u2']:
+                            self.putShortDataBuffer(value.data)
+                        elif value.dtype in ['i4', 'u4']:
+                            self.putShortDataBuffer(value.data)
+                        elif value.dtype == 'f4':
+                            self.putFloatDataBuffer(value.data)
+                        elif value.dtype == 'f8':
+                            self.putDoubleDataBuffer(value.data)
+                        else:
+                            raise TypeError("data type %s is not supported" % value.dtype)
+
             elif operator.isSequenceType(value):
                 if self.primitiveType() == aitEnumInvalid:
                     if type(value[0]) in [bool, int, float, long]:

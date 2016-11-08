@@ -76,6 +76,15 @@ void aitStringDestructor::run ( void * pUntyped )
     aitString *ps = (aitString *) pUntyped;
     delete [] ps;
 }
+
+/* gddDestructor of void pointer */
+class pointerDestructor: public gddDestructor {
+    void run (void *);
+};
+void pointerDestructor::run ( void * pUntyped )
+{
+    free (pUntyped);
+}
 %}
 
 /* const aitFloat64 array pointer input  */
@@ -286,3 +295,23 @@ void aitStringDestructor::run ( void * pUntyped )
 }
 
 
+/* void pointer input */
+%typemap (in) (void *dput) {
+    if (PyBuffer_Check($input)) {
+        PyObject *buff = PyBuffer_FromObject($input, 0, Py_END_OF_BUFFER);
+        if (buff != NULL) {
+            const void *data = NULL;
+            Py_ssize_t size = 0;
+            int error = PyObject_AsReadBuffer(buff, &data, &size);
+            if (error == 0) {
+                $1 = calloc(size, sizeof(char));
+                memcpy($1, data, size);
+            } else {
+                printf("error in read PyBufferObject\n");
+            }
+        } else {
+            printf("error in get PyBufferObject\n");
+        }
+        Py_XDECREF(buff);
+    }
+}
