@@ -337,6 +337,15 @@ _ait_d = {'enum'   : cas.aitEnumEnum16,
           'short'  : cas.aitEnumInt16,
           'char'   : cas.aitEnumUint8,
           }
+
+# map aitType to gddAppType_dbr_ctrl_xxx
+_dbr_d = {
+    cas.aitEnumUint8   : 32,
+    cas.aitEnumInt16   : 29,
+    cas.aitEnumInt32   : 33,
+    cas.aitEnumFloat64 : 34,
+}
+
 class PVInfo(object):
     def __init__(self, info):
         # initialize from info dict with defaults
@@ -506,7 +515,7 @@ class SimplePV(cas.casPV):
         elif self.info.type == cas.aitEnumString: # string type has no control info
             gddCtrl = gddValue
         else:
-            gddCtrl = cas.gdd.createDD(34) # gddAppType_dbr_ctrl_double
+            gddCtrl = cas.gdd.createDD(_dbr_d[self.info.type]) # gddAppType_dbr_ctrl_xxx
             gddCtrl[1].put(self.info.unit)
             gddCtrl[2].put(self.info.low)
             gddCtrl[3].put(self.info.high)
@@ -516,8 +525,11 @@ class SimplePV(cas.casPV):
             gddCtrl[7].put(self.info.hilim)
             gddCtrl[8].put(self.info.lolim)
             gddCtrl[9].put(self.info.hilim)
-            gddCtrl[10].put(self.info.prec)
-            gddCtrl[11].put(gddValue)
+            if self.info.type == cas.aitEnumFloat64:
+                gddCtrl[10].put(self.info.prec)
+                gddCtrl[11].put(gddValue)
+            else:
+                gddCtrl[10].put(gddValue)
 
         self.postEvent(mask, gddCtrl)
 
