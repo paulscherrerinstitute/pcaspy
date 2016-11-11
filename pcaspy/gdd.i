@@ -190,7 +190,11 @@ public:
                         self.setBound(dim, index, size)
                 self.putDD(value)
             elif type(value) in [bool, int, float, long]:
-                self.putConvertNumeric(value)
+                if self.isAtomic():
+                    self.setBound(0, 0, 1);
+                    self.putNumericArray([value])
+                else:
+                    self.putConvertNumeric(value)
             elif type(value) == str:
                 if self.isScalar():
                     self.putConvertString(value)
