@@ -196,7 +196,7 @@ public:
                     self.putNumericArray([value])
                 else:
                     self.putConvertNumeric(value)
-            elif type(value) == str:
+            elif isinstance(value, str):
                 if self.isScalar():
                     self.putConvertString(value)
                 else:
