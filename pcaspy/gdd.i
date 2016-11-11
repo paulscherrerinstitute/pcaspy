@@ -13,6 +13,7 @@ typedef long gddStatus;
 %pythoncode{
 import sys
 import operator
+import warnings
 if sys.version_info[0] > 2:
     str2char = lambda x: bytes(str(x),'utf8')
 else: 
@@ -228,7 +229,8 @@ public:
                         elif value.dtype == 'f8':
                             self.putDoubleDataBuffer(value.data)
                         else:
-                            raise TypeError("data type %s is not supported" % value.dtype)
+                            warnings.warn("gdd does not support data type %s. Conversion is involved." % value.dtype)
+                            self.putNumericArray(value)
 
             elif operator.isSequenceType(value):
                 if self.primitiveType() == aitEnumInvalid:
