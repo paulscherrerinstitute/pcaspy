@@ -35,7 +35,7 @@ class TestGDD(unittest.TestCase):
         self.assertEqual(self.s.get(), 12)
 
     def test_numpy_array(self):
-        self.s.put(numpy.arange(2))
+        self.s.put(numpy.arange(2, dtype='i4'))
         self.assertEqual(self.s.get(), [0, 1])
 
     def test_dim_enlarge(self):
