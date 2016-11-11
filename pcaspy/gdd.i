@@ -223,7 +223,7 @@ public:
                         elif value.dtype in ['i2', 'u2']:
                             self.putShortDataBuffer(value.data)
                         elif value.dtype in ['i4', 'u4']:
-                            self.putShortDataBuffer(value.data)
+                            self.putIntDataBuffer(value.data)
                         elif value.dtype == 'f4':
                             self.putFloatDataBuffer(value.data)
                         elif value.dtype == 'f8':
