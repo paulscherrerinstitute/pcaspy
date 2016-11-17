@@ -170,27 +170,27 @@ Portable Channel Access Server programming, more specifically in the getters of 
 
         Store the data. The conversion table.
 
-        +--------------+------------------------------------------+
-        |              |               gdd                        |
-        |              +-------------------+----------------------+
-        |              |      Scalar       |      Atomic          |
-        |   Input      +---------+---------+----------+-----------+
-        |              | numeric | string  | numeric  | string    |
-        +--------------+---------+---------+----------+-----------+
-        | gdd          | copy dimension/bound info, then putDD    |
-        +--------------+------------------------------------------+
-        | numeric      |          putConvertNumeric               |
-        +--------------+-------------------+----------------------+
-        | string       | putConvertString  | convert to char array|
-        |              |                   | then putCharArray    |
-        +------+-------+-------------------+----------------------+
-        | numpy| scalar|          putConvertNumeric               |
-        |      +-------+------------------------------------------+
-        |      | array | flatten, then same as sequence           |
-        +------+-------+------------------------------------------+
-        | sequence     |  setup gdd dimension/bound, then         |
-        |              |  put(F)StringArray/putNumericArray       |
-        +--------------+------------------------------------------+
+        +--------------+---------------------------------------------+
+        |              |               gdd                           |
+        |              +-------------------+-------------------------+
+        |              |      Scalar       |      Atomic             |
+        |   Input      +---------+---------+----------+--------------+
+        |              | numeric | string  | numeric  | string       |
+        +--------------+---------+---------+----------+--------------+
+        | gdd          | copy dimension/bound info, then putDD       |
+        +--------------+---------------------------------------------+
+        | numeric      | putConvertNumeric | putNumericArray(size=1) |
+        +--------------+-------------------+-------------------------+
+        | string       | putConvertString  | convert to char array   |
+        |              |                   | then putCharArray       |
+        +------+-------+-------------------+-------------------------+
+        | numpy| scalar|          putConvertNumeric                  |
+        |      +-------+---------------------------------------------+
+        |      | array | putXXXDataBuffer                            |
+        +------+-------+---------------------------------------------+
+        | sequence     |  setup gdd dimension/bound, then            |
+        |              |  put(F)StringArray/putNumericArray          |
+        +--------------+---------------------------------------------+
 
     .. classmethod:: gdd.setPrimType(type)
 
