@@ -507,6 +507,9 @@ class SimplePV(cas.casPV):
             mask = (cas.DBE_VALUE | cas.DBE_LOG)
         else:
             gddValue = cas.gdd(16, self.info.type) # gddAppType_value
+            if self.info.count > 1:
+                gddValue.setDimension(1)
+                gddValue.setBound(0, 0, self.info.count)
             gddValue.put(value.value)
             gddValue.setTimeStamp(value.time)
             gddValue.setStatSevr(value.alarm, value.severity)
