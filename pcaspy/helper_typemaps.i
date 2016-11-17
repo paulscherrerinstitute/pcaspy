@@ -297,6 +297,7 @@ void pointerDestructor::run ( void * pUntyped )
 
 /* void pointer input */
 %typemap (in) (void *dput) {
+%#if PY_VERSION_HEX<0x03000000
     if (PyBuffer_Check($input)) {
         PyObject *buff = PyBuffer_FromObject($input, 0, Py_END_OF_BUFFER);
         if (buff != NULL) {
@@ -313,5 +314,17 @@ void pointerDestructor::run ( void * pUntyped )
             printf("error in get PyBufferObject\n");
         }
         Py_XDECREF(buff);
+    } else
+%#endif
+    if (PyObject_CheckBuffer($input)) {
+        Py_buffer buff;
+        int error = PyObject_GetBuffer($input, &buff, PyBUF_SIMPLE);
+        if (error == 0) {
+            $1 = calloc(buff.len, sizeof(char));
+            memcpy($1, buff.buf, buff.len);
+            PyBuffer_Release(&buff);
+        } else {
+            printf("error in get Py_buffer\n");
+        }
     }
 }
