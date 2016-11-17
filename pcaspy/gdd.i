@@ -12,12 +12,16 @@ typedef long gddStatus;
 
 %pythoncode{
 import sys
-import operator
-import warnings
 if sys.version_info[0] > 2:
     str2char = lambda x: bytes(str(x),'utf8')
+    numerics = (bool, int, float)
+    import collections
+    is_sequence = lambda x: isinstance(x, collections.Sequence)
 else: 
     str2char = str
+    numerics = (bool, int, float, long)
+    import operator
+    is_sequence = operator.isSequenceType
 }
 
 %include "helper_typemaps.i"
@@ -137,23 +141,6 @@ public:
         void putRef(aitFixedString *dput, gddDestructor *dest);
         void putRef(aitString *dput, gddDestructor *dest);
 
-        %extend {
-            void putCharDataBuffer(void *dput) {
-                self->putRef(dput, aitEnumInt8, new pointerDestructor());
-            }
-            void putShortDataBuffer(void *dput) {
-                self->putRef(dput, aitEnumInt16, new pointerDestructor());
-            }
-            void putIntDataBuffer(void *dput) {
-                self->putRef(dput, aitEnumInt32, new pointerDestructor());
-            }
-            void putFloatDataBuffer(void *dput) {
-                self->putRef(dput, aitEnumFloat32, new pointerDestructor());
-            }
-            void putDoubleDataBuffer(void *dput) {
-                self->putRef(dput, aitEnumFloat64, new pointerDestructor());
-            }
-        }
         // copy the array data out of the DD
         //%rename (getNumericArray) get(aitFloat64 *dget);
         //%rename (getStringArray)  get(aitString  *dget);
@@ -190,51 +177,36 @@ public:
                         status, index, size = value.getBound(dim)
                         self.setBound(dim, index, size)
                 self.putDD(value)
-            elif type(value) in [bool, int, float, long]:
-                if self.isAtomic():
-                    self.setBound(0, 0, 1);
-                    self.putNumericArray([value])
-                else:
-                    self.putConvertNumeric(value)
-            elif isinstance(value, str):
-                if self.isScalar():
-                    self.putConvertString(value)
-                else:
-                    # if atomic then string is converted to char array
+            elif isinstance(value, numerics):
+                self.putConvertNumeric(value)
+            elif type(value) == str:
+                # if aitEnumUint8 then string is converted to char array
+                if primitiveType in [aitEnumUint8, aitEnumInt8]:
                     valueChar = [ord(v) for v in value]
                     # null terminate
                     valueChar.append(0)
                     self.setDimension(1)
                     self.setBound(0, 0, len(valueChar))
                     self.putCharArray(valueChar)
+                else:
+                    self.putConvertString(value)
             elif hasattr(value, 'shape'): # numpy data type
                 if len(value.shape) == 0: # scalar
                     self.putConvertNumeric(value.astype(float))
                 else:
+                    if len(value.shape) > 1: # ndarray
+                        value = value.flatten()
                     self.setDimension(1)
-                    self.setBound(0,0,value.size)
+                    self.setBound(0,0,len(value))
                     if self.primitiveType() == aitEnumFixedString:
                         self.putFStringArray([str2char(v) for v in value])
                     elif self.primitiveType() == aitEnumString:
                         self.putStringArray([str2char(v) for v in value])
                     else:
-                        if value.dtype in ['i1', 'u1']:
-                            self.putCharDataBuffer(value.data)
-                        elif value.dtype in ['i2', 'u2']:
-                            self.putShortDataBuffer(value.data)
-                        elif value.dtype in ['i4', 'u4']:
-                            self.putIntDataBuffer(value.data)
-                        elif value.dtype == 'f4':
-                            self.putFloatDataBuffer(value.data)
-                        elif value.dtype == 'f8':
-                            self.putDoubleDataBuffer(value.data)
-                        else:
-                            warnings.warn("gdd does not support data type %s. Conversion is involved." % value.dtype)
-                            self.putNumericArray(value)
-
-            elif operator.isSequenceType(value):
+                        self.putNumericArray(value)
+            elif is_sequence(value):
                 if self.primitiveType() == aitEnumInvalid:
-                    if type(value[0]) in [bool, int, float, long]:
+                    if isinstance(value[0], numerics):
                         self.setPrimType(aitEnumFloat64) 
                     else:
                         self.setPrimType(aitEnumString)

@@ -1,4 +1,4 @@
-import cas
+from . import cas
 import threading
 import time
 import sys
@@ -12,7 +12,7 @@ else:
 
 logging.getLogger('pcaspy').addHandler(NullHandler())
 
-from alarm import Severity, Alarm
+from .alarm import Severity, Alarm
 
 class Manager(object):
     pvs = {}    # PV dict using port name as key and {pv base name: pv instance} as value
@@ -54,7 +54,12 @@ class Data(object):
         return "value=%s alarm=%s severity=%s flag=%s mask=%s time=%s" % \
                (self.value, Alarm.nameOf(self.alarm), Severity.nameOf(self.severity), self.flag, self.mask, self.time)
 
-class Driver(object):
+# Define empty DriverBase using metaclass syntax compatible with both Python 2 and Python 3
+DriverBase = DriverType(str('DriverBase'), (), {
+    '__doc__': 'Driver base class'
+})
+
+class Driver(DriverBase):
     """
     This class reacts to PV's read/write requests. The default behavior is to accept any value of a write request
     and return it to a read request, an echo alike.
@@ -63,7 +68,6 @@ class Driver(object):
     """
     port = 'default'
 
-    __metaclass__ = DriverType
     def __init__(self):
         """
         Initialize parameters database. This method must be called by subclasses in the first place.
