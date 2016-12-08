@@ -23,3 +23,7 @@ install:
   # build
   - conda config --add channels paulscherrerinstitute
   - conda build conda-recipe
+  - conda install pcaspy --use-local
+
+scripts:
+  - cd test; python gddTest.py
