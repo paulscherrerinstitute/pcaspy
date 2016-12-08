@@ -19,7 +19,7 @@ install:
   - conda config --set always_yes yes --set changeps1 no
   - conda config --set auto_update_conda False
   - conda update -q --all
-  - conda install conda-build
+  - conda install conda-build numpy
   # build
   - conda config --add channels paulscherrerinstitute
   - conda build conda-recipe
