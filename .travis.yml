@@ -1,0 +1,24 @@
+language: python
+
+matrix:
+  include:
+    - python: '2.7'
+      os: linux
+    - python: '3.5'
+      os: linux
+
+install:
+  - if [[ "$TRAVIS_PYTHON_VERSION" == "2.7" ]]; then
+      wget http://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh -O miniconda.sh;
+    else
+      wget http://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh;
+    fi
+  - bash miniconda.sh -b -p $HOME/miniconda
+  - export PATH="$HOME/miniconda/bin:$PATH"
+  - hash -r
+  - conda config --set always_yes yes --set changeps1 no
+  - conda config --set auto_update_conda False
+  - conda update -q --all
+  # build
+  - conda config --add channels paulscherrerinstitute
+  - conda build conda-recipe
