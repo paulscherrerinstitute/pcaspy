@@ -25,5 +25,5 @@ install:
   - conda build conda-recipe
   - conda install pcaspy --use-local
 
-scripts:
+script:
   - cd test; python gddTest.py
