@@ -166,6 +166,27 @@ Portable Channel Access Server programming, more specifically in the getters of 
 
         Retrieve the data. The gdd primitive types are up cast to Python types.
 
+        +---------------------+---------+
+        | gdd                 | Python  |
+        +=====================+=========+
+        | aitEnumString       |         |
+        | aitEnumFixedString  | str     |
+        +---------------------+---------+
+        | aitEnumFloat32      |         |
+        | aitEnumFloat64      | float   |
+        +---------------------+---------+
+        | aitEnumInt8         |         |
+        | aitEnumUint8        | str     |
+        +---------------------+---------+
+        | aitEnumInt16        |         |
+        | aitEnumUint16       |         |
+        | aitEnumEnum16       | int     |
+        | aitEnumInt32        |         |
+        | aitEnumUint32       |         |
+        +---------------------+---------+
+
+        .. note:: aitEnumInt8 and aitEnumUint8 are used to store char arrays.
+
     .. classmethod:: gdd.put(value)
 
         Store the data. The conversion table.
@@ -176,7 +197,7 @@ Portable Channel Access Server programming, more specifically in the getters of 
         |              |      Scalar       |      Atomic             |
         |   Input      +---------+---------+----------+--------------+
         |              | numeric | string  | numeric  | string       |
-        +--------------+---------+---------+----------+--------------+
+        +==============+=========+=========+==========+==============+
         | gdd          | copy dimension/bound info, then putDD       |
         +--------------+---------------------------------------------+
         | numeric      | putConvertNumeric | putNumericArray(size=1) |
