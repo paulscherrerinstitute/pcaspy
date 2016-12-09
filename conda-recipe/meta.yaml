@@ -15,7 +15,7 @@ requirements:
   build:
     - python
     - setuptools
-    - epics-base # [not win]
+    - epics-base
     - swig
 
   run:
