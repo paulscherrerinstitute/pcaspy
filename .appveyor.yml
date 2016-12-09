@@ -1,0 +1,31 @@
+environment:
+  matrix:
+    - PYTHON_VERSION: 2.7
+      PYTHON_ARCH: "32"
+      MINICONDA: C:\Miniconda
+    - PYTHON_VERSION: 2.7
+      PYTHON_ARCH: "64"
+      MINICONDA: C:\Miniconda-x64
+    - PYTHON_VERSION: 3.5
+      PYTHON_ARCH: "32"
+      MINICONDA: C:\Miniconda35
+    - PYTHON_VERSION: 3.5
+      PYTHON_ARCH: "64"
+      MINICONDA: C:\Miniconda35-x64
+
+build: false
+
+install:
+  - "set PATH=%MINICONDA%;%MINICONDA%\\Scripts;%PATH%"
+  - conda config --set always_yes yes --set changeps1 no
+  - conda config --set auto_update_conda False
+  - conda update -q --all
+  - conda install conda-build numpy
+  # build
+  - conda config --add channels paulscherrerinstitute
+  - conda config --add channels xiaoqiangwang
+  - conda build conda-recipe
+  - conda install pcaspy --use-local
+
+script:
+  - cd test; python gddTest.py
