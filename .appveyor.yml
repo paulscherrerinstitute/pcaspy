@@ -27,4 +27,4 @@ install:
   - conda install pcaspy --use-local
 
 test_script:
-  - cd test; python gddTest.py
+  - cd test && python gddTest.py
