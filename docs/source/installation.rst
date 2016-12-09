@@ -96,8 +96,6 @@ In general please follow `the official installation instruction <http://www.aps.
           +------------------+-----------------------+
           | Python Version   | Visual Studio Version |
           +==================+=======================+
-          | 2.4 - 2.5        |  2003                 |
-          +------------------+-----------------------+
           | 2.6 - 2.7,       |                       |
           | 3.0 - 3.2        |  2008                 |
           +------------------+-----------------------+
@@ -110,7 +108,7 @@ In general please follow `the official installation instruction <http://www.aps.
 
 Windows
 ~~~~~~~
-- Python 2.4+ including 3.x (http://www.python.org/download/)
+- Python 2.6+ including 3.x (http://www.python.org/download/)
 - SWIG 1.3.29+ is required. Get it from http://www.swig.org/download.html and unpack to ``C:\Program Files (x86)\SWIG\``.
 
 Download the most recent source tarball, uncompress and run::
@@ -121,7 +119,7 @@ Download the most recent source tarball, uncompress and run::
 
 Linux
 ~~~~~
-- Python 2.4+ including 3.x
+- Python 2.6+ including 3.x
 - Python headers (package name "python-dev" or similar)
 - SWIG 1.3.29+ (package name "swig")
 
@@ -133,6 +131,14 @@ or install only for the current user::
 
     $ python setup.py build install --user
 
+.. note:: You might need to pass *-E* flag to sudo to preserve the EPICS environment variables. If your user account
+          is not allowed to do so, a normal procedure should be followed, ::
+
+              $ su -
+              # export EPICS_BASE=<epics base path>
+              # export EPICS_HOST_ARCH=<epics host arch>
+              # python setup.py install
+            
 OS X
 ~~~~
 - SWIG (MacPorts package "swig-python")

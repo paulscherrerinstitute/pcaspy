@@ -166,9 +166,52 @@ Portable Channel Access Server programming, more specifically in the getters of 
 
         Retrieve the data. The gdd primitive types are up cast to Python types.
 
-    .. classmethod:: gdd.set(value)
+        +---------------------+---------+
+        | gdd                 | Python  |
+        +=====================+=========+
+        | aitEnumString       |         |
+        | aitEnumFixedString  | str     |
+        +---------------------+---------+
+        | aitEnumFloat32      |         |
+        | aitEnumFloat64      | float   |
+        +---------------------+---------+
+        | aitEnumInt8         |         |
+        | aitEnumUint8        | str     |
+        +---------------------+---------+
+        | aitEnumInt16        |         |
+        | aitEnumUint16       |         |
+        | aitEnumEnum16       | int     |
+        | aitEnumInt32        |         |
+        | aitEnumUint32       |         |
+        +---------------------+---------+
 
-        Store the data.
+        .. note:: aitEnumInt8 and aitEnumUint8 are used to store char arrays.
+
+    .. classmethod:: gdd.put(value)
+
+        Store the data. The conversion table.
+
+        +--------------+---------------------------------------------+
+        |              |               gdd                           |
+        |              +-------------------+-------------------------+
+        |              |      Scalar       |      Atomic             |
+        |   Input      +---------+---------+----------+--------------+
+        |              | numeric | string  | numeric  | string       |
+        +==============+=========+=========+==========+==============+
+        | gdd          | copy dimension/bound info, then putDD       |
+        +--------------+---------------------------------------------+
+        | numeric      | putConvertNumeric | putNumericArray(size=1) |
+        +--------------+-------------------+-------------------------+
+        | string       | putConvertString  | convert to char array   |
+        |              |                   | then putCharArray       |
+        +------+-------+-------------------+-------------------------+
+        | numpy| scalar|          putConvertNumeric                  |
+        |      +-------+---------------------------------------------+
+        |      | array | putXXXDataBuffer                            |
+        +------+-------+---------------------------------------------+
+        | sequence     |  setup gdd dimension/bound, then            |
+        |              |  put(F)StringArray/putNumericArray          |
+        +--------------+---------------------------------------------+
 
     .. classmethod:: gdd.setPrimType(type)
 

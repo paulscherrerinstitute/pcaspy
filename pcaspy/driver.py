@@ -1,4 +1,4 @@
-import cas
+from . import cas
 import threading
 import time
 import sys
@@ -12,7 +12,7 @@ else:
 
 logging.getLogger('pcaspy').addHandler(NullHandler())
 
-from alarm import Severity, Alarm
+from .alarm import Severity, Alarm
 
 class Manager(object):
     pvs = {}    # PV dict using port name as key and {pv base name: pv instance} as value
@@ -54,7 +54,12 @@ class Data(object):
         return "value=%s alarm=%s severity=%s flag=%s mask=%s time=%s" % \
                (self.value, Alarm.nameOf(self.alarm), Severity.nameOf(self.severity), self.flag, self.mask, self.time)
 
-class Driver(object):
+# Define empty DriverBase using metaclass syntax compatible with both Python 2 and Python 3
+DriverBase = DriverType(str('DriverBase'), (), {
+    '__doc__': 'Driver base class'
+})
+
+class Driver(DriverBase):
     """
     This class reacts to PV's read/write requests. The default behavior is to accept any value of a write request
     and return it to a read request, an echo alike.
@@ -63,7 +68,6 @@ class Driver(object):
     """
     port = 'default'
 
-    __metaclass__ = DriverType
     def __init__(self):
         """
         Initialize parameters database. This method must be called by subclasses in the first place.
@@ -337,6 +341,15 @@ _ait_d = {'enum'   : cas.aitEnumEnum16,
           'short'  : cas.aitEnumInt16,
           'char'   : cas.aitEnumUint8,
           }
+
+# map aitType to gddAppType_dbr_ctrl_xxx
+_dbr_d = {
+    cas.aitEnumUint8   : 32,
+    cas.aitEnumInt16   : 29,
+    cas.aitEnumInt32   : 33,
+    cas.aitEnumFloat64 : 34,
+}
+
 class PVInfo(object):
     def __init__(self, info):
         # initialize from info dict with defaults
@@ -494,6 +507,9 @@ class SimplePV(cas.casPV):
             mask = (cas.DBE_VALUE | cas.DBE_LOG)
         else:
             gddValue = cas.gdd(16, self.info.type) # gddAppType_value
+            if self.info.count > 1:
+                gddValue.setDimension(1)
+                gddValue.setBound(0, 0, self.info.count)
             gddValue.put(value.value)
             gddValue.setTimeStamp(value.time)
             gddValue.setStatSevr(value.alarm, value.severity)
@@ -506,7 +522,7 @@ class SimplePV(cas.casPV):
         elif self.info.type == cas.aitEnumString: # string type has no control info
             gddCtrl = gddValue
         else:
-            gddCtrl = cas.gdd.createDD(34) # gddAppType_dbr_ctrl_double
+            gddCtrl = cas.gdd.createDD(_dbr_d[self.info.type]) # gddAppType_dbr_ctrl_xxx
             gddCtrl[1].put(self.info.unit)
             gddCtrl[2].put(self.info.low)
             gddCtrl[3].put(self.info.high)
@@ -516,8 +532,11 @@ class SimplePV(cas.casPV):
             gddCtrl[7].put(self.info.hilim)
             gddCtrl[8].put(self.info.lolim)
             gddCtrl[9].put(self.info.hilim)
-            gddCtrl[10].put(self.info.prec)
-            gddCtrl[11].put(gddValue)
+            if self.info.type == cas.aitEnumFloat64:
+                gddCtrl[10].put(self.info.prec)
+                gddCtrl[11].put(gddValue)
+            else:
+                gddCtrl[10].put(gddValue)
 
         self.postEvent(mask, gddCtrl)
 

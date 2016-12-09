@@ -14,6 +14,8 @@ prefix = 'MTEST:'
 pvdb = {
         'Run'              : { 'type' : 'enum',
                                 'enums': ['STOP', 'RUN']   },
+        'MaxPoints'        : { 'type' : 'int' ,
+                               'value': MAX_POINTS},
         'UpdateTime'       : { 'prec' : 3, 'unit' : 's', 'value' : 1     },
         'TimePerDivision'  : { 'prec' : 5, 'value' : 0.001 },
         'TriggerDelay'     : { 'prec' : 5, 'unit' : 's', 'value' : 0.0005},
