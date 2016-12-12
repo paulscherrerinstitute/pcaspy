@@ -80,12 +80,13 @@ elif UNAME == 'Windows':
             shutil.copy(dllpath,
                         os.path.join(os.path.dirname(os.path.abspath(__file__)), 'pcaspy'))
         macros += [('_CRT_SECURE_NO_WARNINGS', 'None'),('EPICS_CALL_DLL', '')]
+        cflags += ['/Z7']
         CMPL = 'msvc'
     if HOSTARCH in ['win32-x86-static', 'windows-x64-static'] or static:
         libraries += ['ws2_32', 'user32', 'advapi32']
         macros += [('_CRT_SECURE_NO_WARNINGS', 'None'), ('EPICS_DLL_NO', '')]
         umacros+= ['_DLL']
-        cflags += ['/EHsc']
+        cflags += ['/EHsc', '/Z7']
         lflags += ['/LTCG']
         if HOSTARCH[-5:] == 'debug':
             libraries += ['msvcrtd']
