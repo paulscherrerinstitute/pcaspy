@@ -27,7 +27,7 @@ install:
   - conda config --set always_yes yes --set changeps1 no
   - conda config --set auto_update_conda False
   - conda update -q --all
-  - conda install conda-build numpy
+  - conda install conda-build numpy anaconda-client
   # build
   - conda config --add channels paulscherrerinstitute
   - conda build conda-recipe
@@ -35,3 +35,6 @@ install:
 
 script:
   - cd test; python gddTest.py
+
+deploy:
+  script: anaconda -t $CONDA_TOKEN upload $HOME/miniconda/conda-bld/${TRAVIS_OS_NAME}-64/*.tar.bz2
