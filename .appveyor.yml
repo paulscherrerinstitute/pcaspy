@@ -36,4 +36,4 @@ test_script:
   - cd test && python gddTest.py
 
 on_success:
-  - anaconda -t %CONDA_TOKEN% upload %MINICONDA%\\conda-bld\\win-%PYTHON_ARCH%\\*.tar.bz2
+  - if %APPVEYOR_REPO_TAG% == true (anaconda -t %CONDA_TOKEN% upload %MINICONDA%\\conda-bld\\win-%PYTHON_ARCH%\\*.tar.bz2)
