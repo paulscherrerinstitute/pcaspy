@@ -25,7 +25,7 @@ install:
   - "set PATH=%MINICONDA%;%MINICONDA%\\Scripts;%PATH%"
   - conda config --set always_yes yes --set changeps1 no
   - conda update -q --all
-  - conda install conda-build numpy
+  - conda install conda-build numpy anaconda-client
   # build
   - conda config --add channels paulscherrerinstitute
   - conda config --add channels xiaoqiangwang
