@@ -2,7 +2,8 @@ os:
     - linux
     - osx
 
-matrix:
+env:
+  matrix:
     - CONDA_PY=2
     - CONDA_PY=3
 
