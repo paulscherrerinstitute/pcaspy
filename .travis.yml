@@ -1,11 +1,19 @@
-os:
-    - linux
-    - osx
+sudo: false
 
-env:
-  matrix:
-    - CONDA_PY=2
-    - CONDA_PY=3
+language: python
+
+matrix:
+  include:
+    - python: 2.7
+      env: CONDA_PY=2
+    - python: 3.5
+      env: CONDA_PY=3
+    - language: generic
+      os: osx
+      env: CONDA_PY=2
+    - language: generic
+      os: osx
+      env: CONDA_PY=3
 
 install:
   # Set the anaconda environment
