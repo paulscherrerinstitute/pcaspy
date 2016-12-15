@@ -47,3 +47,5 @@ script:
 deploy:
   provider: script
   script: anaconda -t $CONDA_TOKEN upload $HOME/miniconda/conda-bld/${TRAVIS_OS_NAME}-64/*.tar.bz2
+  on:
+    tags: true
