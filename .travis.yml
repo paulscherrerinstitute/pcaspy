@@ -1,18 +1,16 @@
 sudo: false
 
-language: python
+language: cpp
 
 matrix:
   include:
-    - python: 2.7
+    - os: linux
       env: CONDA_PY=2.7
-    - python: 3.5
+    - os: linux
       env: CONDA_PY=3.5
-    - language: generic
-      os: osx
+    - os: osx
       env: CONDA_PY=2.7
-    - language: generic
-      os: osx
+    - os: osx
       env: CONDA_PY=3.5
 
 install:
