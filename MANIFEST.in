@@ -14,3 +14,4 @@ include example/simscope.adl
 include example/simscope.opi
 include example/test.as
 include test/*.py
+include versioneer.py

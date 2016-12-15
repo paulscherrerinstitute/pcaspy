@@ -1,3 +1,6 @@
 from .driver import Driver, SimpleServer, PVInfo, SimplePV
-from ._version import __version__, version_info
 from .alarm import Severity, Alarm
+
+from ._version import get_versions
+__version__ = get_versions()['version']
+del get_versions

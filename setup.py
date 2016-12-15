@@ -5,8 +5,9 @@ setup.py file for pcaspy
 """
 import os
 import platform
-import imp
 import shutil
+
+import versioneer
 
 # Use setuptools to include build_sphinx, upload/sphinx commands
 try:
@@ -135,10 +136,10 @@ if UNAME != 'WIN32':
     cas_module.runtime_library_dirs += os.path.join(EPICSBASE, 'lib', HOSTARCH),
 
 long_description = open('README.rst').read()
-_version = imp.load_source('_version','pcaspy/_version.py')
+version = versioneer.get_version()
 
 dist = setup (name = 'pcaspy',
-              version = _version.__version__,
+              version = version,
               description = """Portable Channel Access Server in Python""",
               long_description = long_description,
               author      = "Xiaoqiang Wang",
