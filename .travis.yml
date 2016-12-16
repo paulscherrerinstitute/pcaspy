@@ -53,11 +53,11 @@ after_success:
         echo password=$PYPI_PASSWORD   >> ~/.pypirc;
         if [[ $TRAVIS_OS_NAME == "linux" && $CONDA_PY == "2.7" ]]; then
             python setup.py sdist upload;
-        fi
+        fi;
         if [[ $TRAVIS_OS_NAME == "linux" ]]; then
             python setup.py bdist_egg upload;
-        fi
+        fi;
         if [[ $TRAVIS_OS_NAME == "osx" ]]; then
             python setup.py bdist_wheel upload;
-        fi
+        fi;
       fi
