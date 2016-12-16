@@ -48,6 +48,6 @@ on_success:
   - echo username=%PYPI_USER%                        >> %USERPROFILE%\\.pypirc
   - echo password=%PYPI_PASSWORD%                    >> %USERPROFILE%\\.pypirc
   - set HOME=%USERPROFILE%
-  - dir %MINICONDA%
+  - conda install epics-base
   - set EPICS_BASE=%MINICONDA%\epics
   - if %APPVEYOR_REPO_TAG% == true (python setup.py bdist_wheel upload)
