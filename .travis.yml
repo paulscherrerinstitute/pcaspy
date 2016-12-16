@@ -33,7 +33,7 @@ install:
   - hash -r
   - conda config --set always_yes yes --set changeps1 no
   - conda update -q --all
-  - conda install conda-build numpy anaconda-client
+  - conda install conda-build numpy pip anaconda-client
   # build
   - conda config --add channels paulscherrerinstitute
   - conda build conda-recipe
@@ -44,6 +44,16 @@ script:
 
 deploy:
   provider: script
-  script: anaconda -t $CONDA_TOKEN upload $HOME/miniconda/conda-bld/${TRAVIS_OS_NAME}-64/*.tar.bz2
+  script:
+    - anaconda -t $CONDA_TOKEN upload $HOME/miniconda/conda-bld/${TRAVIS_OS_NAME}-64/*.tar.bz2
+    - echo [distutils]                                  > ~/.pypirc
+    - echo index-servers = pypi                        >> ~/.pypirc
+    - echo [pypi]                                      >> ~/.pypirc
+    - echo repository=$PYPI_URL                        >> ~/.pypirc
+    - echo username=$PYPI_USER                         >> ~/.pypirc
+    - echo password=$PYPI_PASSWORD                     >> ~/.pypirc
+    - '[[ $TRAVIS_OS_NAME != "linux" || $CONDA_PY != "2.7" ]] || python setup.py sdist upload'
+    - '[[ $TRAVIS_OS_NAME != "linux" ]] || python setup.py bdist_egg   upload'
+    - '[[ $TRAVIS_OS_NAME != "osx" ]]   || python setup.py bdist_wheel upload'
   on:
     tags: true
