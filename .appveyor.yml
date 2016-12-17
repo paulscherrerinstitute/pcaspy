@@ -50,4 +50,4 @@ on_success:
   - set HOME=%USERPROFILE%
   - conda install epics-base swig pip
   - set EPICS_BASE=%MINICONDA%\epics
-  - if %APPVEYOR_REPO_TAG% == true (python setup.py bdist_wheel upload)
+  - if %APPVEYOR_REPO_TAG% == true (python setup.py bdist_wheel upload -r pypi)

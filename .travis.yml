@@ -57,12 +57,12 @@ after_success:
         rm -f $EPICS_BASE/lib/$EPICS_HOST_ARCH/*.so;
         rm -f $EPICS_BASE/lib/$EPICS_HOST_ARCH/*.dylib;
         if [[ $TRAVIS_OS_NAME == "linux" && $CONDA_PY == "2.7" ]]; then
-            python setup.py sdist upload;
+            python setup.py sdist upload -r pypi;
         fi;
         if [[ $TRAVIS_OS_NAME == "linux" ]]; then
-            python setup.py bdist_egg upload;
+            python setup.py bdist_egg upload -r pypi;
         fi;
         if [[ $TRAVIS_OS_NAME == "osx" ]]; then
-            python setup.py bdist_wheel upload;
+            python setup.py bdist_wheel upload -r pypi;
         fi;
       fi
