@@ -16,14 +16,14 @@ matrix:
 install:
   # Set the anaconda environment
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
-      export EPICS_HOST_ARCH=darwin-x86
+      export EPICS_HOST_ARCH=darwin-x86;
       if [[ "$CONDA_PY" == "2.7" ]]; then
         curl https://repo.continuum.io/miniconda/Miniconda-latest-MacOSX-x86_64.sh -o miniconda.sh;
       else
         curl https://repo.continuum.io/miniconda/Miniconda3-latest-MacOSX-x86_64.sh -o miniconda.sh;
       fi
     else
-      export EPICS_HOST_ARCH=linux-x86_64
+      export EPICS_HOST_ARCH=linux-x86_64;
       if [[ "$CONDA_PY" == "2.7" ]]; then
         wget https://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh;
       else
