@@ -45,7 +45,8 @@ script:
   - cd test;python gddTest.py;cd ..
 
 after_success:
-    - if [[ $TRAVIS_TAG ]]; then
+    - echo "Tag: " $TRAVIS_TAG 
+    - if [[ ! -z "$TRAVIS_TAG" ]]; then
         anaconda -t $CONDA_TOKEN upload --force $HOME/miniconda/conda-bld/${TRAVIS_OS_NAME}-64/*.tar.bz2;
         echo [distutils]                > ~/.pypirc;
         echo index-servers = pypi      >> ~/.pypirc;
