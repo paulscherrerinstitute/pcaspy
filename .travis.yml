@@ -54,8 +54,8 @@ after_success:
         echo username=$PYPI_USER       >> ~/.pypirc;
         echo password=$PYPI_PASSWORD   >> ~/.pypirc;
         export EPICS_BASE=$HOME/miniconda/epics;
-        rm -f $EPICS_BASE/lib/$EPICS_HOST_ARCH/*.so;
-        rm -f $EPICS_BASE/lib/$EPICS_HOST_ARCH/*.dylib;
+        rm -f $EPICS_BASE/lib/$EPICS_HOST_ARCH/*.so*;
+        rm -f $EPICS_BASE/lib/$EPICS_HOST_ARCH/*.dylib*;
         if [[ $TRAVIS_OS_NAME == "linux" && $CONDA_PY == "2.7" ]]; then
             python setup.py sdist upload -r pypi;
         fi;
