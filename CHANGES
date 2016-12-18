@@ -1,12 +1,14 @@
 
 .. py:currentmodule:: pcaspy
 
-0.6.3 (XX-11-2016)
+0.6.3 (XX-12-2016)
 ------------------
     * Fixed that string type is wrongly converted to number. (Issue #24)
     * Fixed that gdd.put crashes when input is string but primitiveType is other that Int8 or Uint8. (Issue #26)
     * Added support of numpy array in gdd.put (Issue #28)
     * Changed Python 3 support from 2to3 conversion to direct compatible source code. (Issue #30)
+    * Binary packages on PyPI is built with EPICS base 3.14.12.6. (Issue #25 and #29)
+    * Continuous integration/deployment configured at Travis and AppVeyor.
 
 0.6.2 (02-08-2016)
 ------------------
