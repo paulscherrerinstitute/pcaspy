@@ -42,12 +42,12 @@ test_script:
 on_success:
   - if %APPVEYOR_REPO_TAG% == true (anaconda -t %CONDA_TOKEN% upload --force %MINICONDA%\\conda-bld\\win-%PYTHON_ARCH%\\*.tar.bz2)
   - echo [distutils]                                  > %USERPROFILE%\\.pypirc
-  - echo index-servers =  pypi                       >> %USERPROFILE%\\.pypirc
-  - echo [pypi]                                      >> %USERPROFILE%\\.pypirc
+  - echo index-servers =  mypypi                     >> %USERPROFILE%\\.pypirc
+  - echo [mypypi]                                    >> %USERPROFILE%\\.pypirc
   - echo repository=%PYPI_URL%                       >> %USERPROFILE%\\.pypirc
   - echo username=%PYPI_USER%                        >> %USERPROFILE%\\.pypirc
   - echo password=%PYPI_PASSWORD%                    >> %USERPROFILE%\\.pypirc
   - set HOME=%USERPROFILE%
   - conda install epics-base swig pip
   - set EPICS_BASE=%MINICONDA%\epics
-  - if %APPVEYOR_REPO_TAG% == true (python setup.py bdist_wheel upload -r pypi)
+  - if %APPVEYOR_REPO_TAG% == true (python setup.py bdist_wheel upload -r mypypi)
