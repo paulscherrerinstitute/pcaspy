@@ -46,7 +46,7 @@ Virtual methods
 
        Return the canonical (full) name for the PV.
 
-    .. cpp:function:: unsigned maxDimenstion()
+    .. cpp:function:: unsigned maxDimension()
     .. cpp:function:: aitIndex maxBound(unsigned dimension)
 
        =========      ============  ========
@@ -60,7 +60,7 @@ Virtual methods
 
        The PV value.
 
-    .. cpp:function:: caStatus getPrevision(gdd & value)
+    .. cpp:function:: caStatus getPrecision(gdd & value)
 
        The PV precision.
 
@@ -219,7 +219,7 @@ Portable Channel Access Server programming, more specifically in the getters of 
         Changing the primitive type code is generally an unnatural thing to do.
         Force a GDD to change the application type, which effectively changes the high-level meaning of the data held within the GDD.
 
-    .. classmethod:: gdd.setStatServ(status, severity)
+    .. classmethod:: gdd.setStatSevr(status, severity)
 
         Manipulate the status field of a GDD as a combination status and severity field.
 
