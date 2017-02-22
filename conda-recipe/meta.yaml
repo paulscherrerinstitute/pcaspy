@@ -23,9 +23,14 @@ requirements:
     - epics-base # [not win]
 
 test:
-  # Python imports
-  imports:
-    - pcaspy
+  requires:
+    - numpy
+
+  source_files:
+    - test/gddTest.py
+
+  commands:
+    - python test/gddTest.py
 
 about:
   home: https://github.com/paulscherrerinstitute/pcaspy
