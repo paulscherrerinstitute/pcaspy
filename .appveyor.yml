@@ -29,10 +29,10 @@ install:
   - "set PATH=%MINICONDA%;%MINICONDA%\\Scripts;%PATH%"
   - conda config --set always_yes yes --set changeps1 no
   - conda update -q --all
+  - conda config --add channels defaults
+  - conda config --add channels xiaoqiangwang
   - conda install conda-build numpy anaconda-client
   # build
-  - conda config --add channels paulscherrerinstitute
-  - conda config --add channels xiaoqiangwang
   - "%CMD_IN_ENV% conda build conda-recipe"
   - conda install pcaspy --use-local
 
