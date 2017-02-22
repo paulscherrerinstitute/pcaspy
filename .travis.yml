@@ -40,10 +40,6 @@ install:
   - conda install conda-build numpy swig pip anaconda-client
   # build
   - conda build conda-recipe
-  - conda install pcaspy --use-local
-
-script:
-  - cd test;python gddTest.py;cd ..
 
 after_success:
     - if [[ ! -z "$TRAVIS_TAG" ]]; then

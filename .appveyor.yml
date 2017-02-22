@@ -34,10 +34,6 @@ install:
   - conda install conda-build numpy anaconda-client
   # build
   - "%CMD_IN_ENV% conda build conda-recipe"
-  - conda install pcaspy --use-local
-
-test_script:
-  - cd test && python gddTest.py && cd ..
 
 on_success:
   - if %APPVEYOR_REPO_TAG% == true (anaconda -t %CONDA_TOKEN% upload --force %MINICONDA%\\conda-bld\\win-%PYTHON_ARCH%\\*.tar.bz2)
