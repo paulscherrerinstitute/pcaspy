@@ -57,6 +57,7 @@ macros   = []
 cflags = []
 lflags = []
 dlls = []
+extra_objects = []
 # platform dependent libraries and macros
 UNAME = platform.system()
 if  UNAME.find('CYGWIN') == 0:
@@ -105,6 +106,8 @@ elif UNAME == 'Windows':
         CMPL = 'gcc'
 elif UNAME == 'Darwin':
     CMPL = 'clang'
+    extra_objects = [os.path.join(EPICSBASE, 'lib', HOSTARCH, 'lib%s.a'%lib) for lib in libraries]
+    libraries = []
 elif UNAME == 'Linux':
     # necessary when EPICS is statically linked
     libraries += ['readline', 'rt']
@@ -128,6 +131,7 @@ cas_module = Extension('pcaspy._cas',
                        library_dirs = [ os.path.join(EPICSBASE, 'lib', HOSTARCH),],
                        libraries = libraries,
                        extra_link_args = lflags,
+                       extra_objects = extra_objects,
                        define_macros = macros,
                        undef_macros  = umacros,)
 # *NIX linker has runtime library path option
