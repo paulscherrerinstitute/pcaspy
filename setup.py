@@ -110,7 +110,8 @@ elif UNAME == 'Darwin':
     libraries = []
 elif UNAME == 'Linux':
     # necessary when EPICS is statically linked
-    libraries += ['readline', 'rt']
+    extra_objects = [os.path.join(EPICSBASE, 'lib', HOSTARCH, 'lib%s.a'%lib) for lib in libraries]
+    libraries = ['readline', 'rt']
     CMPL = 'gcc'
 elif UNAME == 'SunOS':
     # OS_CLASS used by EPICS
