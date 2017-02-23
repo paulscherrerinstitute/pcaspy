@@ -15,6 +15,7 @@ requirements:
   build:
     - python
     - setuptools
+    - wheel
     - epics-base
     - swig
 
@@ -31,6 +32,9 @@ test:
 
   commands:
     - python test/gddTest.py
+
+outputs:
+    - type: wheel # [not linux]
 
 about:
   home: https://github.com/paulscherrerinstitute/pcaspy
