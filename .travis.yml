@@ -38,10 +38,9 @@ install:
   - conda config --add channels defaults
   - conda config --add channels xiaoqiangwang
   - conda install conda-build numpy swig pip anaconda-client
-  # build
-  - conda build conda-recipe
 
-script: false
+script:
+  - conda build conda-recipe
 
 after_success:
     - if [[ ! -z "$TRAVIS_TAG" ]]; then
