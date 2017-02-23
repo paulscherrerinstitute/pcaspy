@@ -135,8 +135,8 @@ cas_module = Extension('pcaspy._cas',
                        extra_objects = extra_objects,
                        define_macros = macros,
                        undef_macros  = umacros,)
-# *NIX linker has runtime library path option
-if UNAME != 'WIN32':
+# other *NIX linker has runtime library path option
+if UNAME not in ['WIN32', 'Darwin', 'Linux']:
     cas_module.runtime_library_dirs += os.path.join(EPICSBASE, 'lib', HOSTARCH),
 
 long_description = open('README.rst').read()
