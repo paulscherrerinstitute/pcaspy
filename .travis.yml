@@ -21,7 +21,6 @@ matrix:
 install:
   # Set the anaconda environment
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
-      export EPICS_HOST_ARCH=darwin-x86;
       if [[ "$CONDA_PY" == "2.7" ]]; then
         curl https://repo.continuum.io/miniconda/Miniconda-latest-MacOSX-x86_64.sh -o miniconda.sh;
       else
@@ -34,8 +33,13 @@ install:
       conda update -q --all;
       conda config --add channels defaults;
       conda config --add channels xiaoqiangwang;
-      conda install conda-build numpy swig pip anaconda-client;
+      conda install conda-build pip anaconda-client;
     else
+      curl https://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -o miniconda.sh;
+      bash miniconda.sh -b -p $HOME/miniconda;
+      export PATH="$HOME/miniconda/bin:$PATH";
+      conda config --set always_yes yes --set changeps1 no;
+      conda install pip anaconda-client;
       docker pull continuumio/anaconda-build-linux-64:latest;
       mkdir -m 0777 -p $HOME/miniconda/conda-bld/${TRAVIS_OS_NAME}-64;
     fi
@@ -48,7 +52,7 @@ script:
     fi
 
 after_success:
-    - which pip
+    - ls $HOME/miniconda/conda-bld/${TRAVIS_OS_NAME}-64
     - if [[ ! -z "$TRAVIS_TAG" ]]; then
         anaconda -t $CONDA_TOKEN upload --force $HOME/miniconda/conda-bld/${TRAVIS_OS_NAME}-64/*.tar.bz2;
         echo [distutils]                > ~/.pypirc;
@@ -57,16 +61,14 @@ after_success:
         echo repository=$PYPI_URL      >> ~/.pypirc;
         echo username=$PYPI_USER       >> ~/.pypirc;
         echo password=$PYPI_PASSWORD   >> ~/.pypirc;
-        export EPICS_BASE=$HOME/miniconda/epics;
-        rm -f $EPICS_BASE/lib/$EPICS_HOST_ARCH/*.so*;
-        rm -f $EPICS_BASE/lib/$EPICS_HOST_ARCH/*.dylib*;
+        pip install twine;
         if [[ $TRAVIS_OS_NAME == "linux" && $CONDA_PY == "2.7" ]]; then
-            python setup.py sdist upload -r mypypi;
+            twine upload -r mypypi $HOME/miniconda/conda-bld/${TRAVIS_OS_NAME}-64/pcaspy-*.tar.gz;
         fi;
         if [[ $TRAVIS_OS_NAME == "linux" ]]; then
-            python setup.py bdist_egg upload -r mypypi;
+            twine upload -r mypypi $HOME/miniconda/conda-bld/${TRAVIS_OS_NAME}-64/pcaspy-*.egg;
         fi;
         if [[ $TRAVIS_OS_NAME == "osx" ]]; then
-            python setup.py bdist_wheel upload -r mypypi;
+            twine upload -r mypypi $HOME/miniconda/conda-bld/${TRAVIS_OS_NAME}-64/pcaspy-*.whl;
         fi;
       fi
