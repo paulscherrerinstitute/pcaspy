@@ -13,4 +13,12 @@ echo Using EPICS_HOST_ARCH=$EPICS_HOST_ARCH
 
  # echo $(uname | tr '[:upper:]' '[:lower:]')-$(uname -m)
 #$PYTHON setup.py build     # Python command to install the script
-$PYTHON setup.py install     # Python command to install the script
+OUTPUT_PATH=$(dirname $(conda build --output conda-recipe))
+
+if [ $PLATFORM == "linux" ]; then
+    $PYTHON setup.py install bdist_egg
+    cp dist/*.egg ${OUTPUT_PATH}
+elif [ $PLATFORM == "darwin" ]; then
+    $PYTHON setup.py install bdist_wheel
+    cp dist/*.whl ${OUTPUT_PATH}
+fi
