@@ -8,5 +8,8 @@ if %ARCH%==32 (
 echo Using EPICS_BASE=%EPICS_BASE%
 echo Using EPICS_HOST_ARCH=%EPICS_HOST_ARCH%
 
-"%PYTHON%" setup.py install
+for /f "delims=" %%i in ('conda info --root') do set OUTPUT_PATH=%%i\conda-bld\win-%ARCH%
+
+"%PYTHON%" setup.py install bdist_wheel
+copy dist\*.whl %OUTPUT_PATH%
 if errorlevel 1 exit 1
