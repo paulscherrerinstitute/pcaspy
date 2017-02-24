@@ -1,12 +1,17 @@
-sudo: false
+sudo: required
+
+services:
+  - docker
 
 language: cpp
 
 matrix:
   include:
     - os: linux
+      dist: trusty
       env: CONDA_PY=2.7
     - os: linux
+      dist: trusty
       env: CONDA_PY=3.5
     - os: osx
       env: CONDA_PY=2.7
@@ -22,27 +27,28 @@ install:
       else
         curl https://repo.continuum.io/miniconda/Miniconda3-latest-MacOSX-x86_64.sh -o miniconda.sh;
       fi
+      bash miniconda.sh -b -p $HOME/miniconda;
+      export PATH="$HOME/miniconda/bin:$PATH";
+      hash -r;
+      conda config --set always_yes yes --set changeps1 no;
+      conda update -q --all;
+      conda config --add channels defaults;
+      conda config --add channels xiaoqiangwang;
+      conda install conda-build numpy swig pip anaconda-client;
     else
-      export EPICS_HOST_ARCH=linux-x86_64;
-      if [[ "$CONDA_PY" == "2.7" ]]; then
-        wget https://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh;
-      else
-        wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh;
-      fi
+      docker pull continuumio/anaconda-build-linux-64:latest;
+      mkdir -m 0777 -p $HOME/miniconda/conda-bld/${TRAVIS_OS_NAME}-64;
     fi
-  - bash miniconda.sh -b -p $HOME/miniconda
-  - export PATH="$HOME/miniconda/bin:$PATH"
-  - hash -r
-  - conda config --set always_yes yes --set changeps1 no
-  - conda update -q --all
-  - conda config --add channels defaults
-  - conda config --add channels xiaoqiangwang
-  - conda install conda-build numpy swig pip anaconda-client
 
 script:
-  - conda build conda-recipe
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
+      conda build conda-recipe;
+    else
+       ./conda_build_in_docker.sh `pwd` $HOME/miniconda/conda-bld/${TRAVIS_OS_NAME}-64 xiaoqiangwang;
+    fi
 
 after_success:
+    - which pip
     - if [[ ! -z "$TRAVIS_TAG" ]]; then
         anaconda -t $CONDA_TOKEN upload --force $HOME/miniconda/conda-bld/${TRAVIS_OS_NAME}-64/*.tar.bz2;
         echo [distutils]                > ~/.pypirc;
