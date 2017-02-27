@@ -13,10 +13,15 @@ matrix:
     - os: linux
       dist: trusty
       env: CONDA_PY=3.5
+    - os: linux
+      dist: trusty
+      env: CONDA_PY=3.6
     - os: osx
       env: CONDA_PY=2.7
     - os: osx
       env: CONDA_PY=3.5
+    - os: osx
+      env: CONDA_PY=3.6
 
 install:
   # Set the anaconda environment
