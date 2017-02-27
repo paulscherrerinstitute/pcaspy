@@ -32,7 +32,7 @@ install:
       conda config --set always_yes yes --set changeps1 no;
       conda update -q --all;
       conda config --add channels defaults;
-      conda config --add channels xiaoqiangwang;
+      conda config --add channels ${CONDA_CHANNEL};
       conda install conda-build pip anaconda-client;
     else
       curl https://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -o miniconda.sh;
@@ -48,7 +48,7 @@ script:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
       conda build conda-recipe;
     else
-       ./conda_build_in_docker.sh `pwd` $HOME/miniconda/conda-bld/${TRAVIS_OS_NAME}-64 xiaoqiangwang;
+       ./conda_build_in_docker.sh `pwd` $HOME/miniconda/conda-bld/${TRAVIS_OS_NAME}-64 ${CONDA_CHANNEL};
     fi
 
 after_success:
