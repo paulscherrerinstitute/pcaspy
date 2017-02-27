@@ -101,7 +101,7 @@ In general please follow `the official installation instruction <http://www.aps.
           +------------------+-----------------------+
           | 3.3 - 3.4        |  2010                 |
           +------------------+-----------------------+
-          | 3.5              |  2015                 |
+          | 3.5 - 3.6        |  2015                 |
           +------------------+-----------------------+
 
           Mismatching may cause crashes!
