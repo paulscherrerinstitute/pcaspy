@@ -7,12 +7,12 @@ Anaconda
 --------
 Packages for Anaconda can be installed via::
 
-    conda install -c https://conda.anaconda.org/paulscherrerinstitute pcaspy
+    conda install -c paulscherrerinstitute pcaspy
 
 Binary Installers
 -----------------
 The binary packages are distributed at `PyPI <https://pypi.python.org/pypi/pcaspy>`_.
-They have EPICS 3.14.12.4 libraries statically builtin.
+They have EPICS 3.14.12.6 libraries statically builtin.
 If we do not have a *wheel* or *egg* package for your system, *pip* or *easy_install* will try to
 build from source. And then you would need EPICS base installed, see :ref:`getting-epics`.
 
