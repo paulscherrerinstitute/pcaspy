@@ -38,6 +38,10 @@ class TestGDD(unittest.TestCase):
         self.s.put(numpy.arange(2, dtype='i4'))
         self.assertEqual(self.s.get(), [0, 1])
 
+    def test_numpy_unsupported_dtype(self):
+        self.s.put(numpy.arange(2, dtype='i8'))
+        self.assertEqual(self.s.get(), [0, 1])
+
     def test_dim_enlarge(self):
         self.s.put(1)
         self.assertEqual(self.s.get(), 1)

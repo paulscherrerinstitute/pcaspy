@@ -11,6 +11,7 @@ typedef long gddStatus;
 %include <std_string.i>
 
 %pythoncode{
+import warnings
 import sys
 if sys.version_info[0] > 2:
     str2char = lambda x: bytes(str(x),'utf8')
