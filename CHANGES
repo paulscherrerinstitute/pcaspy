@@ -1,7 +1,7 @@
 
 .. py:currentmodule:: pcaspy
 
-0.6.3 (XX-12-2016)
+0.6.3 (28-02-2017)
 ------------------
     * Fixed that string type is wrongly converted to number. (Issue #24)
     * Fixed that gdd.put crashes when input is string but primitiveType is other that Int8 or Uint8. (Issue #26)
