@@ -27,7 +27,7 @@ install:
   # Set the anaconda environment
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
       if [[ "$CONDA_PY" == "2.7" ]]; then
-        curl https://repo.continuum.io/miniconda/Miniconda-latest-MacOSX-x86_64.sh -o miniconda.sh;
+        curl https://repo.continuum.io/miniconda/Miniconda2-latest-MacOSX-x86_64.sh -o miniconda.sh;
       else
         curl https://repo.continuum.io/miniconda/Miniconda3-latest-MacOSX-x86_64.sh -o miniconda.sh;
       fi;
@@ -40,7 +40,7 @@ install:
       conda config --add channels ${CONDA_CHANNEL};
       conda install conda-build pip anaconda-client;
     else
-      curl https://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -o miniconda.sh;
+      curl https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh -o miniconda.sh;
       bash miniconda.sh -b -p $HOME/miniconda;
       export PATH="$HOME/miniconda/bin:$PATH";
       conda config --set always_yes yes --set changeps1 no;
