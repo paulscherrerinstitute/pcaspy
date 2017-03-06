@@ -19,17 +19,17 @@ import sys, os
 sys.path.insert(0, os.path.abspath('../../'))
 
 # mock binary modules
-from mock import Mock as MagickMock
-class Mock(MagickMock):
+from unittest.mock import MagicMock
+class Mock(MagicMock):
     class caServer(object):
         pass
     class casPV(object):
         pass
     @classmethod
     def __getattr__(cls, name):
-        return Mock()
+        return MagicMock()
 
-MOCK_MODULES = ['cas', '_cas']
+MOCK_MODULES = ['pcaspy.cas']
 sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
 
 # -- General configuration -----------------------------------------------------
