@@ -1,0 +1,44 @@
+Summary: Portable Channel Access Server in Python
+Name: python-pcaspy
+Version: 0.6.3
+Release: 1%{?dist}
+Source0: pcaspy-%{version}.tar.gz
+License: BSD
+Group: Development/Libraries
+BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-buildroot
+Prefix: %{_prefix}
+Vendor: Xiaoqiang Wang <xiaoqiangwang@gmail.com>
+Url: https://pypi.python.org/pypi/pcaspy
+
+BuildRequires: python-devel python-setuptools swig epics-base
+
+%description
+PCASpy
+======
+
+PCASpy provides not only the low level python binding to EPICS Portable Channel Access Server
+but also the necessary high level abstraction to ease the server tool programming.
+
+Check out `PCASpy documents <https://pcaspy.readthedocs.org>`_ to get started.
+
+* Home: https://github.com/paulscherrerinstitute/pcaspy/wiki
+* Documents: https://pcaspy.readthedocs.io
+* Downloads: https://pypi.python.org/pypi/pcaspy
+* Source Repo: https://github.com/paulscherrerinstitute/pcaspy
+* Issue Tracker: https://github.com/paulscherrerinstitute/pcaspy/issues
+
+
+%prep
+%setup -n pcaspy-%{version}
+
+%build
+env CFLAGS="$RPM_OPT_FLAGS" python setup.py build
+
+%install
+python setup.py install --single-version-externally-managed -O1 --root=$RPM_BUILD_ROOT --record=INSTALLED_FILES
+
+%clean
+rm -rf $RPM_BUILD_ROOT
+
+%files -f INSTALLED_FILES
+%defattr(-,root,root)

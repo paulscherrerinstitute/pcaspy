@@ -2,6 +2,7 @@ include README.rst
 include LICENSE
 include MANIFEST.in
 include CHANGES
+include python-pcaspy.spec
 include setup.py
 include pcaspy/pv.*
 include pcaspy/channel.*
