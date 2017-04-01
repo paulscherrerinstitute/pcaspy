@@ -3,37 +3,26 @@
 Installation
 ============
 
+Binary Installers
+-----------------
+
 Anaconda
---------
+~~~~~~~~
 Packages for Anaconda can be installed via::
 
     conda install -c paulscherrerinstitute pcaspy
 
-Binary Installers
------------------
-The binary packages are distributed at `PyPI <https://pypi.python.org/pypi/pcaspy>`_.
-They have EPICS 3.14.12.6 libraries statically builtin.
-If we do not have a *wheel* or *egg* package for your system, *pip* or *easy_install* will try to
-build from source. And then you would need EPICS base installed, see :ref:`getting-epics`.
-
-OS X
-~~~~
-
-Make sure you have `pip <https://pypi.python.org/pypi/pip>`_ and 
-`wheel <https://pypi.python.org/pypi/wheel>`_  installed, and run::
-
-    $ sudo pip install pcaspy
-
-Windows
-~~~~~~~
-
-Make sure you have `pip <https://pypi.python.org/pypi/pip>`_ and
-`wheel <https://pypi.python.org/pypi/wheel>`_  installed, and run::
-
-    > C:\Python27\Scripts\pip.exe install pcaspy
-
-Linux
+Wheel
 ~~~~~
+The binary packages are distributed at `PyPI <https://pypi.python.org/pypi/pcaspy>`_.
+They have EPICS 3.14.12.6 libraries statically builtin. Make sure you have `pip <https://pypi.python.org/pypi/pip>`_ and
+`wheel <https://pypi.python.org/pypi/wheel>`_  installed, and run::
+
+    $ sudo pip install pcaspy # macOS
+    > C:\Python27\Scripts\pip.exe install pcaspy :: Windows
+
+Egg
+~~~
 PyPI does not allow upload linux-specific wheels package, yet (as of 2014).
 The old *egg* format is used then::
 
@@ -46,25 +35,25 @@ Or install only for the current user::
 
 Source
 ------
+If no binary package is available for your system, you can build from source.
+And then you would need EPICS base installed, see :ref:`getting-epics`.
+
 The source can be downloaded in various ways:
 
   * The released source tarballs can be found at `PyPI <https://pypi.python.org/pypi/pcaspy>`_.
-
-  * From the `git repository <https://github.com/paulscherrerinstitute/pcaspy>`_, 
-    the source can be downloaded as a zip package. 
-
+  * From the `git repository <https://github.com/paulscherrerinstitute/pcaspy/releases>`_,
+    each release can be downloaded as a zip package.
   * Clone the repository if you feel adventurous::
 
     $ git clone https://github.com/paulscherrerinstitute/pcaspy.git
 
-Build
------
 
 .. _getting-epics:
 
 Getting EPICS
 ~~~~~~~~~~~~~
-In general please follow `the official installation instruction <http://www.aps.anl.gov/epics/base/R3-14/12-docs/README.html>`_. Here is a short guide,
+In general please follow `the official installation instruction <http://www.aps.anl.gov/epics/base/R3-14/12-docs/README.html>`_.
+Here is a short guide,
 
 - Get the source tarball from http://www.aps.anl.gov/epics/base/R3-14/12.php.
 - Unpack it to a proper path.
@@ -139,10 +128,36 @@ or install only for the current user::
               # export EPICS_HOST_ARCH=<epics host arch>
               # python setup.py install
             
-OS X
-~~~~
+macOS
+~~~~~
 - SWIG (MacPorts package "swig-python")
 
 In the source directory, run::
 
     $ sudo python setup.py install
+
+
+Package
+-------
+After the build succeeds, you may want to create a package for distribution.
+
+Anaconda
+^^^^^^^^
+Conda recipe is included::
+
+    $ conda build -c paulscherrerinstitute conda-recipe
+
+Wheel
+^^^^^
+::
+
+    $ python setup.py bdist_wheel
+
+RPM
+^^^
+The spec file *python-pcaspy.spec* is included. Get the source tarball either from PyPI or create it by
+``python setup.py sdist``, and run::
+
+    $ rpmbuild -ta pcaspy-0.6.3.tar.gz
+
+The binary and source RPM will be created. The package name is *python-pcaspy*.
