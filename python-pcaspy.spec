@@ -10,7 +10,12 @@ Prefix: %{_prefix}
 Vendor: Xiaoqiang Wang <xiaoqiangwang@gmail.com>
 Url: https://pypi.python.org/pypi/pcaspy
 
-BuildRequires: python-devel python-setuptools swig epics-base
+BuildRequires: python-devel python-setuptools swig
+
+# If EPICS_BASE is defined from environment, then epics-base package is not required
+%if "%{?getenv:EPICS_BASE}"==""
+BuildRequires: epics-base
+%endif
 
 %description
 PCASpy
@@ -20,13 +25,6 @@ PCASpy provides not only the low level python binding to EPICS Portable Channel 
 but also the necessary high level abstraction to ease the server tool programming.
 
 Check out `PCASpy documents <https://pcaspy.readthedocs.org>`_ to get started.
-
-* Home: https://github.com/paulscherrerinstitute/pcaspy/wiki
-* Documents: https://pcaspy.readthedocs.io
-* Downloads: https://pypi.python.org/pypi/pcaspy
-* Source Repo: https://github.com/paulscherrerinstitute/pcaspy
-* Issue Tracker: https://github.com/paulscherrerinstitute/pcaspy/issues
-
 
 %prep
 %setup -n pcaspy-%{version}
