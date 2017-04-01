@@ -142,13 +142,13 @@ Package
 After the build succeeds, you may want to create a package for distribution.
 
 Anaconda
-^^^^^^^^
+~~~~~~~~
 Conda recipe is included::
 
     $ conda build -c paulscherrerinstitute conda-recipe
 
 Wheel
-^^^^^
+~~~~~
 ::
 
     $ python setup.py bdist_wheel
