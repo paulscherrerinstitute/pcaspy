@@ -40,6 +40,12 @@ fi
 # Since docker run as uid 0 by default we export our uid and gid and set ownership
 # of files in our volume /output before exiting the container.
 cat <<'EOF' | docker run --rm $CONDA_ENVS -e CONDA_CHANNELS=$3 -e HOST_UID=$(id -u) -e HOST_GID=$(id -g) -v $ABS_RECIPE_PATH:/recipe:ro -v $ABS_OUTPUT_PATH:/output -i continuumio/anaconda-build-linux-64:latest bash -x
+sudo rm /etc/yum.repos.d/*.repo
+cat << END | sudo tee -a /etc/yum.conf
+[base]
+name=Centos-5.11 - Base
+baseurl=http://vault.centos.org/5.11/os/\$basearch/
+END
 sudo yum install -y gcc gcc-c++
 export PATH=/opt/miniconda/bin:/usr/bin:/bin:/sbin/:/usr/sbin
 gcc -v
