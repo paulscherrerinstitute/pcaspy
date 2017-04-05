@@ -12,6 +12,10 @@ Url: https://pypi.python.org/pypi/pcaspy
 
 BuildRequires: python-devel python-setuptools swig
 
+# Do not check .so files in the python_sitearch directory
+# or any files in the application's directory for provides
+%global __provides_exclude_from ^%{python_sitearch}/.*\\.so$
+
 # If EPICS_BASE is defined from environment, then epics-base package is not required
 %if "%{?getenv:EPICS_BASE}"==""
 BuildRequires: epics-base
