@@ -21,6 +21,9 @@ They have EPICS 3.14.12.6 libraries statically builtin. Make sure you have `pip 
     $ sudo pip install pcaspy # macOS
     > C:\Python27\Scripts\pip.exe install pcaspy :: Windows
 
+
+.. note:: On Windows, if you see error message "The program can't start because MSVCRxxx.dll is missing from your computer." when importing pcaspy, you might need to install the proper `Visual C++ Redistributable <https://support.microsoft.com/en-us/help/2977003/the-latest-supported-visual-c-downloads>`_.
+
 Egg
 ~~~
 PyPI does not allow upload linux-specific wheels package, yet (as of 2014).
