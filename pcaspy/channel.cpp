@@ -26,11 +26,13 @@ Channel :: Channel(const casCtx &ctxIn,
         PV *pvIn,  
         const char * const user, 
         const char * const host)
-            : casChannel(ctxIn) 
+            : casChannel(ctxIn),pUserName(NULL),pHostName(NULL)
 {
     pPv = pvIn; 
-    pUserName = epicsStrDup(user); 
-    pHostName = epicsStrDup(host); 
+    if (user)
+      pUserName = strdup(user);
+    if (host)
+      pHostName = strdup(host);
 
     /* add as client and register access rights callback */
     ASMEMBERPVT member = pvIn->getAccessSecurityGroup(); 
