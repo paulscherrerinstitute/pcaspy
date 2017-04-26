@@ -1,6 +1,12 @@
 
 .. py:currentmodule:: pcaspy
 
+0.6.4 (26-04-2017)
+------------------
+    * Fixed the crash on Windows when epics base libraies are compiled using different visual studio version than python. (Issue #41)
+    * Fixed the sphinx docs build. (Issue #37)
+    * Added a spec file for rpmbuild.
+
 0.6.3 (28-02-2017)
 ------------------
     * Fixed that string type is wrongly converted to number. (Issue #24)
