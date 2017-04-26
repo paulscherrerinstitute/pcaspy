@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include <epicsString.h>
+#include <string.h>
 
 #include "pv.h"
 #include "channel.h"
