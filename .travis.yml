@@ -44,6 +44,7 @@ install:
       bash miniconda.sh -b -p $HOME/miniconda;
       export PATH="$HOME/miniconda/bin:$PATH";
       conda config --set always_yes yes --set changeps1 no;
+      conda config --add channels defaults;
       conda install pip anaconda-client;
       docker pull continuumio/anaconda-build-linux-64:latest;
       mkdir -m 0777 -p $HOME/miniconda/conda-bld/${TRAVIS_OS_NAME}-64;
