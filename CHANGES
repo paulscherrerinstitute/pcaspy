@@ -1,6 +1,11 @@
 
 .. py:currentmodule:: pcaspy
 
+0.6.5 (XX-05-2017)
+------------------
+    * Fixed the anaconda upload on Travis Linux.
+    * Rebuilt PyPI/Anaconda packages to fix the wrong number of elements transfer when ``ca_array_get_backack`` requests with ``0`` count. (Issue #43)
+
 0.6.4 (26-04-2017)
 ------------------
     * Fixed the crash on Windows when epics base libraies are compiled using different visual studio version than python. (Issue #41)
