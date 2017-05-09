@@ -466,12 +466,47 @@ Check out the reference :meth:`Driver.setParam` and :meth:`Driver.setParamStatus
 and `alarm severity example <https://github.com/paulscherrerinstitute/pcaspy/blob/master/example/alarm_severity.py>`_.
 
 
-Dynamic enumerate states
-------------------------
+Dynamic properties
+------------------
 For enumerate type, the choices are specified by field *enums* at startup. If in case the choices should be changed
-at runtime, :meth:`Driver.setParamEnums` can be used. Check out the
+at runtime, :meth:`Driver.setParamEnums` can be used. For numerical type, the precision, units, limits can also be changed
+by :meth:`Driver.setParamInfo`. Check out the
 `dynamic enums example <https://github.com/paulscherrerinstitute/pcaspy/blob/master/example/dynamic_property.py>`_.
 
+To see the effect, use the following script: ::
+
+  import time
+  from CaChannel import ca, CaChannel
+
+  def monitor_callback(epics_arg, user_arg):
+      if epics_arg['type'] == ca.DBR_CTRL_DOUBLE:
+          print('units:', epics_arg['pv_units'])
+      elif epics_arg['type'] == ca.DBR_CTRL_ENUM:
+          print('enums:', epics_arg['pv_statestrings'])
+
+  enum = CaChannel('MTEST:ENUM')
+  enum.searchw()
+  enum.add_masked_array_event(ca.DBR_CTRL_ENUM, None, ca.DBE_PROPERTY, monitor_callback)
+
+  rand = CaChannel('MTEST:RAND')
+  rand.searchw()
+  rand.add_masked_array_event(ca.DBR_CTRL_DOUBLE, None, ca.DBE_PROPERTY, monitor_callback)
+  rand.flush_io()
+
+  while True:
+      time.sleep(1)
+
+Now try to change the enum state and of MTEST:ENUM and units of MTEST:RAND. ::
+
+  $ caput MTEST:CHANGE 4
+  $ caput MTEST:RAND.EGU 'eV'
+
+The script shall have the following output. ::
+
+  enums: ('ZERO', 'ONE')
+  units:
+  enums: ('ZERO', 'ONE', 'TWO', 'THREE')
+  units: eV
 
 Create PVs using different prefix
 ---------------------------------
