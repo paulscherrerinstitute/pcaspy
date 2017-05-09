@@ -470,7 +470,7 @@ Dynamic enumerate states
 ------------------------
 For enumerate type, the choices are specified by field *enums* at startup. If in case the choices should be changed
 at runtime, :meth:`Driver.setParamEnums` can be used. Check out the
-`dynamic enums example <https://github.com/paulscherrerinstitute/pcaspy/blob/master/example/dynamic_enums.py>`_.
+`dynamic enums example <https://github.com/paulscherrerinstitute/pcaspy/blob/master/example/dynamic_property.py>`_.
 
 
 Create PVs using different prefix
