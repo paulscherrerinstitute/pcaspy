@@ -1,4 +1,5 @@
 from . import cas
+from .alarm import Severity, Alarm
 import threading
 import time
 import sys
@@ -12,12 +13,11 @@ else:
 
 logging.getLogger('pcaspy').addHandler(NullHandler())
 
-from .alarm import Severity, Alarm
 
 class Manager(object):
-    pvs = {}    # PV dict using port name as key and {pv base name: pv instance} as value
-    pvf = {}    # PV dict using PV full name as key
-    driver = {} # Driver dict
+    pvs = {}     #: PV dict using port name as key and {pv base name: pv instance} as value
+    pvf = {}     #: PV dict using PV full name as key
+    driver = {}  #: Driver dict
 
 # Yes, this is a global instance
 manager = Manager()
@@ -32,23 +32,25 @@ def registerDriver(driver_init_func):
         manager.driver[port] = driver_instance
     return wrap
 
+
 # Driver metaclass to decorate subclass.__init__ to
 # register subclass object
 class DriverType(type):
-    def __init__(self, name, bases, dct):
+    def __init__(cls, name, bases, dct):
         if name != 'Driver':
-            self.__init__ = registerDriver(self.__init__)
-        return type.__init__(self, name, bases, dct)
+            cls.__init__ = registerDriver(cls.__init__)
+        type.__init__(cls, name, bases, dct)
+
 
 class Data(object):
     def __init__(self):
         self.value = 0
-        self.flag  = False
-        self.severity  = Severity.INVALID_ALARM
+        self.flag = False
+        self.severity = Severity.INVALID_ALARM
         self.alarm = Alarm.UDF_ALARM
         self.udf = True
         self.mask = 0
-        self.time  = cas.epicsTimeStamp()
+        self.time = cas.epicsTimeStamp()
 
     def __repr__(self):
         return "value=%s alarm=%s severity=%s flag=%s mask=%s time=%s" % \
@@ -58,6 +60,7 @@ class Data(object):
 DriverBase = DriverType(str('DriverBase'), (), {
     '__doc__': 'Driver base class'
 })
+
 
 class Driver(DriverBase):
     """
@@ -72,7 +75,7 @@ class Driver(DriverBase):
         """
         Initialize parameters database. This method must be called by subclasses in the first place.
         """
-        self.pvDB    = {}
+        self.pvDB = {}
         # init pvData with pv instance
         for reason, pv in manager.pvs[self.port].items():
             data = Data()
@@ -227,7 +230,7 @@ class Driver(DriverBase):
         """
         # copy new information
         pv = manager.pvs[self.port][reason]
-        for k,v in info.items():
+        for k, v in info.items():
             if hasattr(pv.info, k):
                 setattr(pv.info, k, v)
         pv.info.validateLimit()
@@ -282,17 +285,18 @@ class Driver(DriverBase):
                 self.pvDB[reason].mask = 0
 
     def _checkAlarm(self, reason, value):
-        info =  manager.pvs[self.port][reason].info
+        info = manager.pvs[self.port][reason].info
         if info.type == cas.aitEnumEnum16:
             return self._checkEnumAlarm(info, value)
         elif info.type in [cas.aitEnumFloat64, cas.aitEnumInt32]:
             return self._checkNumericAlarm(info, value)
-        elif  info.type in [cas.aitEnumString, cas.aitEnumFixedString, cas.aitEnumUint8]:
-            return Alarm.NO_ALARM,Severity.NO_ALARM
+        elif info.type in [cas.aitEnumString, cas.aitEnumFixedString, cas.aitEnumUint8]:
+            return Alarm.NO_ALARM, Severity.NO_ALARM
         else:
-            return None,None
+            return None, None
 
-    def _checkNumericAlarm(self, info, value):
+    @staticmethod
+    def _checkNumericAlarm(info, value):
         severity = Severity.NO_ALARM
         alarm = Alarm.NO_ALARM
 
@@ -314,16 +318,14 @@ class Driver(DriverBase):
 
         return alarm, severity
 
-
-    def _checkEnumAlarm(self, info, value):
-        severity = Severity.NO_ALARM
-        alarm = Alarm.NO_ALARM
-
+    @staticmethod
+    def _checkEnumAlarm(info, value):
         states = info.states
-
-        if value>=0 and value < len(states):
+        if 0 <= value < len(states):
             severity = states[value]
-            if severity != Severity.NO_ALARM:
+            if severity == Severity.NO_ALARM:
+                alarm = Alarm.NO_ALARM
+            else:
                 alarm = Alarm.STATE_ALARM
         else:
             severity = Severity.MAJOR_ALARM
@@ -333,28 +335,29 @@ class Driver(DriverBase):
 
 
 # map aitType to string representation
-_ait_d = {'enum'   : cas.aitEnumEnum16,
-          'str'    : cas.aitEnumString,
-          'string' : cas.aitEnumString,
-          'float'  : cas.aitEnumFloat64,
-          'int'    : cas.aitEnumInt32,
-          'short'  : cas.aitEnumInt16,
-          'char'   : cas.aitEnumUint8,
+_ait_d = {'enum':   cas.aitEnumEnum16,
+          'str':    cas.aitEnumString,
+          'string': cas.aitEnumString,
+          'float':  cas.aitEnumFloat64,
+          'int':    cas.aitEnumInt32,
+          'short':  cas.aitEnumInt16,
+          'char':   cas.aitEnumUint8,
           }
 
 # map aitType to gddAppType_dbr_ctrl_xxx
 _dbr_d = {
-    cas.aitEnumUint8   : 32,
-    cas.aitEnumInt16   : 29,
-    cas.aitEnumInt32   : 33,
-    cas.aitEnumFloat64 : 34,
+    cas.aitEnumUint8:   32,
+    cas.aitEnumInt16:   29,
+    cas.aitEnumInt32:   33,
+    cas.aitEnumFloat64: 34,
 }
+
 
 class PVInfo(object):
     def __init__(self, info):
         # initialize from info dict with defaults
         self.count = info.get('count', 1)
-        self.type  = _ait_d[info.get('type', 'float')]
+        self.type = _ait_d[info.get('type', 'float')]
         # check the number of enum states and
         # the state string do not exceed the maximum
         enums = info.get('enums', [])
@@ -365,27 +368,29 @@ class PVInfo(object):
         for enum in enums:
             if len(enum) >= cas.MAX_ENUM_STRING_SIZE:
                 sys.stderr.write('enums state "%s" exceeds the maximum length %d\n'
-                      % (enum, cas.MAX_ENUM_STRING_SIZE-1))
+                                 % (enum, cas.MAX_ENUM_STRING_SIZE-1))
                 enum = enum[:cas.MAX_ENUM_STRING_SIZE-1]
             self.enums.append(enum)
-        self.states= info.get('states',[])
+        self.states = info.get('states', [])
         # initialize enum severity states if not specified
         if not self.states:
             self.states = len(self.enums) * [Severity.NO_ALARM]
-        self.prec  = info.get('prec', 0.0)
-        self.unit  = info.get('unit', '')
+        self.prec = info.get('prec', 0.0)
+        self.unit = info.get('unit', '')
         self.lolim = info.get('lolim', 0.0)
         self.hilim = info.get('hilim', 0.0)
-        self.hihi  = info.get('hihi', 0.0)
-        self.lolo  = info.get('lolo', 0.0)
-        self.high  = info.get('high', 0.0)
-        self.low   = info.get('low',  0.0)
-        self.scan  = info.get('scan', 0)
-        self.asyn  = info.get('asyn', False)
-        self.asg   = info.get('asg', '')
-        self.reason= ''
-        self.port  = info.get('port', 'default')
+        self.hihi = info.get('hihi', 0.0)
+        self.lolo = info.get('lolo', 0.0)
+        self.high = info.get('high', 0.0)
+        self.low = info.get('low',  0.0)
+        self.scan = info.get('scan', 0)
+        self.asyn = info.get('asyn', False)
+        self.asg = info.get('asg', '')
+        self.reason = ''
+        self.port = info.get('port', 'default')
         # validate alarm limit
+        self.valid_low_high = False
+        self.valid_lolo_hihi = False
         self.validateLimit()
 
         # initialize value based on type and count
@@ -408,6 +413,7 @@ class PVInfo(object):
             self.valid_low_high = False
         else:
             self.valid_low_high = True
+
 
 class SimplePV(cas.casPV):
     """
@@ -458,11 +464,11 @@ class SimplePV(cas.casPV):
         # call out driver support
         success = driver.write(self.info.reason, gddValue.get())
         value = driver.getParamDB(self.info.reason)
-        if success == False:
+        if success is False:
             logging.getLogger('pcaspy.SimplePV.writeValue').\
                 warn('%s: Driver rejects value %s', self.info.reason, gddValue.get())
             value.severity = Severity.INVALID_ALARM
-            value.alarm    = Alarm.WRITE_ALARM
+            value.alarm = Alarm.WRITE_ALARM
         else:
             driver.updatePVs()
         return success
@@ -506,7 +512,7 @@ class SimplePV(cas.casPV):
             gddValue = value
             mask = (cas.DBE_VALUE | cas.DBE_LOG)
         else:
-            gddValue = cas.gdd(16, self.info.type) # gddAppType_value
+            gddValue = cas.gdd(16, self.info.type)  # gddAppType_value
             if self.info.count > 1:
                 gddValue.setDimension(1)
                 gddValue.setBound(0, 0, self.info.count)
@@ -516,13 +522,13 @@ class SimplePV(cas.casPV):
             mask = value.mask
 
         if self.info.type == cas.aitEnumEnum16:
-            gddCtrl = cas.gdd.createDD(31) # gddAppType_dbr_ctrl_enum
+            gddCtrl = cas.gdd.createDD(31)  # gddAppType_dbr_ctrl_enum
             gddCtrl[1].put(gddValue)
             gddCtrl[2].put(self.info.enums)
-        elif self.info.type == cas.aitEnumString: # string type has no control info
+        elif self.info.type == cas.aitEnumString:  # string type has no control info
             gddCtrl = gddValue
         else:
-            gddCtrl = cas.gdd.createDD(_dbr_d[self.info.type]) # gddAppType_dbr_ctrl_xxx
+            gddCtrl = cas.gdd.createDD(_dbr_d[self.info.type])  # gddAppType_dbr_ctrl_xxx
             gddCtrl[1].put(self.info.unit)
             gddCtrl[2].put(self.info.low)
             gddCtrl[3].put(self.info.high)
@@ -574,7 +580,7 @@ class SimplePV(cas.casPV):
         return cas.S_casApp_success
 
     def getEnums(self, enums):
-        if (self.info.enums):
+        if self.info.enums:
             enums.put(self.info.enums)
         return cas.S_casApp_success
 
@@ -617,6 +623,7 @@ class SimplePV(cas.casPV):
     def getName(self):
         return self.name
 
+
 class SimpleServer(cas.caServer):
     """
     This class encapsulates transactions performed by channel access server.
@@ -649,7 +656,8 @@ class SimpleServer(cas.caServer):
     def pvAttach(self, context, fullname):
         return manager.pvf.get(fullname, cas.S_casApp_pvNotFound)
 
-    def createPV(self, prefix, pvdb):
+    @staticmethod
+    def createPV(prefix, pvdb):
         """
         Create PV based on prefix and database definition pvdb
 
@@ -711,13 +719,15 @@ class SimpleServer(cas.caServer):
         for basename, pvinfo in pvdb.items():
             pvinfo = PVInfo(pvinfo)
             pvinfo.reason = basename
-            pvinfo.name   = prefix + basename
+            pvinfo.name = prefix + basename
             pv = SimplePV(pvinfo.name, pvinfo)
             manager.pvf[pvinfo.name] = pv
-            if pvinfo.port not in manager.pvs: manager.pvs[pvinfo.port]={}
+            if pvinfo.port not in manager.pvs:
+                manager.pvs[pvinfo.port] = {}
             manager.pvs[pvinfo.port][basename] = pv
 
-    def initAccessSecurityFile(self, filename, **subst):
+    @staticmethod
+    def initAccessSecurityFile(filename, **subst):
         """
         Load access security configuration file
 
@@ -728,15 +738,16 @@ class SimpleServer(cas.caServer):
             This must be called before :meth:`createPV`.
 
         """
-        macro = ','.join(['%s=%s'%(k,v) for k,v in subst.items()])
+        macro = ','.join(['%s=%s' % (k, v) for k, v in subst.items()])
         cas.asInitFile(filename, macro)
         cas.asCaStart()
 
-    def process(self, time):
+    @staticmethod
+    def process(delay):
         """
         Process server transactions.
 
-        :param float time: Processing time in second
+        :param float delay: Processing time in second
 
         This method should be called so frequent so that the incoming channel access
         requests are answered in time. Normally called in the loop::
@@ -748,4 +759,4 @@ class SimpleServer(cas.caServer):
 
 
         """
-        cas.process(time)
+        cas.process(delay)

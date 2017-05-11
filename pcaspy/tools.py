@@ -1,5 +1,6 @@
 import threading
 
+
 # Thread running server processing loop
 class ServerThread(threading.Thread):
     """
@@ -34,4 +35,3 @@ class ServerThread(threading.Thread):
         Stop the server processing
         """
         self.running = False
-
