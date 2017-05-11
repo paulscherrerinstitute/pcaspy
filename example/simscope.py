@@ -2,7 +2,7 @@
 import threading
 import numpy
 
-from pcaspy import Driver, SimpleServer
+from pcaspy import Driver, SimpleServer, Severity
 
 MAX_POINTS      = 1000
 FREQUENCY       = 1000
@@ -13,7 +13,8 @@ MIN_UPDATE_TIME = 0.01
 prefix = 'MTEST:'
 pvdb = {
         'Run'              : { 'type' : 'enum',
-                                'enums': ['STOP', 'RUN']   },
+                               'enums': ['STOP', 'RUN'],
+                               'states': [Severity.NO_ALARM, Severity.MINOR_ALARM]},
         'MaxPoints'        : { 'type' : 'int' ,
                                'value': MAX_POINTS},
         'UpdateTime'       : { 'prec' : 3, 'unit' : 's', 'value' : 1     },
