@@ -345,7 +345,7 @@ The following runs the server for ~4 seconds and exits. The debug output shows t
 
 Qt GUI integration
 ^^^^^^^^^^^^^^^^^^
-`qtqui.py <https://github.com/paulscherrerinstitute/pcaspy/blob/master/example/qtgui.py>`_ shows how to combine it with Qt GUI event loop.
+`qtgui.py <https://github.com/paulscherrerinstitute/pcaspy/blob/master/example/qtgui.py>`_ shows how to combine it with Qt GUI event loop.
 
 Example 5: Access Security Control
 ----------------------------------
