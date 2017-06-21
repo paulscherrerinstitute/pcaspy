@@ -21,6 +21,13 @@ pvdb = {
         'type':  'enum',
         'enums': ['NONE', 'TRIG'],
     },
+    'PWM' : {
+        'type':  'enum',
+        'enums': ['STOP', 'START'],
+    },
+    'DC' : {
+        'type':  'int',
+    },
     'INP' : {
         'type':  'enum',
         'enums': ['LOW', 'HIGH'],
@@ -32,6 +39,7 @@ pvdb = {
 }
 
 PIN_OUT = 12 #: pin for output
+PIN_PWM = 16 #: pin for PWM
 PIN_INP = 3 #: pin for input
 
 class myDriver(Driver):
@@ -40,7 +48,9 @@ class myDriver(Driver):
         GPIO.setmode(GPIO.BOARD)
         GPIO.setup(PIN_INP, GPIO.IN)
         GPIO.setup(PIN_OUT, GPIO.OUT)
+        GPIO.setup(PIN_PWM, GPIO.OUT)
         GPIO.add_event_detect(PIN_INP, GPIO.BOTH, callback=self.input_callback)
+        self.pwm = GPIO.PWM(PIN_PWM, 1) # 1 Hz
 
     def input_callback(self, channel):
         level = GPIO.input(channel)
@@ -61,13 +71,20 @@ class myDriver(Driver):
             time.sleep(0.1)
             GPIO.output(PIN_OUT, GPIO.LOW)
             status = False
+        elif reason == 'PWM':
+            if value == 0:
+                self.pwm.stop()
+            else:
+                self.pwm.start(self.getParam('DC'))
+        elif reason == 'DC':
+            self.pwm.ChangeDutyCycle(value)
         else:
             status = False
 
         if status:
             self.setParam(reason, value)
         return status
-   
+
 
 if __name__ == '__main__':
     server = SimpleServer()
