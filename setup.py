@@ -7,6 +7,7 @@ import os
 import platform
 import imp
 import shutil
+import subprocess
 
 # Use setuptools to include build_sphinx, upload/sphinx commands
 try:
@@ -111,7 +112,9 @@ elif UNAME == 'Darwin':
 elif UNAME == 'Linux':
     # necessary when EPICS is statically linked
     extra_objects = [os.path.join(EPICSBASE, 'lib', HOSTARCH, 'lib%s.a'%lib) for lib in libraries]
-    libraries = ['readline', 'rt']
+    libraries = ['rt']
+    if subprocess.call('nm %s | grep -q rl_' % os.path.join(EPICSBASE, 'lib', HOSTARCH, 'libCom.a'), shell=True) == 0:
+        libraries += ['readline']
     CMPL = 'gcc'
 elif UNAME == 'SunOS':
     # OS_CLASS used by EPICS
