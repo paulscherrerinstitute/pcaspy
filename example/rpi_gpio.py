@@ -28,6 +28,9 @@ pvdb = {
     'DC' : {
         'type':  'int',
     },
+    'FREQ' : {
+        'value': 1
+    },
     'INP' : {
         'type':  'enum',
         'enums': ['LOW', 'HIGH'],
@@ -78,6 +81,8 @@ class myDriver(Driver):
                 self.pwm.start(self.getParam('DC'))
         elif reason == 'DC':
             self.pwm.ChangeDutyCycle(value)
+        elif reason == 'FREQ':
+            self.pwm.ChangeFrequency(value)
         else:
             status = False
 
