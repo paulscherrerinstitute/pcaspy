@@ -164,7 +164,7 @@ class Driver(DriverBase):
             # make a copy of mutable objects, list, numpy.ndarray
             if isinstance(value, list):
                 value = value[:]
-            elif str(type(value)) == "<type 'numpy.ndarray'>":
+            elif 'numpy.ndarray' in str(type(value)):
                 value = value.copy()
             self.pvDB[reason].value = value
             self.pvDB[reason].flag = True
