@@ -275,9 +275,10 @@ class Driver(DriverBase):
 
         If no info_keys are specified, all PV info keys are returned.
 
-        :param reason: PV base name
-        :param info_keys: List of keys for what information to obtain
+        :param str reason: PV base name
+        :param list info_keys: List of keys for what information to obtain
         :return: Dictionary with PV info fields and their current values
+        :rtype: dict
         """
         pv = manager.pvs[self.port][reason]
 
