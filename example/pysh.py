@@ -38,8 +38,9 @@ class myDriver(Driver):
         if reason == 'COMMAND':
             if not self.tid:
                 command = value
-                self.tid = threading.Thread(target=self.runShell,args=(command,))
-                self.tid.start()
+                if command:
+                    self.tid = threading.Thread(target=self.runShell,args=(command,))
+                    self.tid.start()
             else:
                 status = False
         else:
