@@ -35,6 +35,8 @@ Reference
 
     .. automethod:: setParamInfo(reason, info)
 
+    .. automethod:: getParamInfo(reason, info_keys=None)
+
     .. automethod:: callbackPV(reason)
 
     .. automethod:: updatePVs()
