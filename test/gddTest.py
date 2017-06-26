@@ -72,6 +72,8 @@ class TestGDD(unittest.TestCase):
         self.s.setBound(0, 0, 10)
         self.s.put('sdcsd')
         self.assertEqual(self.s.get(), 'sdcsd')
+        self.s.put('')
+        self.assertEqual(self.s.get(), '')
 
     def test_string_to_numeric_scalar(self):
         self.s.setPrimType(cas.aitEnumUint16)

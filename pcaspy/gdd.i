@@ -263,7 +263,11 @@ public:
                     else:
                         valueInt = int(valueFloat)
                         if primitiveType in [aitEnumUint8, aitEnumInt8]:
-                            return chr(valueInt & 0xFF)
+                            valueChar = valueInt & 0xFF
+                            if valueChar == 0:
+                                return ''
+                            else:
+                                return chr(valueChar)
                         else:
                             return valueInt
             else:
