@@ -266,6 +266,33 @@ class Driver(DriverBase):
 
         return self.pvDB[reason]
 
+    def getParamInfo(self, reason, info_keys=None):
+        """
+        Get PV info fields. This function returns a dictionary with info/value pairs,
+        where each entry of the info_keys-parameter results in a dictionary entry if
+        the PVInfo-object has such an attribute. Attributes that do not exist are ignored.
+        Valid attributes are the same as used in :meth:`SimpleServer.createPV`.
+
+        If no info_keys are specified, all PV info keys are returned.
+
+        :param reason: PV base name
+        :param info_keys: List of keys for what information to obtain
+        :return: Dictionary with PV info fields and their current values
+        """
+        pv = manager.pvs[self.port][reason]
+
+        if info_keys is None:
+            info_keys = ['states', 'prec', 'unit', 'lolim', 'hilim',
+                         'hihi', 'lolo', 'high', 'low', 'scan', 'asyn',
+                         'asg', 'port', 'enums', 'count', 'type', 'value']
+
+        info_dict = {}
+        for key in info_keys:
+            if hasattr(pv.info, key):
+                info_dict[key] = getattr(pv.info, key)
+
+        return info_dict
+
     def callbackPV(self, reason):
         """Inform asynchronous write completion
 
