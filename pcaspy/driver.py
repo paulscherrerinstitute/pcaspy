@@ -146,30 +146,23 @@ class Driver(DriverBase):
         the alarm status is STATE_ALARM.
 
         """
-        self.setParamValue(reason, value)
-        alarm, severity = self._checkAlarm(reason, value)
+        # make a copy of mutable objects, list, numpy.ndarray
+        if isinstance(value, list):
+            value = value[:]
+        elif 'numpy.ndarray' in str(type(value)):
+            value = value.copy()
+        # check whether value update is needed
+        pv = manager.pvs[self.port][reason]
+        self.pvDB[reason].mask |= pv.info.checkValue(value)
+        self.pvDB[reason].value = value
+        self.pvDB[reason].time = cas.epicsTimeStamp()
+        if self.pvDB[reason].mask:
+            self.pvDB[reason].flag = True
+        # check whether alarm/severity update is needed
+        alarm, severity = pv.info.checkAlarm(value)
         self.setParamStatus(reason, alarm, severity)
         logging.getLogger('pcaspy.Driver.setParam')\
             .debug('%s: %s', reason, self.pvDB[reason])
-
-    def setParamValue(self, reason, value):
-        """set PV value and request update
-
-        :param str reason:
-        :param value: new value
-        """
-        # check whether update is needed
-        same = self.pvDB[reason].value == value
-        if (type(same) == bool and not same) or (hasattr(same, 'all') and not same.all()):
-            # make a copy of mutable objects, list, numpy.ndarray
-            if isinstance(value, list):
-                value = value[:]
-            elif 'numpy.ndarray' in str(type(value)):
-                value = value.copy()
-            self.pvDB[reason].value = value
-            self.pvDB[reason].flag = True
-            self.pvDB[reason].mask = (cas.DBE_VALUE | cas.DBE_LOG)
-        self.pvDB[reason].time = cas.epicsTimeStamp()
 
     def setParamStatus(self, reason, alarm=None, severity=None):
         """set PV status and severity and request update
@@ -184,17 +177,11 @@ class Driver(DriverBase):
         """
         if alarm is not None and self.pvDB[reason].alarm != alarm:
             self.pvDB[reason].alarm = alarm
-            if self.pvDB[reason].flag:
-                self.pvDB[reason].mask |= cas.DBE_ALARM
-            else:
-                self.pvDB[reason].mask = cas.DBE_ALARM
+            self.pvDB[reason].mask |= cas.DBE_ALARM
             self.pvDB[reason].flag = True
         if severity is not None and self.pvDB[reason].severity != severity:
             self.pvDB[reason].severity = severity
-            if self.pvDB[reason].flag:
-                self.pvDB[reason].mask |= cas.DBE_ALARM
-            else:
-                self.pvDB[reason].mask = cas.DBE_ALARM
+            self.pvDB[reason].mask |= cas.DBE_ALARM
             self.pvDB[reason].flag = True
 
     def setParamEnums(self, reason, enums, states=None):
@@ -207,7 +194,8 @@ class Driver(DriverBase):
         The number of elements in *states* must match that of *enums*.
         If *None* is given, the list is populated with *Severity.NO_ALARM*.
 
-        .. note:: The monitoring client will not receive this update. An explicit get is needed.
+        .. note:: The monitoring client needs to use *DBR_GR_XXX* or *DBR_CTRL_XXX* request type and *DBE_PROPERTY*
+                  event mask when issuing the subscription. This requires EPICS base 3.14.12.6+.
         """
         if states is None:
             states = [Alarm.NO_ALARM] * len(enums)
@@ -227,6 +215,9 @@ class Driver(DriverBase):
 
         :param str reason: PV base name
         :param dict info: information dictionary, same as used in :meth:`SimpleServer.createPV`.
+
+        .. note:: The monitoring client needs to use *DBR_GR_XXX* or *DBR_CTRL_XXX* request type and *DBE_PROPERTY*
+                  event mask when issuing the subscription. This requires EPICS base 3.14.12.6+.
         """
         # copy new information
         pv = manager.pvs[self.port][reason]
@@ -236,7 +227,7 @@ class Driver(DriverBase):
         pv.info.validateLimit()
 
         # recheck alarm
-        alarm, severity = self._checkAlarm(reason, self.pvDB[reason].value)
+        alarm, severity = pv.info.checkAlarm(self.pvDB[reason].value)
         self.setParamStatus(reason, alarm, severity)
 
         # mark event mask and flag
@@ -312,55 +303,6 @@ class Driver(DriverBase):
                 self.pvDB[reason].flag = False
                 self.pvDB[reason].mask = 0
 
-    def _checkAlarm(self, reason, value):
-        info = manager.pvs[self.port][reason].info
-        if info.type == cas.aitEnumEnum16:
-            return self._checkEnumAlarm(info, value)
-        elif info.type in [cas.aitEnumFloat64, cas.aitEnumInt32]:
-            return self._checkNumericAlarm(info, value)
-        elif info.type in [cas.aitEnumString, cas.aitEnumFixedString, cas.aitEnumUint8]:
-            return Alarm.NO_ALARM, Severity.NO_ALARM
-        else:
-            return None, None
-
-    @staticmethod
-    def _checkNumericAlarm(info, value):
-        severity = Severity.NO_ALARM
-        alarm = Alarm.NO_ALARM
-
-        if info.valid_low_high and value <= info.low:
-            alarm = Alarm.LOW_ALARM
-            severity = Severity.MINOR_ALARM
-
-        if info.valid_lolo_hihi and value <= info.lolo:
-            alarm = Alarm.LOLO_ALARM
-            severity = Severity.MAJOR_ALARM
-
-        if info.valid_low_high and value >= info.high:
-            alarm = Alarm.HIGH_ALARM
-            severity = Severity.MINOR_ALARM
-
-        if info.valid_lolo_hihi and value >= info.hihi:
-            alarm = Alarm.HIHI_ALARM
-            severity = Severity.MAJOR_ALARM
-
-        return alarm, severity
-
-    @staticmethod
-    def _checkEnumAlarm(info, value):
-        states = info.states
-        if 0 <= value < len(states):
-            severity = states[value]
-            if severity == Severity.NO_ALARM:
-                alarm = Alarm.NO_ALARM
-            else:
-                alarm = Alarm.STATE_ALARM
-        else:
-            severity = Severity.MAJOR_ALARM
-            alarm = Alarm.STATE_ALARM
-
-        return alarm, severity
-
 
 # map aitType to string representation
 _ait_d = {'enum':   cas.aitEnumEnum16,
@@ -411,11 +353,16 @@ class PVInfo(object):
         self.lolo = info.get('lolo', 0.0)
         self.high = info.get('high', 0.0)
         self.low = info.get('low',  0.0)
+        self.adel = info.get('adel', 0.0)
+        self.mdel = info.get('mdel', 0.0)
         self.scan = info.get('scan', 0)
         self.asyn = info.get('asyn', False)
         self.asg = info.get('asg', '')
         self.reason = ''
         self.port = info.get('port', 'default')
+        # initialize last monitor/archive value
+        self.mlst = None
+        self.alst = None
         # validate alarm limit
         self.valid_low_high = False
         self.valid_lolo_hihi = False
@@ -441,6 +388,75 @@ class PVInfo(object):
             self.valid_low_high = False
         else:
             self.valid_low_high = True
+
+    def checkValue(self, newValue):
+        """Check value change event"""
+        mask = 0
+        # array type always gets notified
+        if self.count > 1:
+            mask = (cas.DBE_LOG | cas.DBE_VALUE)
+        # string type's equality is checked
+        elif self.type in [cas.aitEnumString, cas.aitEnumFixedString]:
+            if self.mlst != newValue:
+                mask |= cas.DBE_VALUE
+                self.mlst = newValue
+            if self.alst != newValue:
+                mask |= cas.DBE_LOG
+                self.alst = newValue
+        # scalar numeric type is checked against archive and monitor deadband
+        else:
+            if self.mlst is None or abs(self.mlst - newValue) > self.mdel:
+                mask |= cas.DBE_VALUE
+                self.mlst = newValue
+            if self.alst is None or abs(self.alst - newValue) > self.adel:
+                mask |= cas.DBE_LOG
+                self.alst = newValue
+        return mask
+
+    def checkAlarm(self, value):
+        if self.type == cas.aitEnumEnum16:
+            return self._checkEnumAlarm(value)
+        elif self.type in [cas.aitEnumFloat64, cas.aitEnumInt32]:
+            return self._checkNumericAlarm(value)
+        elif self.type in [cas.aitEnumString, cas.aitEnumFixedString, cas.aitEnumUint8]:
+            return Alarm.NO_ALARM, Severity.NO_ALARM
+        else:
+            return None, None
+
+    def _checkNumericAlarm(self, value):
+        severity = Severity.NO_ALARM
+        alarm = Alarm.NO_ALARM
+
+        if self.valid_low_high and value <= self.low:
+            alarm = Alarm.LOW_ALARM
+            severity = Severity.MINOR_ALARM
+
+        if self.valid_lolo_hihi and value <= self.lolo:
+            alarm = Alarm.LOLO_ALARM
+            severity = Severity.MAJOR_ALARM
+
+        if self.valid_low_high and value >= self.high:
+            alarm = Alarm.HIGH_ALARM
+            severity = Severity.MINOR_ALARM
+
+        if self.valid_lolo_hihi and value >= self.hihi:
+            alarm = Alarm.HIHI_ALARM
+            severity = Severity.MAJOR_ALARM
+
+        return alarm, severity
+
+    def _checkEnumAlarm(self, value):
+        if 0 <= value < len(self.states):
+            severity = self.states[value]
+            if severity == Severity.NO_ALARM:
+                alarm = Alarm.NO_ALARM
+            else:
+                alarm = Alarm.STATE_ALARM
+        else:
+            severity = Severity.MAJOR_ALARM
+            alarm = Alarm.STATE_ALARM
+
+        return alarm, severity
 
 
 class SimplePV(cas.casPV):
@@ -469,10 +485,15 @@ class SimplePV(cas.casPV):
         while True:
             driver = manager.driver.get(self.info.port)
             if driver:
-                gddValue = cas.gdd()
-                self.getValue(gddValue)
-                gddValue.setTimeStamp()
-                self.updateValue(gddValue)
+                # read value from driver and write to driver's param database
+                newValue = driver.read(self.info.reason)
+                driver.setParam(self.info.reason, newValue)
+                # post update events if necessary
+                dbValue = driver.getParamDB(self.info.reason)
+                if dbValue.flag:
+                    self.updateValue(dbValue)
+                    dbValue.flag = False
+                    dbValue.mask = 0
             time.sleep(self.info.scan)
 
     def interestRegister(self):
@@ -487,18 +508,15 @@ class SimplePV(cas.casPV):
         driver = manager.driver.get(self.info.port)
         if not driver:
             logging.getLogger('pcaspy.SimplePV.writeValue').\
-                warn('%s: No driver is registered for port %s', self.info.reason, self.info.port)
+                warning('%s: No driver is registered for port %s', self.info.reason, self.info.port)
             return cas.S_casApp_undefined
         # call out driver support
         success = driver.write(self.info.reason, gddValue.get())
-        value = driver.getParamDB(self.info.reason)
         if success is False:
             logging.getLogger('pcaspy.SimplePV.writeValue').\
-                warn('%s: Driver rejects value %s', self.info.reason, gddValue.get())
-            value.severity = Severity.INVALID_ALARM
-            value.alarm = Alarm.WRITE_ALARM
-        else:
-            driver.updatePVs()
+                warning('%s: Driver rejects value %s', self.info.reason, gddValue.get())
+            driver.setParamStatus(self.info.reason, Alarm.WRITE_ALARM, Severity.INVALID_ALARM)
+        driver.updatePVs()
         return success
 
     def write(self, context, value):
@@ -533,21 +551,17 @@ class SimplePV(cas.casPV):
             success = self.writeValue(value)
             return cas.S_casApp_success
 
-    def updateValue(self, value):
+    def updateValue(self, dbValue):
         if not self.interest:
             return
-        if type(value) == cas.gdd:
-            gddValue = value
-            mask = (cas.DBE_VALUE | cas.DBE_LOG)
-        else:
-            gddValue = cas.gdd(16, self.info.type)  # gddAppType_value
-            if self.info.count > 1:
-                gddValue.setDimension(1)
-                gddValue.setBound(0, 0, self.info.count)
-            gddValue.put(value.value)
-            gddValue.setTimeStamp(value.time)
-            gddValue.setStatSevr(value.alarm, value.severity)
-            mask = value.mask
+
+        gddValue = cas.gdd(16, self.info.type)  # gddAppType_value
+        if self.info.count > 1:
+            gddValue.setDimension(1)
+            gddValue.setBound(0, 0, self.info.count)
+        gddValue.put(dbValue.value)
+        gddValue.setTimeStamp(dbValue.time)
+        gddValue.setStatSevr(dbValue.alarm, dbValue.severity)
 
         if self.info.type == cas.aitEnumEnum16:
             gddCtrl = cas.gdd.createDD(31)  # gddAppType_dbr_ctrl_enum
@@ -572,23 +586,26 @@ class SimplePV(cas.casPV):
             else:
                 gddCtrl[10].put(gddValue)
 
-        self.postEvent(mask, gddCtrl)
+        self.postEvent(dbValue.mask, gddCtrl)
 
     def getValue(self, value):
         # get driver object
         driver = manager.driver.get(self.info.port)
         if not driver:
             logging.getLogger('pcaspy.SimplePV.getValue')\
-                .warn('%s: No driver is registered for port %s', self.info.reason, self.info.port)
+                .warning('%s: No driver is registered for port %s', self.info.reason, self.info.port)
             return cas.S_casApp_undefined
         # set gdd type if necessary
         if value.primitiveType() == cas.aitEnumInvalid:
             value.setPrimType(self.info.type)
         # set gdd value
-        newValue = driver.read(self.info.reason)
+        if self.info.scan > 0:
+            newValue = driver.getParam(self.info.reason)
+        else:
+            newValue = driver.read(self.info.reason)
         if newValue is None:
             logging.getLogger('pcaspy.SimplePV.getValue')\
-                .warn('%s: Driver returns None', self.info.reason)
+                .warning('%s: Driver returns None', self.info.reason)
             return cas.S_casApp_undefined
         logging.getLogger('pcaspy.SimplePV.getValue')\
             .debug('%s: Read value %s', self.info.reason, newValue)
@@ -725,6 +742,8 @@ class SimpleServer(cas.caServer):
           high      0          Data high limit for alarm
           lolo      0          Data low low limit for alarm
           hihi      0          Data high high limit for alarm
+          adel      0          Archive deadband
+          mdel      0          Monitor, value change deadband
           scan      0          Scan period in second. 0 means passive
           asyn      False      Process finishes asynchronously if True
           asg       ''         Access security group name
@@ -739,6 +758,8 @@ class SimpleServer(cas.caServer):
         Fixed width string, 40 characters as of EPICS 3.14, is of type 'string'.
         Long string is supported using 'char' type and specify the *count* field large enough.
         'enum' type defines a list of choices by *enums* field, and optional associated severity by *states*.
+
+        The *adel* and *mdel* fields specify the deadbands to trigger an archive and value change event respectively.
 
         *asyn* if set to be True. Any channel access client write with callback option, i.e. calling `ca_put_callback`,
         will be noticed only when :meth:`Driver.callbackPV` being called.
