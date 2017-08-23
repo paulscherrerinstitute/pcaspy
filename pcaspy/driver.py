@@ -663,7 +663,10 @@ class SimplePV(cas.casPV):
             return 0
 
     def maxBound(self, dims):
-        return self.info.count
+        if dims == 0:
+            return self.info.count
+        else:
+            return 0
 
     def getName(self):
         return self.name
