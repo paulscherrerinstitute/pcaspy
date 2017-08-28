@@ -1,6 +1,14 @@
 
 .. py:currentmodule:: pcaspy
 
+0.7.0 (XX-XX-2017)
+------------------
+    * Changed :meth:`gdd.get` to return empty string if char(int8/uin8) type scalar is 0. It used to return ``'\x00'``, this confuses the check for a empty string.
+    * Fixed numpy array checking. (Issue #44)
+    * Added adel/mdel fields in PV configuration in analog to EPICS IOC records. (Issue #46)
+    * Added :meth:`Driver.getParamInfo` to retrieve the current PV configuration. (PR #45)
+    * Added an example *rpi_gpio.py* to control GPIO on RaspberryPi.
+
 0.6.5 (09-05-2017)
 ------------------
     * Fixed the anaconda upload on Travis Linux.
