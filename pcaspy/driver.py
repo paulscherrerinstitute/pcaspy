@@ -275,7 +275,7 @@ class Driver(DriverBase):
 
         if info_keys is None:
             info_keys = ['states', 'prec', 'unit', 'lolim', 'hilim',
-                         'hihi', 'lolo', 'high', 'low', 'scan', 'asyn',
+                         'hihi', 'lolo', 'high', 'low', 'scan', 'asyn', 'adel', 'mdel',
                          'asg', 'port', 'enums', 'count', 'type', 'value']
 
         info_dict = {}
