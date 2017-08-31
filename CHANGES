@@ -3,9 +3,10 @@
 
 0.7.0 (XX-XX-2017)
 ------------------
-    * Changed :meth:`gdd.get` to return empty string if char(int8/uin8) type scalar is 0. It used to return ``'\x00'``, this confuses the check for a empty string.
+    * Changed :meth:`gdd.get` to return empty string if char(int8/uin8) type scalar is 0. It used to return ``'\x00'``, this confuses the check for an empty string.
+    * Changed :meth:`Driver.setParam` so that waveform PV always posts monitor/archive events. It used to check the equality.
     * Fixed numpy array checking. (Issue #44)
-    * Added adel/mdel fields in PV configuration in analog to EPICS IOC records. (Issue #46)
+    * Added adel/mdel fields in scalar PV configuration in analog to EPICS IOC records. (Issue #46)
     * Added :meth:`Driver.getParamInfo` to retrieve the current PV configuration. (PR #45)
     * Added an example *rpi_gpio.py* to control GPIO on RaspberryPi.
 
