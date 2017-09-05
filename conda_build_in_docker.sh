@@ -52,6 +52,7 @@ gcc -v
 conda config --set always_yes yes --set changeps1 no
 conda update -q --all
 conda config --add channels defaults
+conda install conda-build=2
 IFS=',' read -a array <<< "$CONDA_CHANNELS"
 for element in "${array[@]}"
 do

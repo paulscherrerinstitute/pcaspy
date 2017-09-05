@@ -73,7 +73,7 @@ class myDriver(Driver):
             GPIO.output(PIN_OUT, GPIO.HIGH)
             time.sleep(0.1)
             GPIO.output(PIN_OUT, GPIO.LOW)
-            status = False
+            value = 0
         elif reason == 'PWM':
             if value == 0:
                 self.pwm.stop()
