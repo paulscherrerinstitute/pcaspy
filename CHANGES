@@ -1,7 +1,7 @@
 
 .. py:currentmodule:: pcaspy
 
-0.7.0 (XX-XX-2017)
+0.7.0 (21-09-2017)
 ------------------
     * Changed :meth:`gdd.get` to return empty string if char(int8/uin8) type scalar is 0. It used to return ``'\x00'``, this confuses the check for an empty string.
     * Changed :meth:`Driver.setParam` so that waveform PV always posts monitor/archive events. It used to check the equality.

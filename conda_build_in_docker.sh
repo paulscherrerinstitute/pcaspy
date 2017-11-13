@@ -37,29 +37,22 @@ fi
 if [ ! -z $CONDA_NPY ]; then
     CONDA_ENVS="$CONDA_ENVS -e CONDA_NPY"
 fi
-# Since docker run as uid 0 by default we export our uid and gid and set ownership
-# of files in our volume /output before exiting the container.
-cat <<'EOF' | docker run --rm $CONDA_ENVS -e CONDA_CHANNELS=$3 -e HOST_UID=$(id -u) -e HOST_GID=$(id -g) -v $ABS_RECIPE_PATH:/recipe:ro -v $ABS_OUTPUT_PATH:/output -i continuumio/anaconda-build-linux-64:latest bash -x
-sudo rm /etc/yum.repos.d/*.repo
-cat << END | sudo tee -a /etc/yum.conf
-[base]
-name=Centos-5.11 - Base
-baseurl=http://vault.centos.org/5.11/os/\$basearch/
-END
-sudo yum install -y gcc gcc-c++
-export PATH=/opt/miniconda/bin:/usr/bin:/bin:/sbin/:/usr/sbin
-gcc -v
+BUILDSCRIPT=buildscript$$
+cat <<'EOF' > $ABS_RECIPE_PATH/$BUILDSCRIPT
 conda config --set always_yes yes --set changeps1 no
-conda update -q --all
-conda config --add channels defaults
-conda install conda-build=2
 IFS=',' read -a array <<< "$CONDA_CHANNELS"
 for element in "${array[@]}"
 do
     conda config --add channels "$element"
 done
+conda config --add channels defaults
 conda info
-conda build /recipe
+conda build /recipe/conda-recipe
 cp `conda info --root`/conda-bld/linux-64/* /output
-#chown $HOST_GID:$HOST_UID /output/*
 EOF
+
+# Since docker run as uid 0 by default we export our uid and gid and set ownership
+# of files in our volume /output before exiting the container.
+docker run --rm $CONDA_ENVS -e CONDA_CHANNELS=$3 -e HOST_UID=$(id -u) -e HOST_GID=$(id -g) -v $ABS_RECIPE_PATH:/recipe:ro -v $ABS_OUTPUT_PATH:/output -it condaforge/linux-anvil:latest bash -x recipe/$BUILDSCRIPT
+
+rm -f $ABS_RECIPE_PATH/$BUILDSCRIPT
