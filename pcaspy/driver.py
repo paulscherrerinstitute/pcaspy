@@ -174,6 +174,8 @@ class Driver(DriverBase):
         The PVs' alarm status and severity are automatically set in :meth:`setParam`.
         If the status and severity need to be set explicitly to override the defaults, :meth:`setParamStatus` must
         be called *after* :meth:`setParam`.
+
+        The new alarm status/severity will be pushed to registered clients the next time when :meth:`updatePVs` is called.
         """
         if alarm is not None and self.pvDB[reason].alarm != alarm:
             self.pvDB[reason].alarm = alarm
@@ -194,6 +196,8 @@ class Driver(DriverBase):
         The number of elements in *states* must match that of *enums*.
         If *None* is given, the list is populated with *Severity.NO_ALARM*.
 
+        The new enumerate strings will be pushed to registered clients the next time when :meth:`updatePVs` is called.
+
         .. note:: The monitoring client needs to use *DBR_GR_XXX* or *DBR_CTRL_XXX* request type and *DBE_PROPERTY*
                   event mask when issuing the subscription. This requires EPICS base 3.14.12.6+.
         """
@@ -207,7 +211,6 @@ class Driver(DriverBase):
             pv.info.states = states
             self.pvDB[reason].mask |= cas.DBE_PROPERTY
             self.pvDB[reason].flag = True
-            self.updatePVs()
 
     def setParamInfo(self, reason, info):
         """
@@ -215,6 +218,8 @@ class Driver(DriverBase):
 
         :param str reason: PV base name
         :param dict info: information dictionary, same as used in :meth:`SimpleServer.createPV`.
+
+        The new meta information will be pushed to registered clients the next time when :meth:`updatePVs` is called.
 
         .. note:: The monitoring client needs to use *DBR_GR_XXX* or *DBR_CTRL_XXX* request type and *DBE_PROPERTY*
                   event mask when issuing the subscription. This requires EPICS base 3.14.12.6+.
@@ -233,8 +238,6 @@ class Driver(DriverBase):
         # mark event mask and flag
         self.pvDB[reason].mask |= cas.DBE_PROPERTY
         self.pvDB[reason].flag = True
-
-        self.updatePVs()
 
     def getParam(self, reason):
         """retrieve PV value
@@ -296,12 +299,20 @@ class Driver(DriverBase):
             pv.endAsyncWrite(cas.S_casApp_success)
 
     def updatePVs(self):
-        """Post update event on changed values"""
-        for reason, pv in manager.pvs[self.port].items():
-            if self.pvDB[reason].flag and pv.info.scan == 0:
-                pv.updateValue(self.pvDB[reason])
-                self.pvDB[reason].flag = False
-                self.pvDB[reason].mask = 0
+        """Post update events on all PVs with value, alarm status or metadata changed"""
+        for reason in self.pvDB:
+            self.updatePV(reason)
+
+    def updatePV(self, reason):
+        """Post update event on the PV if value, alarm status or metadata changes
+
+        :param str reason: PV base name
+        """
+        pv = manager.pvs[self.port][reason]
+        if self.pvDB[reason].flag and pv.info.scan == 0:
+            pv.updateValue(self.pvDB[reason])
+            self.pvDB[reason].flag = False
+            self.pvDB[reason].mask = 0
 
 
 # map aitType to string representation
@@ -516,7 +527,7 @@ class SimplePV(cas.casPV):
             logging.getLogger('pcaspy.SimplePV.writeValue').\
                 warning('%s: Driver rejects value %s', self.info.reason, gddValue.get())
             driver.setParamStatus(self.info.reason, Alarm.WRITE_ALARM, Severity.INVALID_ALARM)
-        driver.updatePVs()
+        driver.updatePV(self.info.reason)
         return success
 
     def write(self, context, value):
