@@ -53,6 +53,6 @@ EOF
 
 # Since docker run as uid 0 by default we export our uid and gid and set ownership
 # of files in our volume /output before exiting the container.
-docker run --rm $CONDA_ENVS -e CONDA_CHANNELS=$3 -e HOST_UID=$(id -u) -e HOST_GID=$(id -g) -v $ABS_RECIPE_PATH:/recipe:ro -v $ABS_OUTPUT_PATH:/output -it condaforge/linux-anvil:latest bash -x recipe/$BUILDSCRIPT
+docker run --rm $CONDA_ENVS -e CONDA_CHANNELS=$3 -e HOST_UID=$(id -u) -e HOST_GID=$(id -g) -v $ABS_RECIPE_PATH:/recipe:ro -v $ABS_OUTPUT_PATH:/output -it condaforge/linux-anvil:latest bash -x /recipe/$BUILDSCRIPT
 
 rm -f $ABS_RECIPE_PATH/$BUILDSCRIPT
