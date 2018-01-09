@@ -3,6 +3,7 @@
 
 0.7.1 (XX-11-2017)
 ------------------
+    * Fixed spurious value update after startup. (Issue #50)
     * Changed :meth:`SimplePV.writeValue` to post the update event only on the this specific PV. (Issue #48)
     * Changed :meth:`Driver.setParamInfo` and :meth:`Driver.setParamEnums` not to call meth:`Driver.updatePVs`, and leave that to the user.
 

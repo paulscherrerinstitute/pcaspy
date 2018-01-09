@@ -371,9 +371,6 @@ class PVInfo(object):
         self.asg = info.get('asg', '')
         self.reason = ''
         self.port = info.get('port', 'default')
-        # initialize last monitor/archive value
-        self.mlst = None
-        self.alst = None
         # validate alarm limit
         self.valid_low_high = False
         self.valid_lolo_hihi = False
@@ -387,6 +384,9 @@ class PVInfo(object):
         if self.count > 1 and self.type is not cas.aitEnumUint8:
             value = [value] * self.count
         self.value = info.get('value', value)
+        # initialize last monitor/archive value
+        self.mlst = self.value
+        self.alst = self.value
 
     def validateLimit(self):
         # validate alarm limit
@@ -416,10 +416,10 @@ class PVInfo(object):
                 self.alst = newValue
         # scalar numeric type is checked against archive and monitor deadband
         else:
-            if self.mlst is None or abs(self.mlst - newValue) > self.mdel:
+            if abs(self.mlst - newValue) > self.mdel:
                 mask |= cas.DBE_VALUE
                 self.mlst = newValue
-            if self.alst is None or abs(self.alst - newValue) > self.adel:
+            if abs(self.alst - newValue) > self.adel:
                 mask |= cas.DBE_LOG
                 self.alst = newValue
         return mask
