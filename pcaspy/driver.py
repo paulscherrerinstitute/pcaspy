@@ -310,8 +310,8 @@ class Driver(DriverBase):
         """
         pv = manager.pvs[self.port][reason]
         if self.pvDB[reason].flag and pv.info.scan == 0:
-            pv.updateValue(self.pvDB[reason])
             self.pvDB[reason].flag = False
+            pv.updateValue(self.pvDB[reason])
             self.pvDB[reason].mask = 0
 
 
@@ -502,8 +502,8 @@ class SimplePV(cas.casPV):
                 # post update events if necessary
                 dbValue = driver.getParamDB(self.info.reason)
                 if dbValue.flag:
-                    self.updateValue(dbValue)
                     dbValue.flag = False
+                    self.updateValue(dbValue)
                     dbValue.mask = 0
             time.sleep(self.info.scan)
 
