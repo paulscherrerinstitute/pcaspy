@@ -1,9 +1,10 @@
 
 .. py:currentmodule:: pcaspy
 
-0.7.1 (XX-11-2017)
+0.7.1 (12-01-2018)
 ------------------
     * Fixed spurious value update after startup. (Issue #50)
+    * Mitigated the race condition in :math:`Driver.updatePV`. It could cause one event to fire twice in rare cases. This is not a total fix but good enough. (PR #49)
     * Changed :meth:`SimplePV.writeValue` to post the update event only on the this specific PV. (Issue #48)
     * Changed :meth:`Driver.setParamInfo` and :meth:`Driver.setParamEnums` not to call meth:`Driver.updatePVs`, and leave that to the user.
 
