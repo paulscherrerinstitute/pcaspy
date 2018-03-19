@@ -117,9 +117,10 @@ Virtual methods
 
 Helper methods
 ~~~~~~~~~~~~~~
-    .. cpp:function:: caStatus postEvent(const gdd & event)
+    .. cpp:function:: caStatus postEvent(int mask, const gdd & event)
 
-      Server application calls this function to post a PV *DBE_VALUE | DBE_LOG* event.
+      Server application calls this function to post a PV event.
+      The event mask can be any combination of *DBE_VALUE*,  *DBE_LOG*, *DBE_ALARM*, *DBE_PROPERTY*.
 
     .. cpp:function:: void startAsyncWrite()
 
