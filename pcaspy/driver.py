@@ -1,5 +1,7 @@
 from . import cas
 from .alarm import Severity, Alarm
+import collections
+import operator
 import threading
 import time
 import sys
@@ -438,21 +440,21 @@ class PVInfo(object):
         severity = Severity.NO_ALARM
         alarm = Alarm.NO_ALARM
 
-        if self.valid_low_high and value <= self.low:
-            alarm = Alarm.LOW_ALARM
-            severity = Severity.MINOR_ALARM
+        if self.valid_low_high:
+            if self._compareNumeric(value, self.low, operator.le):
+                alarm = Alarm.LOW_ALARM
+                severity = Severity.MINOR_ALARM
+            elif self._compareNumeric(value, self.high, operator.ge):
+                alarm = Alarm.HIGH_ALARM
+                severity = Severity.MINOR_ALARM
 
-        if self.valid_lolo_hihi and value <= self.lolo:
-            alarm = Alarm.LOLO_ALARM
-            severity = Severity.MAJOR_ALARM
-
-        if self.valid_low_high and value >= self.high:
-            alarm = Alarm.HIGH_ALARM
-            severity = Severity.MINOR_ALARM
-
-        if self.valid_lolo_hihi and value >= self.hihi:
-            alarm = Alarm.HIHI_ALARM
-            severity = Severity.MAJOR_ALARM
+        if self.valid_lolo_hihi:
+            if self._compareNumeric(value, self.lolo, operator.le):
+                alarm = Alarm.LOLO_ALARM
+                severity = Severity.MAJOR_ALARM
+            elif self._compareNumeric(value, self.hihi, operator.ge):
+                alarm = Alarm.HIHI_ALARM
+                severity = Severity.MAJOR_ALARM
 
         return alarm, severity
 
@@ -468,6 +470,19 @@ class PVInfo(object):
             alarm = Alarm.STATE_ALARM
 
         return alarm, severity
+
+    def _compareNumeric(self, value, limit, op):
+        """
+        Compare value and limit with comparison operator.
+
+        :param value: numeric scalar or sequence
+        :param limit: numeric scalar
+        :param op: comparision operators, le, ge etc
+        """
+        if isinstance(value, collections.Iterable):
+            return any(op(v, limit) for v in value)
+        else:
+            return op(value, limit)
 
 
 class SimplePV(cas.casPV):
