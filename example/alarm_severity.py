@@ -9,6 +9,12 @@ pvdb = {
         'low' : -5, 'high': 5,
         'lolo': -10,'hihi': 10,
     },
+    'ARRAY': {
+        'count': 30,
+        'value': 30*[1],
+        'low': -5, 'high': 5,
+        'lolo': -10, 'hihi': 10
+    },
     'STATUS' : {
         'type' : 'enum',
         'enums':  ['OK', 'ERROR'],
