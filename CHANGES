@@ -1,6 +1,10 @@
 
 .. py:currentmodule:: pcaspy
 
+0.7.2 (XX-10-2018)
+------------------
+    * Fixed the alarm limits checking for numeric array type. (Issue #52)
+
 0.7.1 (12-01-2018)
 ------------------
     * Fixed spurious value update after startup. (Issue #50)
