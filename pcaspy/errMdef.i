@@ -1,4 +1,16 @@
-#define M_cas		(523 <<16) /*CA server*/
+#if EPICS_VERSION >= 7
+%include <errMdef.h>
+#else
+#define M_cas          (523 <<16) /*CA server*/
+#define M_casApp       (524 <<16) /*CA server application*/
+#endif
+
+/*
+ * ===========================================================
+ * for internal use by the server library
+ * (and potentially returned to the server tool)
+ * ===========================================================
+ */
 #define S_cas_success 0
 #define S_cas_internal (M_cas| 1) /*Internal failure*/
 #define S_cas_noMemory (M_cas| 2) /*Memory allocation failed*/
@@ -31,8 +43,12 @@
 #define S_cas_pvAlreadyAttached (M_cas | 31) /*PV attached to another server*/
 #define S_cas_badRequest (M_cas | 32) /*client's request was invalid*/
 #define S_cas_invalidAsynchIO (M_cas | 33) /*inappropriate asynchronous IO type*/
-
-#define M_casApp	(524 <<16) /*CA server application*/
+#define S_cas_posponeWhenNonePending (M_cas | 34) /*request postponement, none pending*/
+/*
+ * ===========================================================
+ * returned by the application (to the server library)
+ * ===========================================================
+ */
 #define S_casApp_success 0 
 #define S_casApp_noMemory (M_casApp | 1) /*Memory allocation failed*/
 #define S_casApp_pvNotFound (M_casApp | 2) /*PV not found*/
