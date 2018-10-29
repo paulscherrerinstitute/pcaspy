@@ -81,6 +81,17 @@ Here is a short guide,
     |         | Intel | darwin-x86         |
     +---------+-------+--------------------+
 
+- From EPICS 7 onwards, PCAS library is not any more distributed in EPICS base. In the official document, it
+  suggests building PCAS as epics module. However to simplify the build process, you are suggested to still
+  build PCAS library together with EPICS base.
+
+  - Download source from https://github.com/epics-modules/pcas/releases
+  - Unpack its contents to <EPICS_BASE>/modules/pcas
+  - Create <EPICS_BASE>/modules/Makefile.local, with the following contents::
+
+    SUBMODULES += pcas
+    pcas_DEPEND_DIRS = libcom
+
 - Run ``make``.
 
 .. note:: On windows, the Visual Studio version has to match that used to build Python.
