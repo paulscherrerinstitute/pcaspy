@@ -30,14 +30,23 @@ environment:
       PYTHON_ARCH: "64"
       MINICONDA: C:\Miniconda36-x64
       EPICS_HOST_ARCH: "windows-x64"
+    - PYTHON_VERSION: 3.7
+      PYTHON_ARCH: "32"
+      MINICONDA: C:\Miniconda37
+      EPICS_HOST_ARCH: "win32-x86"
+    - PYTHON_VERSION: 3.7
+      PYTHON_ARCH: "64"
+      MINICONDA: C:\Miniconda37-x64
+      EPICS_HOST_ARCH: "windows-x64"
 
 install:
-  - "set PATH=%MINICONDA%;%MINICONDA%\\Scripts;%PATH%"
+  - "%MINICONDA%\\Scripts\\activate.bat"
   - conda config --set always_yes yes --set changeps1 no
   - conda update -q --all
   - conda config --add channels defaults
   - conda config --add channels %CONDA_CHANNEL%
   - conda install conda-build numpy anaconda-client
+  - conda info
 
 build_script:
   - set CONDA_PY=%PYTHON_VERSION%
