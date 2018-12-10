@@ -3,6 +3,19 @@
 
 */
 
+/* const char* input */
+%typemap(directorin) const char * pPVAliasName {
+    %#if PY_VERSION_HEX >= 0x03000000
+        $input = PyUnicode_FromString(pPVAliasName);
+        if ($input == NULL) {
+            PyErr_Print();
+            $input = PyUnicode_DecodeLatin1(pPVAliasName, strlen(pPVAliasName), pPVAliasName);
+        }
+    %#else
+        $input = PyString_FromString(pPVAliasName);
+    %#endif
+}
+
 /* pvExistReturn */
 %typemap(directorout) pvExistReturn {
     if (PyInt_Check($1)) {
