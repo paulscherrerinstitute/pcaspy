@@ -3,7 +3,9 @@
 
 0.7.2 (XX-10-2018)
 ------------------
+    * Added docs about installation on epics base 7+. (Issue #57)
     * Fixed the alarm limits checking for numeric array type. (Issue #52)
+    * Fixed the exception when decoding non-utf8 PV searches. (Issue #59)
 
 0.7.1 (12-01-2018)
 ------------------
