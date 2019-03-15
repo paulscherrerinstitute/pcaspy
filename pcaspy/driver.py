@@ -429,7 +429,7 @@ class PVInfo(object):
     def checkAlarm(self, value):
         if self.type == cas.aitEnumEnum16:
             return self._checkEnumAlarm(value)
-        elif self.type in [cas.aitEnumFloat64, cas.aitEnumInt32]:
+        elif self.type in [cas.aitEnumFloat64, cas.aitEnumInt32, cas.aitEnumInt16]:
             return self._checkNumericAlarm(value)
         elif self.type in [cas.aitEnumString, cas.aitEnumFixedString, cas.aitEnumUint8]:
             return Alarm.NO_ALARM, Severity.NO_ALARM
