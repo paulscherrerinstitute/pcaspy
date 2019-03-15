@@ -42,7 +42,7 @@ environment:
 install:
   - "%MINICONDA%\\Scripts\\activate.bat"
   - conda config --set always_yes yes --set changeps1 no
-  - conda update -q --all
+  - if not %PYTHON_VERSION% == 3.5 (conda update -q --all)
   - conda config --add channels defaults
   - conda config --add channels %CONDA_CHANNEL%
   - conda install conda-build numpy anaconda-client
