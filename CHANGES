@@ -1,6 +1,10 @@
 
 .. py:currentmodule:: pcaspy
 
+0.7.3 (XX-03-2019)
+------------------
+    * Fixed alarm/severity checking for short type. (Issue #62)
+
 0.7.2 (20-12-2018)
 ------------------
     * Added docs about installation on epics base 7+. (Issue #57)
