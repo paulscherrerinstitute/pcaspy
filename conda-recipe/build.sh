@@ -17,7 +17,7 @@ OUTPUT_PATH=$(dirname $(conda build --output conda-recipe))
 
 if [ $PLATFORM == "linux" ]; then
     $PYTHON setup.py install sdist bdist_egg
-    cp dist/*.tar.gz ${OUTPUT_PATH}
+    cp -f dist/*.tar.gz ${OUTPUT_PATH}
     cp dist/*.egg ${OUTPUT_PATH}
 elif [ $PLATFORM == "darwin" ]; then
     $PYTHON setup.py install bdist_wheel

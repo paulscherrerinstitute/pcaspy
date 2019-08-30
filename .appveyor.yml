@@ -6,22 +6,6 @@ environment:
     CMD_IN_ENV: "cmd /E:ON /V:ON /C run_with_env.cmd"
 
   matrix:
-    - PYTHON_VERSION: 2.7
-      PYTHON_ARCH: "32"
-      MINICONDA: C:\Miniconda
-      EPICS_HOST_ARCH: "win32-x86"
-    - PYTHON_VERSION: 2.7
-      PYTHON_ARCH: "64"
-      MINICONDA: C:\Miniconda-x64
-      EPICS_HOST_ARCH: "windows-x64"
-    - PYTHON_VERSION: 3.5
-      PYTHON_ARCH: "32"
-      MINICONDA: C:\Miniconda35
-      EPICS_HOST_ARCH: "win32-x86"
-    - PYTHON_VERSION: 3.5
-      PYTHON_ARCH: "64"
-      MINICONDA: C:\Miniconda35-x64
-      EPICS_HOST_ARCH: "windows-x64"
     - PYTHON_VERSION: 3.6
       PYTHON_ARCH: "32"
       MINICONDA: C:\Miniconda36
@@ -30,26 +14,17 @@ environment:
       PYTHON_ARCH: "64"
       MINICONDA: C:\Miniconda36-x64
       EPICS_HOST_ARCH: "windows-x64"
-    - PYTHON_VERSION: 3.7
-      PYTHON_ARCH: "32"
-      MINICONDA: C:\Miniconda37
-      EPICS_HOST_ARCH: "win32-x86"
-    - PYTHON_VERSION: 3.7
-      PYTHON_ARCH: "64"
-      MINICONDA: C:\Miniconda37-x64
-      EPICS_HOST_ARCH: "windows-x64"
 
 install:
   - "%MINICONDA%\\Scripts\\activate.bat"
   - conda config --set always_yes yes --set changeps1 no
   - if not %PYTHON_VERSION% == 3.5 (conda update -q --all)
   - conda config --add channels defaults
-  - conda config --add channels %CONDA_CHANNEL%
+  - conda config --add channels %MY_CONDA_CHANNEL%
   - conda install conda-build numpy anaconda-client
   - conda info
 
 build_script:
-  - set CONDA_PY=%PYTHON_VERSION%
   - "%CMD_IN_ENV% conda build conda-recipe"
 
 on_success:

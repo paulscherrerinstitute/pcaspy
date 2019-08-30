@@ -5,49 +5,22 @@ services:
 
 language: cpp
 
-matrix:
-  include:
-    - os: linux
-      dist: trusty
-      env: CONDA_PY=2.7
-    - os: linux
-      dist: trusty
-      env: CONDA_PY=3.5
-    - os: linux
-      dist: trusty
-      env: CONDA_PY=3.6
-    - os: linux
-      dist: trusty
-      env: CONDA_PY=3.7
-    - os: osx
-      env: CONDA_PY=2.7
-    - os: osx
-      env: CONDA_PY=3.5
-    - os: osx
-      env: CONDA_PY=3.6
-    - os: osx
-      env: CONDA_PY=3.7
-
 install:
   # Set the anaconda environment
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
-      if [[ "$CONDA_PY" == "2.7" ]]; then
-        curl https://repo.continuum.io/miniconda/Miniconda2-latest-MacOSX-x86_64.sh -o miniconda.sh;
-      else
-        curl https://repo.continuum.io/miniconda/Miniconda3-latest-MacOSX-x86_64.sh -o miniconda.sh;
-      fi;
+      curl https://repo.continuum.io/miniconda/Miniconda3-latest-MacOSX-x86_64.sh -o miniconda.sh;
       bash miniconda.sh -b -p $HOME/miniconda;
-      export PATH="$HOME/miniconda/bin:$PATH";
+      source $HOME/miniconda/bin/activate;
       hash -r;
       conda config --set always_yes yes --set changeps1 no;
       conda update -q --all;
       conda config --add channels defaults;
-      conda config --add channels ${CONDA_CHANNEL};
+      conda config --add channels ${MY_CONDA_CHANNEL};
       conda install conda-build=2 pip anaconda-client;
     else
-      curl https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh -o miniconda.sh;
+      curl https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -o miniconda.sh;
       bash miniconda.sh -b -p $HOME/miniconda;
-      export PATH="$HOME/miniconda/bin:$PATH";
+      source $HOME/miniconda/bin:$PATH;
       conda config --set always_yes yes --set changeps1 no;
       conda config --add channels defaults;
       conda install pip anaconda-client;
@@ -59,7 +32,7 @@ script:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
       conda build conda-recipe;
     else
-       ./conda_build_in_docker.sh `pwd` $HOME/miniconda/conda-bld/${TRAVIS_OS_NAME}-64 ${CONDA_CHANNEL};
+       ./conda_build_in_docker.sh `pwd` $HOME/miniconda/conda-bld/${TRAVIS_OS_NAME}-64 ${MY_CONDA_CHANNEL};
     fi
 
 after_success:
@@ -73,10 +46,8 @@ after_success:
         echo username=$PYPI_USER       >> ~/.pypirc;
         echo password=$PYPI_PASSWORD   >> ~/.pypirc;
         pip install twine;
-        if [[ $TRAVIS_OS_NAME == "linux" && $CONDA_PY == "2.7" ]]; then
-            twine upload -r mypypi $HOME/miniconda/conda-bld/${TRAVIS_OS_NAME}-64/pcaspy-*.tar.gz;
-        fi;
         if [[ $TRAVIS_OS_NAME == "linux" ]]; then
+            twine upload -r mypypi $HOME/miniconda/conda-bld/${TRAVIS_OS_NAME}-64/pcaspy-*.tar.gz;
             twine upload -r mypypi $HOME/miniconda/conda-bld/${TRAVIS_OS_NAME}-64/pcaspy-*.egg;
         fi;
         if [[ $TRAVIS_OS_NAME == "osx" ]]; then
