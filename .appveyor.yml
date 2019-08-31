@@ -25,7 +25,7 @@ install:
   - conda info
 
 build_script:
-  - "%CMD_IN_ENV% conda build conda-recipe"
+  - conda build conda-recipe
 
 on_success:
   - if %APPVEYOR_REPO_TAG% == true (anaconda -t %CONDA_TOKEN% upload --force %MINICONDA%\\conda-bld\\win-%PYTHON_ARCH%\\*.tar.bz2)
