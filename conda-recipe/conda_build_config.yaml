@@ -3,3 +3,11 @@ python:
     - 3.5
     - 3.6
     - 3.7
+vc:
+    - 9
+    - 14
+    - 14
+    - 17
+zip_keys:
+    - python
+    - vc
