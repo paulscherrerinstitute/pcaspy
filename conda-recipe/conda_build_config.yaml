@@ -3,11 +3,17 @@ python:
     - 3.5
     - 3.6
     - 3.7
-vc:
-    - 9
-    - 14
-    - 14
-    - 17
+c_compiler:
+    - vs2008 # [win]
+    - vs2015 # [win]
+    - vs2015 # [win]
+    - vs2015 # [win]
+cxx_compiler:
+    - vs2008 # [win]
+    - vs2015 # [win]
+    - vs2015 # [win]
+    - vs2015 # [win]
 zip_keys:
     - python
-    - vc
+    - c_compiler #[win]
+    - cxx_compiler #[win]

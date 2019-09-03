@@ -1,19 +1,13 @@
 environment:
-  global:
-    # SDK v7.0 MSVC Express 2008's SetEnv.cmd script will fail if the
-    # /E:ON and /V:ON options are not enabled in the batch script intepreter
-    # See: http://stackoverflow.com/a/13751649/163740
-    CMD_IN_ENV: "cmd /E:ON /V:ON /C run_with_env.cmd"
-
   matrix:
-    - PYTHON_VERSION: 3.6
+    - PYTHON_VERSION: 3
       PYTHON_ARCH: "32"
-      MINICONDA: C:\Miniconda36
-      EPICS_HOST_ARCH: "win32-x86"
-    - PYTHON_VERSION: 3.6
+      MINICONDA: C:\Miniconda3
+      EPICS_HOST_ARCH: "win32-x86-static"
+    - PYTHON_VERSION: 3
       PYTHON_ARCH: "64"
-      MINICONDA: C:\Miniconda36-x64
-      EPICS_HOST_ARCH: "windows-x64"
+      MINICONDA: C:\Miniconda3-x64
+      EPICS_HOST_ARCH: "windows-x64-static"
 
 install:
   - "%MINICONDA%\\Scripts\\activate.bat"
@@ -23,6 +17,9 @@ install:
   - conda config --add channels %MY_CONDA_CHANNEL%
   - conda install conda-build numpy anaconda-client
   - conda info
+  # patch vs2008 express
+  - conda install -c conda-forge vs2008_express_vc_python_patch
+  - setup_x64
 
 build_script:
   - conda build conda-recipe
