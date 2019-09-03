@@ -13,29 +13,23 @@ matrix:
 install:
   # Set the anaconda environment
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
-      curl https://repo.continuum.io/miniconda/Miniconda3-latest-MacOSX-x86_64.sh -o miniconda.sh;
-      bash miniconda.sh -b -p $HOME/miniconda;
-      source $HOME/miniconda/bin/activate;
-      conda config --set always_yes yes --set changeps1 no;
-      conda update -q --all;
-      conda config --add channels defaults;
-      conda config --add channels ${MY_CONDA_CHANNEL};
-      conda install conda-build pip anaconda-client;
+      curl https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-x86_64.sh -o miniconda.sh;
     else
-      curl https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -o miniconda.sh;
-      bash miniconda.sh -b -p $HOME/miniconda;
-      source $HOME/miniconda/bin/activate;
-      conda config --set always_yes yes --set changeps1 no;
-      conda config --add channels defaults;
-      conda install pip anaconda-client;
-      docker pull continuumio/anaconda-build-linux-64:latest;
-      mkdir -m 0777 -p $HOME/miniconda/conda-bld/${TRAVIS_OS_NAME}-64;
+      curl https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -o miniconda.sh;
     fi
+  - bash miniconda.sh -b -p $HOME/miniconda
+  - source $HOME/miniconda/bin/activate
+  - conda config --set always_yes yes --set changeps1 no
+  - conda update -q --all
+  - conda config --add channels defaults
+  - conda install conda-build pip anaconda-client
+  - conda info
 
 script:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
-      conda build conda-recipe;
+      conda build -c ${MY_CONDA_CHANNEL} conda-recipe;
     else
+       mkdir -m 0777 -p $HOME/miniconda/conda-bld/${TRAVIS_OS_NAME}-64;
        ./conda_build_in_docker.sh `pwd` $HOME/miniconda/conda-bld/${TRAVIS_OS_NAME}-64 ${MY_CONDA_CHANNEL};
     fi
 
