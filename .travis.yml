@@ -11,7 +11,6 @@ install:
       curl https://repo.continuum.io/miniconda/Miniconda3-latest-MacOSX-x86_64.sh -o miniconda.sh;
       bash miniconda.sh -b -p $HOME/miniconda;
       source $HOME/miniconda/bin/activate;
-      hash -r;
       conda config --set always_yes yes --set changeps1 no;
       conda update -q --all;
       conda config --add channels defaults;
@@ -20,7 +19,7 @@ install:
     else
       curl https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -o miniconda.sh;
       bash miniconda.sh -b -p $HOME/miniconda;
-      source $HOME/miniconda/bin:$PATH;
+      source $HOME/miniconda/bin/activate;
       conda config --set always_yes yes --set changeps1 no;
       conda config --add channels defaults;
       conda install pip anaconda-client;
