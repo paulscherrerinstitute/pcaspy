@@ -8,9 +8,9 @@ language: cpp
 matrix:
   include:
     - os: linux
-      MY_CONDA_VERSION: latest
+      env: MY_CONDA_VERSION=latest
     - os: osx
-      MY_CONDA_VERSION: 4.5.4
+      env: MY_CONDA_VERSION=4.5.4
 
 install:
   # Set the anaconda environment
