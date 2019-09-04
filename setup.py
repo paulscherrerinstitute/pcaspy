@@ -5,7 +5,7 @@ setup.py file for pcaspy
 """
 import os
 import platform
-import imp
+import sys
 import shutil
 import subprocess
 
@@ -24,6 +24,18 @@ class build_py(_build_py):
     def run(self):
         self.run_command('build_ext')
         _build_py.run(self)
+
+# python 2/3 compatible way to load module from file
+def load_module(name, location):
+    if sys.hexversion < 0x03040000:
+        import imp
+        module = imp.load_source(name, location)
+    else:
+        import importlib
+        spec = importlib.util.spec_from_file_location(name, location)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+    return module
 
 # define EPICS base path and host arch
 EPICSBASE = os.environ.get("EPICS_BASE")
@@ -143,7 +155,7 @@ if UNAME not in ['WIN32', 'Darwin', 'Linux']:
     cas_module.runtime_library_dirs += os.path.join(EPICSBASE, 'lib', HOSTARCH),
 
 long_description = open('README.rst').read()
-_version = imp.load_source('_version','pcaspy/_version.py')
+_version = load_module('_version', 'pcaspy/_version.py')
 
 dist = setup (name = 'pcaspy',
               version = _version.__version__,
