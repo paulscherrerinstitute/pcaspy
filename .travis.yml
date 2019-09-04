@@ -8,14 +8,16 @@ language: cpp
 matrix:
   include:
     - os: linux
+      MY_CONDA_VERSION: latest
     - os: osx
+      MY_CONDA_VERSION: 4.5.4
 
 install:
   # Set the anaconda environment
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
-      curl https://repo.anaconda.com/miniconda/Miniconda3-4.5.4-MacOSX-x86_64.sh -o miniconda.sh;
+      curl https://repo.anaconda.com/miniconda/Miniconda3-${MY_CONDA_VERSION}-MacOSX-x86_64.sh -o miniconda.sh;
     else
-      curl https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -o miniconda.sh;
+      curl https://repo.anaconda.com/miniconda/Miniconda3-${MY_CONDA_VERSION}-Linux-x86_64.sh -o miniconda.sh;
     fi
   - bash miniconda.sh -b -p $HOME/miniconda
   - source $HOME/miniconda/bin/activate
