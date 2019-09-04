@@ -1,6 +1,10 @@
 from pcaspy import cas
 
-import numpy
+try:
+    import numpy
+except ImportError:
+    print('Skipping numpy tests')
+    numpy = None
 
 import unittest
 
@@ -31,14 +35,20 @@ class TestGDD(unittest.TestCase):
         self.assertEqual(self.s.get(), [0,1])
 
     def test_numpy_scaler(self):
+        if numpy is None:
+            return
         self.s.put(numpy.int32(12))
         self.assertEqual(self.s.get(), 12)
 
     def test_numpy_array(self):
+        if numpy is None:
+            return
         self.s.put(numpy.arange(2, dtype='i4'))
         self.assertEqual(self.s.get(), [0, 1])
 
     def test_numpy_unsupported_dtype(self):
+        if numpy is None:
+            return
         self.s.put(numpy.arange(2, dtype='i8'))
         self.assertEqual(self.s.get(), [0, 1])
 
