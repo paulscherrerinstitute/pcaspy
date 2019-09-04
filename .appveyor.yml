@@ -34,4 +34,4 @@ on_success:
   - echo password=%PYPI_PASSWORD%                    >> %USERPROFILE%\\.pypirc
   - set HOME=%USERPROFILE%
   - pip install twine
-  - if %APPVEYOR_REPO_TAG% == true (twine upload -r mypypi %MINICONDA%\\conda-bld\\win-%PYTHON_ARCH%\\*.whl)
+  - if %APPVEYOR_REPO_TAG% == true (twine upload -r mypypi --skip-existing %MINICONDA%\\conda-bld\\win-%PYTHON_ARCH%\\*.whl)
