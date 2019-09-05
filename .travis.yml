@@ -47,10 +47,10 @@ after_success:
         echo password=$PYPI_PASSWORD   >> ~/.pypirc;
         pip install twine;
         if [[ $TRAVIS_OS_NAME == "linux" ]]; then
-            twine upload -r mypypi $HOME/miniconda/conda-bld/${TRAVIS_OS_NAME}-64/pcaspy-*.tar.gz;
-            twine upload -r mypypi $HOME/miniconda/conda-bld/${TRAVIS_OS_NAME}-64/pcaspy-*.egg;
+            twine upload -r mypypi --skip-existing $HOME/miniconda/conda-bld/${TRAVIS_OS_NAME}-64/pcaspy-*.tar.gz;
+            twine upload -r mypypi --skip-existing $HOME/miniconda/conda-bld/${TRAVIS_OS_NAME}-64/pcaspy-*.egg;
         fi;
         if [[ $TRAVIS_OS_NAME == "osx" ]]; then
-            twine upload -r mypypi $HOME/miniconda/conda-bld/${TRAVIS_OS_NAME}-64/pcaspy-*.whl;
+            twine upload -r mypypi --skip-existing $HOME/miniconda/conda-bld/${TRAVIS_OS_NAME}-64/pcaspy-*.whl;
         fi;
       fi
