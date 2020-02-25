@@ -92,7 +92,7 @@ elif UNAME == 'Windows':
                 static = True
                 break
             dll_dest = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'pcaspy', dll)
-            if not os.path.exists(dll_dest):
+            if sys.argv[1] == "install":
                 shutil.copy(dllpath, dll_dest)
         macros += [('_CRT_SECURE_NO_WARNINGS', 'None'), ('_CRT_NONSTDC_NO_DEPRECATE', 'None'), ('EPICS_CALL_DLL', '')]
         cflags += ['/Z7']
