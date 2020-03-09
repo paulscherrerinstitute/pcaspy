@@ -10,7 +10,7 @@ matrix:
     - os: linux
       env: MY_CONDA_VERSION=latest
     - os: osx
-      env: MY_CONDA_VERSION=4.5.4
+      env: MY_CONDA_VERSION=4.7.12
 
 install:
   # Set the anaconda environment
