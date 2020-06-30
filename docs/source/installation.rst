@@ -88,10 +88,12 @@ Here is a short guide,
   - Download source from https://github.com/epics-modules/pcas/releases
   - Unpack its contents to <EPICS_BASE>/modules/pcas
   - Create <EPICS_BASE>/modules/Makefile.local, with the following contents::
+  
+        SUBMODULES += pcas
+        pcas_DEPEND_DIRS = libcom
 
-    SUBMODULES += pcas
-    pcas_DEPEND_DIRS = libcom
-
+  - As long as v4.13.2 is the latest release of pcas, add ``-include $(TOP)/../RELEASE.$(EPICS_HOST_ARCH).local``
+    to the end of <EPICS_BASE>/modules/pcas/configure/RELEASE.
 - Run ``make``.
 
 .. note:: On windows, the Visual Studio version has to match that used to build Python.
