@@ -405,9 +405,17 @@ class PVInfo(object):
     def checkValue(self, newValue):
         """Check value change event"""
         mask = 0
-        # array type always gets notified
+        ## array type always gets notified
+        #if self.count > 1:
+        #    mask = (cas.DBE_LOG | cas.DBE_VALUE)
+        # array type's equality is checked
         if self.count > 1:
-            mask = (cas.DBE_LOG | cas.DBE_VALUE)
+            if self.mlst != newValue:
+                mask |= cas.DBE_VALUE
+                self.mlst = newValue
+            if self.alst != newValue:
+                mask |= cas.DBE_LOG
+                self.alst = newValue
         # string type's equality is checked
         elif self.type in [cas.aitEnumString, cas.aitEnumFixedString]:
             if self.mlst != newValue:
