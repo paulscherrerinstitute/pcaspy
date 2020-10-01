@@ -10,7 +10,9 @@ matrix:
     - os: linux
       env: MY_CONDA_VERSION=latest
     - os: osx
-      env: MY_CONDA_VERSION=4.7.12
+      env:
+        - MY_CONDA_VERSION=latest
+        - CONDA_BUILD_SYSROOT="$(xcode-select -p)/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk"
 
 install:
   # Set the anaconda environment
@@ -29,6 +31,8 @@ install:
 
 script:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
+      [[ -e /opt/MacOSX10.9.sdk ]] || sudo ln -s ${CONDA_BUILD_SYSROOT} /opt/MacOSX10.9.sdk;
+      printf "CONDA_BUILD_SYSROOT:\n    - ${CONDA_BUILD_SYSROOT}\n" >> conda-recipe/conda_build_config.yaml;
       conda build -c ${MY_CONDA_CHANNEL} conda-recipe;
     else
        mkdir -m 0777 -p $HOME/miniconda/conda-bld/${TRAVIS_OS_NAME}-64;
