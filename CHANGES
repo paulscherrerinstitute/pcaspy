@@ -1,7 +1,7 @@
 
 .. py:currentmodule:: pcaspy
 
-0.7.3 (XX-03-2019)
+0.7.3 (15-10-2020)
 ------------------
     * Fixed alarm/severity checking for short type. (Issue #62)
 
