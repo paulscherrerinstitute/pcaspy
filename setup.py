@@ -40,20 +40,16 @@ def load_module(name, location):
 
 # define EPICS base path and host arch
 EPICSBASE = os.environ.get("EPICS_BASE")
+HOSTARCH = os.environ.get("EPICS_HOST_ARCH")
+SHARED = os.environ.get("EPICS_SHARED")
+# guess from EPICS root environment variable
 if not EPICSBASE:
     EPICSROOT = os.environ.get("EPICS")
     if EPICSROOT:
         EPICSBASE = os.path.join(EPICSROOT, 'base')
-if not EPICSBASE:
-    raise IOError("Please define EPICS_BASE environment variable")
-if not os.path.exists(EPICSBASE):
-    raise IOError("Please correct EPICS_BASE environment variable, "
-                  "the path {0} does not exist".format(EPICSBASE))
 
-
-HOSTARCH  = os.environ.get("EPICS_HOST_ARCH")
-if not HOSTARCH:
-    raise IOError("Please define EPICS_HOST_ARCH environment variable")
+if not EPICSBASE or not os.path.exists(EPICSBASE) or not HOSTARCH:
+    raise IOError("Please define/validate EPICS_BASE environment variable")
 
 # check EPICS version
 PRE315 = True
