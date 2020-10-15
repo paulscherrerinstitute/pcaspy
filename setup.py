@@ -117,14 +117,16 @@ elif UNAME == 'Windows':
         CMPL = 'gcc'
 elif UNAME == 'Darwin':
     CMPL = 'clang'
-    extra_objects = [os.path.join(EPICSBASE, 'lib', HOSTARCH, 'lib%s.a'%lib) for lib in libraries]
-    libraries = []
+    if not SHARED:
+        extra_objects = [os.path.join(EPICSBASE, 'lib', HOSTARCH, 'lib%s.a'%lib) for lib in libraries]
+        libraries = []
 elif UNAME == 'Linux':
-    # necessary when EPICS is statically linked
-    extra_objects = [os.path.join(EPICSBASE, 'lib', HOSTARCH, 'lib%s.a'%lib) for lib in libraries]
-    libraries = ['rt']
-    if subprocess.call('nm -u %s | grep -q rl_' % os.path.join(EPICSBASE, 'lib', HOSTARCH, 'libCom.a'), shell=True) == 0:
-        libraries += ['readline']
+    if not SHARED:
+        extra_objects = [os.path.join(EPICSBASE, 'lib', HOSTARCH, 'lib%s.a'%lib) for lib in libraries]
+        # necessary when EPICS is statically linked
+        libraries = ['rt']
+        if subprocess.call('nm -u %s | grep -q rl_' % os.path.join(EPICSBASE, 'lib', HOSTARCH, 'libCom.a'), shell=True) == 0:
+            libraries += ['readline']
     CMPL = 'gcc'
 elif UNAME == 'SunOS':
     # OS_CLASS used by EPICS
@@ -148,9 +150,9 @@ cas_module = Extension('pcaspy._cas',
                        extra_objects = extra_objects,
                        define_macros = macros,
                        undef_macros  = umacros,)
-# other *NIX linker has runtime library path option
-if UNAME not in ['WIN32', 'Darwin', 'Linux']:
-    cas_module.runtime_library_dirs += os.path.join(EPICSBASE, 'lib', HOSTARCH),
+# use runtime library path option if linking share libraries on *NIX
+if UNAME not in ['WIN32'] and SHARED:
+    cas_module.runtime_library_dirs += [os.path.join(EPICSBASE, 'lib', HOSTARCH)]
 
 long_description = open('README.rst').read()
 _version = load_module('_version', 'pcaspy/_version.py')
