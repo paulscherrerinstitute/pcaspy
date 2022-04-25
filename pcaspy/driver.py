@@ -1,6 +1,9 @@
 from . import cas
 from .alarm import Severity, Alarm
-import collections
+try:
+    from collections.abc import Iterable
+except ImportError:  # python < 3
+    from collections import Iterable
 import operator
 import threading
 import time
@@ -479,7 +482,7 @@ class PVInfo(object):
         :param limit: numeric scalar
         :param op: comparision operators, le, ge etc
         """
-        if isinstance(value, collections.Iterable):
+        if isinstance(value, Iterable):
             return any(op(v, limit) for v in value)
         else:
             return op(value, limit)
