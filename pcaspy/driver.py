@@ -123,16 +123,18 @@ class Driver(DriverBase):
         self.setParam(reason, value)
         return True
 
-    def setParam(self, reason, value):
+    def setParam(self, reason, value, timestamp=None):
         """set PV value and request update
 
         :param str reason: PV base name
         :param value: PV new value
+        :param pcaspy.cas.epicsTimeStamp timestamp: PV time stamp
 
         Store the PV's new value if it is indeed different from the old.
         For list and numpy array, a copy will be made.
         This new value will be pushed to registered client the next time when :meth:`updatePVs` is called.
-        The timestamp will be updated to the current time anyway.
+        The PV's modification time will be updated to *timestamp*. If *timestamp* is omitted, the current
+        time is applied.
 
         Alarm and severity status are updated as well. For numeric type, the alarm/severity is determined as the
         following:
@@ -150,6 +152,8 @@ class Driver(DriverBase):
         For enumerate type, the alarm severity is defined by field *states*. And if severity is other than NO_ALARM,
         the alarm status is STATE_ALARM.
 
+        .. note:: The *timestamp*, if given, must be of :class:`pcaspy.cas.epicsTimeStamp` type.
+
         """
         # make a copy of mutable objects, list, numpy.ndarray
         if isinstance(value, list):
@@ -160,7 +164,9 @@ class Driver(DriverBase):
         pv = manager.pvs[self.port][reason]
         self.pvDB[reason].mask |= pv.info.checkValue(value)
         self.pvDB[reason].value = value
-        self.pvDB[reason].time = cas.epicsTimeStamp()
+        if timestamp is None:
+            timestamp = cas.epicsTimeStamp()
+        self.pvDB[reason].time = timestamp
         if self.pvDB[reason].mask:
             self.pvDB[reason].flag = True
         # check whether alarm/severity update is needed
