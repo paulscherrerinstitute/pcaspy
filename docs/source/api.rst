@@ -57,5 +57,31 @@ Reference
 
     .. automethod:: stop()
 
+.. module:: pcaspy.cas
+
+.. attribute:: POSIX_TIME_AT_EPICS_EPOCH
+
+   POSIX time at the EPICS epoch, 00:00:00 Jan. 1, 1990
+
+:class:`epicsTimeStamp`
+-----------------------
+.. class:: epicsTimeStamp
+   EPICS time stamp.
+
+   .. attribute:: secPastEpoch
+
+      seconds since 0000 Jan 1, 1990
+
+   .. attribute:: nsec
+
+      nanoseconds within second
+
+   .. method:: __init__()
+
+      Current timestamp
+
+   .. method:: __init__(secPastEpoch, nsec)
+
+      Timestamp at the given time point
 
 .. py:currentmodule:: pcaspy
