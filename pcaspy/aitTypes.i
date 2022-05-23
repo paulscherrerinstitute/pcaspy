@@ -31,6 +31,8 @@ typedef enum {
 
 %#include <epicsTime.h>
 
+#define POSIX_TIME_AT_EPICS_EPOCH 631152000u
+
 /* epics time stamp for C interface*/
 typedef struct epicsTimeStamp {
     epicsUInt32 secPastEpoch; /* seconds since 0000 Jan 1, 1990 */
@@ -42,6 +44,14 @@ typedef struct epicsTimeStamp {
         epicsTimeGetCurrent(ts);
         return ts;
     }
+
+    epicsTimeStamp(epicsUInt32 secPastEpoch, epicsUInt32 nsec) {
+        epicsTimeStamp *ts = (epicsTimeStamp*) malloc(sizeof(epicsTimeStamp));
+        ts->secPastEpoch = secPastEpoch;
+        ts->nsec = nsec;
+        return ts;
+    }
+
     ~epicsTimeStamp() {
         free(self);
     }
