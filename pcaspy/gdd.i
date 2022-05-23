@@ -18,7 +18,7 @@ if sys.version_info[0] > 2:
     numerics = (bool, int, float)
     import collections.abc
     is_sequence = lambda x: isinstance(x, collections.abc.Sequence)
-else: 
+else:
     str2char = str
     numerics = (bool, int, float, long)
     import operator
@@ -235,7 +235,7 @@ public:
                             self.putDoubleDataBuffer(value.data)
                         else:
                             warnings.warn("gdd does not support data type %s. Conversion is involved." % value.dtype)
-                            self.putNumericArray(value) 
+                            self.putNumericArray(value)
             elif is_sequence(value):
                 if self.primitiveType() == aitEnumInvalid:
                     if isinstance(value[0], numerics):
@@ -250,7 +250,7 @@ public:
                     self.putStringArray([str2char(v) for v in value])
                 else:
                     self.putNumericArray(value)
-                       
+
         def get(self):
             primitiveType = self.primitiveType()
             if self.isScalar():

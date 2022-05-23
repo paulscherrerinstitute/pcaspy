@@ -4,14 +4,14 @@
 #include <casdef.h>
 #include <asLib.h>
 
-class PV; 
+class PV;
 
 class Channel : public casChannel {
     public:
-        Channel(const casCtx &ctxIn,  PV *pvIn,  
-                const char * const pUserNameIn, 
-                const char * const pHostNameIn); 
-        ~Channel(); 
+        Channel(const casCtx &ctxIn,  PV *pvIn,
+                const char * const pUserNameIn,
+                const char * const pHostNameIn);
+        ~Channel();
 
         /* server library calls these methods to determine
          * client's access rights.
@@ -22,11 +22,11 @@ class Channel : public casChannel {
         Channel & operator = ( const Channel & );
         Channel ( const Channel & );
 
-        PV * pPv; 
-        char * pUserName; 
-        char * pHostName; 
+        PV * pPv;
+        char * pUserName;
+        char * pHostName;
 
-        ASCLIENTPVT client; 
-}; 
+        ASCLIENTPVT client;
+};
 
 #endif

@@ -19,41 +19,41 @@ int PV :: initialized = 0;
 gddAppFuncTable<PV> PV :: ft;
 
 
-PV :: PV () 
-    : pAsyncWrite(NULL), 
-    asg(NULL), 
+PV :: PV ()
+    : pAsyncWrite(NULL),
+    asg(NULL),
     member(NULL)
 {
     PV::initFT();
 }
 
-PV ::~PV () 
+PV ::~PV ()
 {
     if (member)
-        asRemoveMember(&member); 
+        asRemoveMember(&member);
     if (asg)
-        free(asg); 
+        free(asg);
 }
 
-// called by server application to specify access rights 
-// by given ASG name. 
+// called by server application to specify access rights
+// by given ASG name.
 // this is called in Python subclass SimplePV
 bool PV :: setAccessSecurityGroup (const char *asgName)
 {
     if (asgName)
         asg = strdup(asgName);
     if (asg==NULL || asAddMember(&member, asg)) {
-        member = NULL; 
-        return false; 
+        member = NULL;
+        return false;
     }
-    return true; 
+    return true;
 }
 
 // called by server library when connection established
-casChannel * PV :: createChannel ( const casCtx &ctx, 
-        const char * const pUserName, 
+casChannel * PV :: createChannel ( const casCtx &ctx,
+        const char * const pUserName,
         const char * const pHostName )
-{ 
+{
     return new Channel(ctx, this,  pUserName,  pHostName);
 }
 
@@ -78,7 +78,7 @@ void PV :: endAsyncWrite(caStatus status)
 // called by AsyncWriteIO destructor to remove pending async write
 void PV :: removeAsyncWrite()
 {
-    pAsyncWrite = NULL; 
+    pAsyncWrite = NULL;
 }
 // called by server application when it changes value and notifies clients
 caStatus PV :: postEvent(int mask, gdd &value)
