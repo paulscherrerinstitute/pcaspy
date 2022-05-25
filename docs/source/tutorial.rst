@@ -269,7 +269,7 @@ Now we can run some commands to see the output,::
 
 Make it asynchronous
 ^^^^^^^^^^^^^^^^^^^^
-As we have noted, the command normally would take undetermined time to finish running. In addiction to yield ``MTEST:STATUS`` to indicate completion.
+As we have noted, the command normally would take undetermined time to finish running. In addition to yield ``MTEST:STATUS`` to indicate completion.
 We could make ``MTEST:COMMAND`` asynchronous, and notify upon completion if client has called *ca_array_put_callback*.
 
 Add a new field *asyn* to ``COMMAND`` to indicate that this PV finishes writing asynchronously,::
