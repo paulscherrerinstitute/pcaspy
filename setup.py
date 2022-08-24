@@ -49,7 +49,7 @@ if not EPICSBASE:
         EPICSBASE = os.path.join(EPICSROOT, 'base')
 
 if not EPICSBASE or not os.path.exists(EPICSBASE) or not HOSTARCH:
-    raise IOError("Please define/validate EPICS_BASE environment variable")
+    raise IOError("Please define/validate EPICS_BASE and EPICS_HOST_ARCH environment variables")
 
 # check EPICS version
 PRE315 = True
