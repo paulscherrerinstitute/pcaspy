@@ -1,8 +1,8 @@
 python:
-    - 2.7 # [not osx-aarch64]
-    - 3.5 # [not osx-aarch64]
-    - 3.6 # [not osx-aarch64]
-    - 3.7 # [not osx-aarch64]
+    - 2.7 # [not arm64]
+    - 3.5 # [not arm64]
+    - 3.6 # [not arm64]
+    - 3.7 # [not arm64]
     - 3.8
     - 3.9
     - 3.10
