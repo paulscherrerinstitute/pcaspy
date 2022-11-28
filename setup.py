@@ -13,10 +13,10 @@ import filecmp
 # Use setuptools to include build_sphinx, upload/sphinx commands
 try:
     from setuptools import setup, Extension
+    from setuptools.command.build_py import build_py as _build_py
 except:
     from distutils.core import setup, Extension
-
-from distutils.command.build_py import build_py as _build_py
+    from distutils.command.build_py import build_py as _build_py
 
 # build_py runs before build_ext so that swig generated module is not copied
 # See http://bugs.python.org/issue7562
