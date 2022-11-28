@@ -32,11 +32,18 @@ def load_module(name, location):
         import imp
         module = imp.load_source(name, location)
     else:
-        import importlib
+        import importlib.util
         spec = importlib.util.spec_from_file_location(name, location)
         module = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(module)
     return module
+
+# check wether all paths exist
+def paths_exist(paths):
+    for path in paths:
+        if not os.path.exists(path):
+            return False
+    return True
 
 # define EPICS base path and host arch
 EPICSBASE = os.environ.get("EPICS_BASE")
@@ -119,14 +126,22 @@ elif UNAME == 'Darwin':
     CMPL = 'clang'
     if not SHARED:
         extra_objects = [os.path.join(EPICSBASE, 'lib', HOSTARCH, 'lib%s.a'%lib) for lib in libraries]
-        libraries = []
+        if paths_exist(extra_objects):
+            libraries = []
+        else:
+            extra_objects = []
+            SHARED = True
 elif UNAME == 'Linux':
     if not SHARED:
         extra_objects = [os.path.join(EPICSBASE, 'lib', HOSTARCH, 'lib%s.a'%lib) for lib in libraries]
-        # necessary when EPICS is statically linked
-        libraries = ['rt']
-        if subprocess.call('nm -u %s | grep -q rl_' % os.path.join(EPICSBASE, 'lib', HOSTARCH, 'libCom.a'), shell=True) == 0:
-            libraries += ['readline']
+        if paths_exist(extra_objects):
+            # necessary when EPICS is statically linked
+            libraries = ['rt']
+            if subprocess.call('nm -u %s | grep -q rl_' % os.path.join(EPICSBASE, 'lib', HOSTARCH, 'libCom.a'), shell=True) == 0:
+                libraries += ['readline']
+        else:
+            extra_objects = []
+            SHARED = True
     CMPL = 'gcc'
 elif UNAME == 'SunOS':
     # OS_CLASS used by EPICS
