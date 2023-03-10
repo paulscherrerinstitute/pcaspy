@@ -27,7 +27,7 @@ Reference
 
     .. automethod:: getParam(reason)
 
-    .. automethod:: setParam(reason)
+    .. automethod:: setParam(reason, value, timestamp=None)
 
     .. automethod:: setParamStatus(reason, alarm, severity)
 
