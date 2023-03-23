@@ -538,7 +538,7 @@ class SimplePV(cas.casPV):
     def interestDelete(self):
         self.interest = False
 
-    def writeValue(self, gddValue):
+    def writeValue(self, client, gddValue):
         # get driver object
         driver = manager.driver.get(self.info.port)
         if not driver:
@@ -546,6 +546,10 @@ class SimplePV(cas.casPV):
                 warning('%s: No driver is registered for port %s', self.info.reason, self.info.port)
             return cas.S_casApp_undefined
         # call out driver support
+        logging.getLogger('pcaspy.SimplePV.writeValue').\
+                info('%s: %s %s  old=%s new=%s',
+                     self.info.reason, client.host, client.user,
+                     driver.getParam(self.info.reason), gddValue.get())
         success = driver.write(self.info.reason, gddValue.get())
         if success is False:
             logging.getLogger('pcaspy.SimplePV.writeValue').\
@@ -560,7 +564,7 @@ class SimplePV(cas.casPV):
         if not cas.EPICS_HAS_WRITENOTIFY and self.info.asyn:
             return self.writeNotify(context, value)
         else:
-            self.writeValue(value)
+            self.writeValue(context, value)
             return cas.S_casApp_success
 
     def writeNotify(self, context, value):
@@ -573,7 +577,7 @@ class SimplePV(cas.casPV):
             # register async write io
             self.startAsyncWrite(context)
             # call out driver
-            success = self.writeValue(value)
+            success = self.writeValue(context, value)
             # if not successful, clean the async write io
             # pass status S_cas_success instead of cas.S_casApp_canceledAsyncIO
             # so that client wont see error message.
@@ -583,7 +587,7 @@ class SimplePV(cas.casPV):
             return cas.S_casApp_asyncCompletion
         else:
             # call out driver
-            success = self.writeValue(value)
+            success = self.writeValue(context, value)
             return cas.S_casApp_success
 
     def updateValue(self, dbValue):

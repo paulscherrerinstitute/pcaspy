@@ -16,6 +16,11 @@ class AsyncWriteIO : public casAsyncWriteIO {
         PV & pv;
 };
 
+struct casClientInfo {
+    const char *user;
+    const char *host;
+};
+
 class PV : public casPV {
     public:
         PV();
@@ -36,6 +41,9 @@ class PV : public casPV {
         virtual caStatus getLowWarnLimit(gdd &lolim) {return S_casApp_success;};
         virtual caStatus getUnits(gdd &units) {return S_casApp_success;};
         virtual caStatus getEnums(gdd &enums) {return S_casApp_success;};
+
+        virtual caStatus write(const casClientInfo &client, const gdd &gddValue) {return S_casApp_noSupport;};
+        virtual caStatus writeNotify(const casClientInfo &client, const gdd &gddValue) {return S_casApp_noSupport;};
 
         /* Post value/alarm change event */
         caStatus postEvent(int mask, gdd &value);

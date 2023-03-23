@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <string.h>
-
 #include "pv.h"
 #include "channel.h"
 
@@ -69,3 +68,14 @@ bool Channel :: writeAccess() const
         return true;
 }
 
+caStatus Channel :: write (const casCtx &ctx, const gdd &value)
+{
+    casClientInfo client = {pUserName, pHostName};
+    return pPv->write(client, value);
+}
+
+caStatus Channel :: writeNotify (const casCtx &ctx, const gdd &value)
+{
+    casClientInfo client = {pUserName, pHostName};
+    return pPv->writeNotify(client, value);
+}

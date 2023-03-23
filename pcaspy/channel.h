@@ -18,6 +18,11 @@ class Channel : public casChannel {
          */
         virtual bool readAccess() const;
         virtual bool writeAccess() const;
+
+        /* server library calls these methods to write PV (asynchronousely).
+         */
+        virtual caStatus write (const casCtx &ctx, const gdd &value);
+        virtual caStatus writeNotify (const casCtx &ctx, const gdd &value);
     private:
         Channel & operator = ( const Channel & );
         Channel ( const Channel & );
