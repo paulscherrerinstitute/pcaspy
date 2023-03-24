@@ -1,0 +1,72 @@
+name: "Build Conda Packages"
+
+on:
+  pull_request:
+    branches:
+      - "*"
+  push:
+    branches:
+      - "master"
+
+defaults:
+  run:
+    shell: bash -l {0}
+
+jobs:
+  build:
+    name: conda build (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+          os: ["ubuntu-latest", "macos-latest", "windows-latest"]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Dump env
+        run: |
+            printenv
+            echo "USER_ID=$(id -u)" >> $GITHUB_ENV
+      - name: Setup miniconda
+        uses: conda-incubator/setup-miniconda@v2
+        with:
+          auto-update-conda: false
+          conda-build-version: 3
+          auto-activate-base: true
+          activate-environment: ""
+      - name: Setup Xcode and SDK on macOS
+        if: runner.os == 'macOS'
+        run: |
+            MACOS_SDK=MacOSX10.9.sdk
+            curl -OL https://github.com/phracker/MacOSX-SDKs/releases/download/10.15/${MACOS_SDK}.tar.xz
+            sudo tar xf ${MACOS_SDK}.tar.xz -C /opt
+            printf "CONDA_BUILD_SYSROOT:\n    - /opt/${MACOS_SDK}\n" >> conda-recipe/conda_build_config.yaml
+      - name: Build macOS
+        if: runner.os == 'macOS'
+        run: |
+            mkdir packages
+            conda config --add channels paulscherrerinstitute
+            conda build --output-folder packages conda-recipe
+      - name: Build Windows
+        if: runner.os == 'Windows'
+        run: |
+            mkdir packages
+            conda config --add channels paulscherrerinstitute
+            conda build --output-folder packages conda-recipe
+      - name: Build Linux
+        if: runner.os == 'linux'
+        uses: docker://condaforge/linux-anvil-comp7:latest
+        with:
+          args: bash -c "conda config --add channels paulscherrerinstitute;conda info;cd /github/workspace;mkdir packages;conda build --output-folder packages conda-recipe"
+        env:
+          HOST_USER_ID: ${{ env.USER_ID }}
+      - name: Upload Anaconda
+        run: |
+            conda install anaconda-client
+            [[ -z ${MY_CONDA_TOKEN} ]] || anaconda -v -t ${MY_CONDA_TOKEN} upload --force packages/*/*.tar.bz2
+        env:
+          MY_CONDA_TOKEN: ${{ secrets.MY_CONDA_TOKEN }}
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          path: packages/*/*.tar.bz2
+          retention-days: 1
