@@ -6,7 +6,7 @@ python:
     - 3.8
     - 3.9
     - 3.10
-    - 3.11
+    - 3.11 # [not win32]
 c_compiler:
     - vs2008 # [win]
     - vs2015 # [win]
