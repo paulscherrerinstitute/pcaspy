@@ -18,7 +18,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-          os: ["ubuntu-latest", "macos-latest", "windows-latest"]
+          os: ["ubuntu-latest", "macos-latest"]
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -42,12 +42,6 @@ jobs:
             printf "CONDA_BUILD_SYSROOT:\n    - /opt/${MACOS_SDK}\n" >> conda-recipe/conda_build_config.yaml
       - name: Build macOS
         if: runner.os == 'macOS'
-        run: |
-            mkdir packages
-            conda config --add channels paulscherrerinstitute
-            conda build --output-folder packages conda-recipe
-      - name: Build Windows
-        if: runner.os == 'Windows'
         run: |
             mkdir packages
             conda config --add channels paulscherrerinstitute
