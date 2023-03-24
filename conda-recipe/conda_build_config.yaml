@@ -15,7 +15,7 @@ c_compiler:
     - vs2015 # [win]
     - vs2015 # [win]
     - vs2015 # [win]
-    - vs2015 # [win]
+    - vs2015 # [win64]
 cxx_compiler:
     - vs2008 # [win]
     - vs2015 # [win]
@@ -24,7 +24,7 @@ cxx_compiler:
     - vs2015 # [win]
     - vs2015 # [win]
     - vs2015 # [win]
-    - vs2015 # [win]
+    - vs2015 # [win64]
 zip_keys:
     - python
     - c_compiler #[win]
