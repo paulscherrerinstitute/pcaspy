@@ -30,6 +30,7 @@ typedef enum {
 } aitEnum;
 
 %#include <epicsTime.h>
+%#include <math.h>
 
 #define POSIX_TIME_AT_EPICS_EPOCH 631152000u
 
@@ -52,13 +53,35 @@ typedef struct epicsTimeStamp {
         return ts;
     }
 
+    static epicsTimeStamp fromPosixTimeStamp(double timestamp) {
+        epicsTimeStamp ts = {0, 0}
+        double intg, frac;
+        frac = modf(timestamp, &intg);
+        if (intg >= POSIX_TIME_AT_EPICS_EPOCH) {
+            ts.secPastEpoch = epicsUInt32(intg - POSIX_TIME_AT_EPICS_EPOCH);
+            ts.nsec = epicsUInt32(frac * 1e9);
+        }
+        return ts;
+    }
+
+    static epicsTimeStamp fromPosixTimeStamp(long long sec, epicsUInt32 nsec) {
+        epicsTimeStamp ts = {0, 0}
+        if (sec >= POSIX_TIME_AT_EPICS_EPOCH) {
+            ts.secPastEpoch = epicsUInt32(sec - POSIX_TIME_AT_EPICS_EPOCH);
+            ts.nsec = nsec;
+        }
+        return ts;
+    }
+
     ~epicsTimeStamp() {
         free(self);
     }
 }
 %pythoncode {
     def __str__(self):
-        return '%d,%d' % (self.secPastEpoch, self.nsec)
+        return '%d.%d' % (self.secPastEpoch, self.nsec)
+    def __repr__(self):
+        return 'epicsTimeStamp(%d,%d)' % (self.secPastEpoch, self.nsec)
 }
 } epicsTimeStamp;
 

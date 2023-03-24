@@ -76,12 +76,22 @@ Reference
 
       nanoseconds within second
 
-   .. method:: __init__()
+   .. method:: epicsTimeStamp()
 
       Current timestamp
 
-   .. method:: __init__(secPastEpoch, nsec)
+   .. method:: epicsTimeStamp(secPastEpoch, nsec)
+      :noindex:
 
       Timestamp at the given time point
+
+   .. staticmethod:: fromPosixTimeStamp(timestamp)
+
+      Convert from a POSIX timestamp in seconds as a floating point number.
+
+   .. staticmethod:: fromPosixTimeStamp(sec, nsec)
+      :noindex:
+
+      Convert from a POSIX timestamp.
 
 .. py:currentmodule:: pcaspy
