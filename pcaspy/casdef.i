@@ -117,6 +117,12 @@ public:
     caServer * getCAS () const;
 };
 
+struct casClientInfo {
+    %immutable;
+    const char *user;
+    const char *host;
+};
+
 class PV : public casPV {
 public:
     PV();
@@ -135,6 +141,11 @@ public:
     virtual caStatus getLowWarnLimit(gdd &lolim);
     virtual caStatus getUnits(gdd &units);
     virtual caStatus getEnums(gdd &enums);
+
+    virtual caStatus write (const casClientInfo &client, const gdd &value);
+    #if EPICS_HAS_WRITENOTIFY == 1
+    virtual caStatus writeNotify (const casClientInfo &client, const gdd &value);
+    #endif
 
     bool setAccessSecurityGroup(const char *);
 
