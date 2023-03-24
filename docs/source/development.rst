@@ -37,6 +37,19 @@ This is the basic entity representing a piece of data, with associated informati
 The C++ class `casPV` abstracts the interface to access the PV value. :cpp:class:`PV` derives from `casPV` and further defines
 the interface to access the PV associated information. In addition it adds helper functions for asynchronous write.
 
+.. cpp:struct:: casClientInfo
+
+Data members
+~~~~~~~~~~~~
+
+    .. cpp:member:: const char * host
+
+       CA client host name
+
+    .. cpp:member:: const char * user
+
+       CA client user name
+
 .. cpp:class:: PV
 
 Virtual methods
@@ -87,8 +100,8 @@ Virtual methods
 
       The PV warning limit
 
-    .. cpp:function:: caStatus write(const casCtx & ctx, const gdd & value)
-    .. cpp:function:: caStatus writeNotify(const casCtx & ctx, const gdd & value)
+    .. cpp:function:: caStatus write(const casClientInfo & client, const gdd & value)
+    .. cpp:function:: caStatus writeNotify(const casClientInfo & client, const gdd & value)
 
       The write interface is called when the server receives
       ca_put request and the writeNotify interface is called
