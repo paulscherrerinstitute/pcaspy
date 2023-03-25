@@ -347,6 +347,8 @@ Qt GUI integration
 ^^^^^^^^^^^^^^^^^^
 `qtgui.py <https://github.com/paulscherrerinstitute/pcaspy/blob/master/example/qtgui.py>`_ shows how to combine it with Qt GUI event loop.
 
+.. _tutorial-access-security-control:
+
 Example 5: Access Security Control
 ----------------------------------
 We already could refuse user written values in ``write`` method as done in Example 3.

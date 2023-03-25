@@ -167,8 +167,8 @@ As such this class is not exposed to Python.
 
 .. py:currentmodule:: pcaspy.cas
 
-:class:`gdd`
-------------
+gdd
+---
 
 .. py:class:: gdd
 

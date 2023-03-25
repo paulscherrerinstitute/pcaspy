@@ -9,6 +9,8 @@
 
         logging.getLogger('pcaspy.SimplePV.writeValue').setLevel(logging.INFO)
 
+    * Migrated from travis CI to github actions.
+
 0.7.3 (15-10-2020)
 ------------------
     * Fixed alarm/severity checking for short type. (Issue #62)
@@ -109,8 +111,7 @@
     * Added access security control
         access security control file can be loaded using :meth:`SimpleServer.initAccessSecurityFile`.
         The loaded rules can then be assigned to PV's *asg* field.
-        `example/access_control.py` provides an example and better explained in UserDocuments
-        https://code.google.com/p/pcaspy/wiki/UserDocuments#Example_5:_Access_Security_Control
+        `example/access_control.py` provides an example and better explained in :ref:`tutorial-access-security-control`.
 
     * Added new type char. 
         It is used to represent a long string (>40 chars). And it behaves just like string parameters in driver.
@@ -120,12 +121,12 @@
         The timestamp is set at each setParam call with new value different to current value.
     
     * Added alarm/severity info.
-        For *enum* type PV, the severity is configured by its *states* field.
-        It is a list of severity states, which can be NO_ALARM, MINOR_ALARM, MAJOR_ALARM, INVALID_ALARM.
-        If current state's severity is other than NO_ALARM, alarm is STATE_ALARM.
-        For *int* or *float* type PV, the alarm state is configured by its *low*,*high*,*lolo*,*hihi* fields,
-        in analogue to EPICS database.
-        `example/alarm_severity` provides an example.
+        * For *enum* type PV, the severity is configured by its *states* field.
+          It is a list of severity states, which can be NO_ALARM, MINOR_ALARM, MAJOR_ALARM, INVALID_ALARM.
+          If current state's severity is other than NO_ALARM, alarm is STATE_ALARM.
+        * For *int* or *float* type PV, the alarm state is configured by its *low*, *high*, *lolo*, *hihi* fields,
+          in analogue to EPICS database.
+        * `example/alarm_severity` provides an example.
 
 0.3 (21-09-2011)
 ----------------
