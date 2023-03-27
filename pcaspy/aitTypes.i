@@ -54,7 +54,7 @@ typedef struct epicsTimeStamp {
     }
 
     static epicsTimeStamp fromPosixTimeStamp(double timestamp) {
-        epicsTimeStamp ts = {0, 0}
+        epicsTimeStamp ts = {0, 0};
         double intg, frac;
         frac = modf(timestamp, &intg);
         if (intg >= POSIX_TIME_AT_EPICS_EPOCH) {
@@ -65,7 +65,7 @@ typedef struct epicsTimeStamp {
     }
 
     static epicsTimeStamp fromPosixTimeStamp(long long sec, epicsUInt32 nsec) {
-        epicsTimeStamp ts = {0, 0}
+        epicsTimeStamp ts = {0, 0};
         if (sec >= POSIX_TIME_AT_EPICS_EPOCH) {
             ts.secPastEpoch = epicsUInt32(sec - POSIX_TIME_AT_EPICS_EPOCH);
             ts.nsec = nsec;
