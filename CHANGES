@@ -1,7 +1,7 @@
 
 .. py:currentmodule:: pcaspy
 
-0.8.0 (XX-05-2022)
+0.8.0 (27-03-2023)
 ------------------
     * Added optional argument *timestamp* to :meth:`Driver.setParam`. (Issue #54)
     * Added logging of CA client host and user names in *pcaspy.SimplePV.writeValue* logger. (Issue #72)
