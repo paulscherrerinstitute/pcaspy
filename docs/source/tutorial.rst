@@ -75,7 +75,7 @@ So later we will not show this part.
 
 Return a random number
 ^^^^^^^^^^^^^^^^^^^^^^
-It is not much interesting to be just an echo. We would return a random number upon every read request.
+It is not very interesting to be just an echo. We will return a random number upon every read request.
 We need to override `read` method in our subclass `myDriver`.::
 
     import random
@@ -98,7 +98,7 @@ We need to override `read` method in our subclass `myDriver`.::
 
 Scan periodically
 ^^^^^^^^^^^^^^^^^
-Until now this PV updates only when clients read. It can also update itself periodically if we define the *scan* field,::
+So far this PV updates only when clients read. It can also update itself periodically if we define the *scan* field,::
 
     pvdb = {
         'RAND' : {
@@ -118,8 +118,8 @@ Now the PV will update every second. Monitor the change,::
 .. note::
   * The scan thread is implemented per PV and the scan interval can be arbitrary. In comparison the EPICS database scan thread is implemented per IOC and scan interval is defined in database definition.
 
-Return a series of random number
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Return a series of random numbers
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Suppose we want to return more random numbers, 10 e.g. Add *count* field in ``pvdb``,::
 
     pvdb = {
@@ -269,7 +269,7 @@ Now we can run some commands to see the output,::
 
 Make it asynchronous
 ^^^^^^^^^^^^^^^^^^^^
-As we have noted, the command normally would take undetermined time to finish running. In addition to yield ``MTEST:STATUS`` to indicate completion.
+As we have noted, the command normally would take an undetermined time to finish running. In addition to yield ``MTEST:STATUS`` to indicate completion.
 We could make ``MTEST:COMMAND`` asynchronous, and notify upon completion if client has called *ca_array_put_callback*.
 
 Add a new field *asyn* to ``COMMAND`` to indicate that this PV finishes writing asynchronously,::
@@ -324,7 +324,7 @@ Example 4: Integrate into GUI applications
 ------------------------------------------
 In the above examples, the server process loop is running in the main thread.
 GUI applications require their own event loop running in the main thread also.
-In such application the server process loop could run in a separate thread and yield the main thread to the GUI event loop.
+In such applications the server process loop could run in a separate thread and yield the main thread to the GUI event loop.
 
 A helper class :class:`ServerThread` can be used to execute the server in a separate thread.
 
@@ -352,7 +352,7 @@ Qt GUI integration
 Example 5: Access Security Control
 ----------------------------------
 We already could refuse user written values in ``write`` method as done in Example 3.
-In addition it is possible to use access security rules as in EPICS database. 
+In addition it is possible to use access security rules as in the EPICS database. 
 
 Define the access security rule 
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

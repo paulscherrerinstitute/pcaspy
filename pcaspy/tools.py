@@ -6,7 +6,7 @@ class ServerThread(threading.Thread):
     """
     A helper class to run server in a thread.
 
-    The following snippet runs the server for 4 seconds and quit::
+    The following snippet runs the server for 4 seconds and quits::
 
         server = SimpleServer()
         server_thread = ServerThread(server)

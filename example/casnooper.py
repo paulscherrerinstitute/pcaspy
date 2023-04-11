@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 """
 This trivial program snoops all PV search requests and prints them out.
-Its only purpose is to demonstrate how channel access disconvers PVs.
+Its only purpose is to demonstrate how channel access discovers PVs.
 """
 import pcaspy.cas as cas
 import logging
