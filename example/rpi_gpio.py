@@ -2,8 +2,8 @@
 """
 An example server for RaspberryPi GPIO control/monitor.
 
-One output and one input are defined using ``PIN_OUT`` and ``PIN_INP``.
-The output can either output constant low/high ('OUT'), or output a pulse of 100ms width ('TRIG').
+One output and one input are defined using ``PIN_OUT`` and ``PIN_INP`` respectively.
+The output can either be a constant low/high ('OUT'), or a pulse of 100ms width ('TRIG').
 
 """
 

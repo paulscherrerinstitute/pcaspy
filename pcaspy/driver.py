@@ -70,7 +70,7 @@ DriverBase = DriverType(str('DriverBase'), (), {
 class Driver(DriverBase):
     """
     This class reacts to PV's read/write requests. The default behavior is to accept any value of a write request
-    and return it to a read request, an echo alike.
+    and return it to a read request, an alike echo.
 
     To specify the behavior, override methods :meth:`read` and :meth:`write` in a derived class.
     """
@@ -794,7 +794,7 @@ class SimpleServer(cas.caServer):
 
         The data type supported has been greatly reduced from C++ PCAS to match Python native types.
         Numeric types are 'float' and 'int', corresponding to DBF_DOUBLE and DBF_LONG of EPICS IOC.
-        The display limits are defined by *lolim* abd *hilim*.
+        The display limits are defined by *lolim* and *hilim*.
         The alarm limits are defined by *low*, *high*, *lolo*, *hihi*.
 
         Fixed width string, 40 characters as of EPICS 3.14, is of type 'string'.
