@@ -11,7 +11,7 @@ spvs = {}
 
 class SpectrumSimulator(object):
     """
-    An object to produce spectrum on request.
+    An object to produce a spectrum on request.
     """
     def get(self, index):
         """
