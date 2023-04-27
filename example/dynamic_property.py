@@ -45,6 +45,7 @@ class myDriver(Driver):
 
         if status:
             self.setParam(reason, value)
+            self.updatePVs()
         return status
 
 if __name__ == '__main__':
