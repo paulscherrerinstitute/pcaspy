@@ -63,6 +63,14 @@ PRE315 = True
 if os.path.exists(os.path.join(EPICSBASE, 'include', 'compiler')):
     PRE315 = False
 
+# check whether PCAS is part of EPICS base installation
+PCAS = None
+if not os.path.exists(os.path.join(EPICSBASE, 'include', 'casdef.h')):
+    PCAS = os.environ.get('PCAS')
+    if not PCAS:
+        raise IOError('It looks like PCAS module is not part of EPICS base installation. '
+                      'Please define PCAS environment variable to the module path.')
+
 # common libraries to link
 libraries = ['cas', 'ca', 'gdd', 'Com']
 if PRE315:
@@ -150,16 +158,24 @@ elif UNAME == 'SunOS':
 else:
     raise IOError("Unsupported OS {0}".format(UNAME))
 
+include_dirs = [ os.path.join(EPICSBASE, 'include'),
+                 os.path.join(EPICSBASE, 'include', 'os', UNAME),
+                 os.path.join(EPICSBASE, 'include', 'compiler', CMPL)]
+
+library_dirs = [ os.path.join(EPICSBASE, 'lib', HOSTARCH) ]
+
+if PCAS:
+    include_dirs.append(os.path.join(PCAS, 'include'))
+    library_dirs.append(os.path.join(PCAS, 'lib', HOSTARCH))
+
 cas_module = Extension('pcaspy._cas',
                        sources  =[os.path.join('pcaspy','casdef.i'),
                                   os.path.join('pcaspy','pv.cpp'),
                                   os.path.join('pcaspy','channel.cpp'),],
                        swig_opts=['-c++','-threads','-nodefaultdtor','-I%s'% os.path.join(EPICSBASE, 'include')],
                        extra_compile_args=cflags,
-                       include_dirs = [ os.path.join(EPICSBASE, 'include'),
-                                        os.path.join(EPICSBASE, 'include', 'os', UNAME),
-                                        os.path.join(EPICSBASE, 'include', 'compiler', CMPL)],
-                       library_dirs = [ os.path.join(EPICSBASE, 'lib', HOSTARCH),],
+                       include_dirs = include_dirs,
+                       library_dirs = library_dirs,
                        libraries = libraries,
                        extra_link_args = lflags,
                        extra_objects = extra_objects,
