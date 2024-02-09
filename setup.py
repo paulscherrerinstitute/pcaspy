@@ -184,6 +184,8 @@ cas_module = Extension('pcaspy._cas',
 # use runtime library path option if linking share libraries on *NIX
 if UNAME not in ['WIN32'] and SHARED:
     cas_module.runtime_library_dirs += [os.path.join(EPICSBASE, 'lib', HOSTARCH)]
+    if PCAS:
+        cas_module.runtime_library_dirs += [os.path.join(PCAS, 'lib', HOSTARCH)]
 
 long_description = open('README.rst').read()
 _version = load_module('_version', 'pcaspy/_version.py')
