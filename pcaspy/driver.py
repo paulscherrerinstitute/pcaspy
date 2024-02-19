@@ -575,7 +575,7 @@ class SimplePV(cas.casPV):
         # do asynchronous only if PV supports
         if self.info.asyn:
             # register async write io
-            self.startAsyncWrite(context)
+            self.startAsyncWrite(context.ctx)
             # call out driver
             success = self.writeValue(context, value)
             # if not successful, clean the async write io

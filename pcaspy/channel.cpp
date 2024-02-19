@@ -70,12 +70,12 @@ bool Channel :: writeAccess() const
 
 caStatus Channel :: write (const casCtx &ctx, const gdd &value)
 {
-    casClientInfo client = {pUserName, pHostName};
+    casClientInfo client = {pUserName, pHostName, &ctx};
     return pPv->write(client, value);
 }
 
 caStatus Channel :: writeNotify (const casCtx &ctx, const gdd &value)
 {
-    casClientInfo client = {pUserName, pHostName};
+    casClientInfo client = {pUserName, pHostName, &ctx};
     return pPv->writeNotify(client, value);
 }

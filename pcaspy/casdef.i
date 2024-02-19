@@ -121,6 +121,7 @@ struct casClientInfo {
     %immutable;
     const char *user;
     const char *host;
+    const casCtx *ctx;
 };
 
 class PV : public casPV {
