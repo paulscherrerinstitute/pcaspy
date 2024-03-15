@@ -513,7 +513,7 @@ class SimplePV(cas.casPV):
         # scan thread
         if self.info.scan > 0:
             self.tid = threading.Thread(target=self.scan)
-            self.tid.setDaemon(True)
+            self.tid.daemon = True
             self.tid.start()
 
     def scan(self):
