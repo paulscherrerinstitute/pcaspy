@@ -84,6 +84,11 @@ Here is a short guide,
 
   - As long as v4.13.2 is the latest release of pcas, add ``-include $(TOP)/../RELEASE.$(EPICS_HOST_ARCH).local``
     to the end of <EPICS_BASE>/modules/pcas/configure/RELEASE.
+
+  If PCAS library is built as a separate module, its path has to be defined::
+
+        export PCAS=<pcas_module_path>
+
 - Run ``make``.
 
 .. note:: On windows, the Visual Studio version has to match that used to build Python.
