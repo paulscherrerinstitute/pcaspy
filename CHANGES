@@ -1,6 +1,11 @@
 
 .. py:currentmodule:: pcaspy
 
+0.8.1 (15-03-2024)
+------------------
+    * Fixed asyn write crash, which was introduced in 0.8.0. (Issue #95)
+    * Building process can use an out-of-tree pcas module given by *PCAS* environment variable.
+
 0.8.0 (27-03-2023)
 ------------------
     * Added optional argument *timestamp* to :meth:`Driver.setParam`. (Issue #54)
