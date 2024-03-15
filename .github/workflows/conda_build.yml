@@ -27,7 +27,7 @@ jobs:
             printenv
             echo "USER_ID=$(id -u)" >> $GITHUB_ENV
       - name: Setup miniconda
-        uses: conda-incubator/setup-miniconda@v2
+        uses: conda-incubator/setup-miniconda@v3
         with:
           auto-update-conda: false
           conda-build-version: 3
