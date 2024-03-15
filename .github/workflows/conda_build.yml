@@ -31,6 +31,7 @@ jobs:
         with:
           auto-update-conda: false
           conda-build-version: 3
+          conda-solver: "classic"
           auto-activate-base: true
           activate-environment: ""
       - name: Setup Xcode and SDK on macOS
