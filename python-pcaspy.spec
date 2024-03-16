@@ -1,6 +1,6 @@
 Summary: Portable Channel Access Server in Python
 Name: python-pcaspy
-Version: 0.8.0
+Version: 0.8.1
 Release: 1%{?dist}
 Source0: https://pypi.io/packages/source/p/pcaspy/pcaspy-%{version}.tar.gz
 License: BSD
