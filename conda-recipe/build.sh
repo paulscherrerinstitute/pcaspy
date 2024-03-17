@@ -24,10 +24,10 @@ echo Using EPICS_HOST_ARCH=$EPICS_HOST_ARCH
 OUTPUT_PATH=$(dirname $(conda build --output conda-recipe))
 
 if [ $PLATFORM == "linux" ]; then
-    $PYTHON setup.py install sdist bdist_egg
+    $PYTHON setup.py install --single-version-externally-managed --record=record.txt sdist bdist_egg
     cp -f dist/*.tar.gz ${OUTPUT_PATH}
     cp dist/*.egg ${OUTPUT_PATH}
 elif [ $PLATFORM == "darwin" ]; then
-    $PYTHON setup.py install bdist_wheel
+    $PYTHON setup.py install --single-version-externally-managed --record=record.txt bdist_wheel
     cp dist/*.whl ${OUTPUT_PATH}
 fi
