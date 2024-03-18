@@ -64,5 +64,7 @@ jobs:
       - name: Upload Artifact
         uses: actions/upload-artifact@v3
         with:
-          path: packages/*/*.tar.bz2
+          path: |
+              packages/*/*.tar.bz2
+              packages/*/*.whl
           retention-days: 1
