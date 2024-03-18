@@ -22,7 +22,12 @@ They have EPICS 3.14.12.8 libraries statically builtin. Make sure you have `pip 
     > C:\Python27\Scripts\pip.exe install pcaspy :: Windows
 
 
-.. note:: On Windows, if you see error message "The program can't start because MSVCRxxx.dll is missing from your computer." when importing pcaspy, you might need to install the proper `Visual C++ Redistributable <https://support.microsoft.com/en-us/help/2977003/the-latest-supported-visual-c-downloads>`_.
+.. note::
+  * The binary packages are built by CI/CD at the release time. The supported Python versions are up to the most recent release at that time point.
+    That means newer Python released after that point will not have binary packages. In that case please build from source, or stay with an older Python
+    or raise an issue to request a new build.
+  * On Windows, if you see error message "The program can't start because MSVCRxxx.dll is missing from your computer." when importing pcaspy,
+   you might need to install the proper `Visual C++ Redistributable <https://support.microsoft.com/en-us/help/2977003/the-latest-supported-visual-c-downloads>`_.
 
 Source
 ------
