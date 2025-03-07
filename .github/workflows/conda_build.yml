@@ -62,7 +62,7 @@ jobs:
         env:
           MY_CONDA_TOKEN: ${{ secrets.MY_CONDA_TOKEN }}
       - name: Upload Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           path: packages/*/*.tar.bz2
           retention-days: 1
