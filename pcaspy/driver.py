@@ -395,6 +395,13 @@ class PVInfo(object):
         if self.count > 1 and self.type is not cas.aitEnumUint8:
             value = [value] * self.count
         self.value = info.get('value', value)
+        # if a string is provided for enum type, lookup its corresponding index
+        if self.type == cas.aitEnumEnum16 and isinstance(self.value, str):
+            try:
+                self.value = self.enums.index(self.value)
+            except ValueError:
+                sys.stderr.write('enums state "%s" not found\n' % self.value)
+                self.value = 0
         # initialize last monitor/archive value
         self.mlst = self.value
         self.alst = self.value
