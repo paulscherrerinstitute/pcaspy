@@ -155,13 +155,15 @@ class Driver(DriverBase):
         .. note:: The *timestamp*, if given, must be of :class:`pcaspy.cas.epicsTimeStamp` type.
 
         """
+        pv = manager.pvs[self.port][reason]
         # make a copy of mutable objects, list, numpy.ndarray
         if isinstance(value, list):
             value = value[:]
         elif 'numpy.ndarray' in str(type(value)):
             value = value.copy()
+        elif pv.info.type == cas.aitEnumEnum16 and isinstance(value, str):
+            value = pv.info.enums.index(value)
         # check whether value update is needed
-        pv = manager.pvs[self.port][reason]
         self.pvDB[reason].mask |= pv.info.checkValue(value)
         self.pvDB[reason].value = value
         if timestamp is None:

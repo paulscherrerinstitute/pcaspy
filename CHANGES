@@ -1,6 +1,10 @@
 
 .. py:currentmodule:: pcaspy
 
+0.8.2 (XX-XX-2025)
+------------------
+    * Allow initializing and writing enum type PV with its choice string. (Issue #101)
+
 0.8.1 (15-03-2024)
 ------------------
     * Fixed asyn write crash, which was introduced in 0.8.0. (Issue #95)
